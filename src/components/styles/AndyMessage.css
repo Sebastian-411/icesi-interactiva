@@ -1,0 +1,119 @@
+/* Estilos para mensajes de Andy */
+.andy-message-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0, 0, 0, 0.7);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 1000;
+  animation: fadeIn 0.3s ease-in;
+}
+
+.andy-message {
+  background: linear-gradient(135deg, #2c3e50, #34495e);
+  border: 3px solid #3498db;
+  border-radius: 15px;
+  padding: 2rem;
+  max-width: 500px;
+  text-align: center;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+  animation: slideIn 0.5s ease-out;
+}
+
+.andy-avatar-small {
+  font-size: 3rem;
+  margin-bottom: 1rem;
+  animation: bounce 1s ease-in-out infinite;
+}
+
+.message-text {
+  font-family: 'Press Start 2P', monospace;
+  font-size: 0.8rem;
+  color: #ecf0f1;
+  line-height: 1.6;
+  margin-bottom: 1rem;
+}
+
+.close-message {
+  background: #e74c3c;
+  color: white;
+  border: none;
+  padding: 0.5rem 1rem;
+  border-radius: 5px;
+  font-family: 'Press Start 2P', monospace;
+  font-size: 0.6rem;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.close-message:hover {
+  background: #c0392b;
+  transform: scale(1.05);
+}
+
+/* Estilos para mensaje de cierre de Andy */
+.andy-closing-message {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  background: rgba(52, 73, 94, 0.8);
+  border: 2px solid #3498db;
+  border-radius: 10px;
+  padding: 1.5rem;
+  margin: 1rem 0;
+}
+
+.andy-closing-message .andy-avatar-small {
+  font-size: 2rem;
+  margin-bottom: 0;
+}
+
+.andy-closing-message p {
+  font-family: 'Press Start 2P', monospace;
+  font-size: 0.7rem;
+  color: #ecf0f1;
+  margin: 0;
+  line-height: 1.4;
+}
+
+/* Estilos para paquetes nuevos */
+.new-packet {
+  animation: newPacketGlow 2s ease-in-out infinite;
+  box-shadow: 0 0 20px rgba(0, 255, 0, 0.8);
+}
+
+@keyframes newPacketGlow {
+  0%, 100% { 
+    transform: scale(1);
+    box-shadow: 0 0 20px rgba(0, 255, 0, 0.8);
+  }
+  50% { 
+    transform: scale(1.1);
+    box-shadow: 0 0 30px rgba(0, 255, 0, 1);
+  }
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+@keyframes slideIn {
+  from { 
+    transform: translateY(-50px);
+    opacity: 0;
+  }
+  to { 
+    transform: translateY(0);
+    opacity: 1;
+  }
+}
+
+@keyframes bounce {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-10px); }
+}

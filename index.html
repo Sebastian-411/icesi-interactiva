@@ -1,0 +1,670 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Andy's Close Friends Rescue - Universidad Icesi</title>
+    <link rel="stylesheet" href="styles.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap" rel="stylesheet">
+</head>
+<body>
+    <!-- Pantalla de Carga -->
+    <div id="loading-screen" class="screen active">
+        <div class="loading-container">
+            <div class="andy-silhouette">🐿️</div>
+            <div class="loading-bar">
+                <div class="loading-progress"></div>
+            </div>
+            <div class="loading-tip" id="loading-tip">Compilando shaders...</div>
+        </div>
+    </div>
+
+    <!-- Pantalla de Inicio -->
+    <div id="home-screen" class="screen">
+        <div class="background-animation">
+            <div class="icesi-campus-background">
+                <div class="pixel-sun"></div>
+                <div class="tropical-vegetation"></div>
+                <div class="icesi-tower">
+                    <div class="tower-base"></div>
+                    <div class="tower-middle"></div>
+                    <div class="tower-top">
+                        <div class="icesi-text">ICESI</div>
+                        <div class="tower-clock"></div>
+                    </div>
+                    <div class="brick-patterns"></div>
+                </div>
+            </div>
+        </div>
+        
+        <div class="main-content">
+            <div class="center-section">
+                <div class="andy-pixel-container">
+                    <div class="andy-pixel-art">
+                        <div class="andy-head"></div>
+                        <div class="andy-body"></div>
+                        <div class="andy-tail"></div>
+                        <div class="andy-eye"></div>
+                    </div>
+                    <div class="andy-caption">Andy Secuestrado</div>
+                </div>
+                
+                <div class="title-container">
+                    <h1 class="game-title">RESCATA A ANDY Y A SUS MEJORES AMIGOS!</h1>
+                    <div class="subtitle">Una aventura épica en la Universidad Icesi</div>
+                </div>
+                
+                <div class="menu-buttons">
+                    <button id="play-btn" class="btn-primary pixel-btn">INICIAR AVENTURA</button>
+                    <button id="instructions-btn" class="btn-secondary pixel-btn">INSTRUCCIONES</button>
+                </div>
+            </div>
+        </div>
+        
+        <div class="icesi-logo">🏛️ Universidad Icesi - Cali, Colombia</div>
+    </div>
+
+    <!-- Pantalla de Instrucciones -->
+    <div id="instructions-screen" class="screen">
+        <div class="instructions-container">
+            <h2>Instrucciones del Juego</h2>
+            <div class="instructions-content">
+                <div class="instruction-section">
+                    <h3>🎮 Controles</h3>
+                    <ul>
+                        <li><strong>Flechas Izquierda/Derecha:</strong> Mover a Andy</li>
+                        <li><strong>Barra Espaciadora:</strong> Saltar</li>
+                        <li><strong>Click:</strong> Interactuar con elementos</li>
+                    </ul>
+                </div>
+                
+                <div class="instruction-section">
+                    <h3>🎯 Objetivo</h3>
+                    <p>Rescata a Andy y a sus 4 mejores amigos que han sido secuestrados en la torre de ladrillos. Cada nivel te llevará a un piso diferente donde encontrarás a uno de sus amigos.</p>
+                </div>
+                
+                <div class="instruction-section">
+                    <h3>⭐ Elementos del Juego</h3>
+                    <ul>
+                        <li><strong>🪙 Monedas:</strong> +100 puntos cada una</li>
+                        <li><strong>🍄 Hongo:</strong> +1 vida extra</li>
+                        <li><strong>⭐ Estrella:</strong> Invencibilidad temporal</li>
+                        <li><strong>👹 Enemigos:</strong> Evítalos o perderás vidas</li>
+                        <li><strong>🧱 Ladrillos:</strong> Haz clic para romperlos</li>
+                    </ul>
+                </div>
+                
+                <div class="instruction-section">
+                    <h3>🏆 Progresión</h3>
+                    <p>Completa cada nivel rescatando al amigo correspondiente. Al final, enfrentarás al jefe final para rescatar a Andy y completar la aventura.</p>
+                </div>
+            </div>
+            <button id="instructions-back-btn" class="btn-primary">Volver al Inicio</button>
+        </div>
+    </div>
+
+    <!-- Pantalla de Opciones -->
+    <div id="options-screen" class="screen">
+        <div class="options-container">
+            <h2>Opciones</h2>
+            <div class="option-item">
+                <label for="music-toggle">Música:</label>
+                <input type="checkbox" id="music-toggle" checked>
+            </div>
+            <div class="option-item">
+                <label for="sfx-toggle">Efectos de Sonido:</label>
+                <input type="checkbox" id="sfx-toggle" checked>
+            </div>
+            <button id="back-btn" class="btn-primary">Volver</button>
+        </div>
+    </div>
+
+    <!-- Cinemática de Introducción -->
+    <div id="intro-screen" class="screen">
+        <div class="story-container">
+            <!-- Frame 1: La vida tranquila -->
+            <div class="story-frame active" data-frame="1">
+                <div class="frame-background campus-day">
+                    <div class="icesi-campus-peaceful">
+                        <div class="campus-buildings"></div>
+                        <div class="campus-trees"></div>
+                    </div>
+                </div>
+                <div class="frame-content">
+                    <div class="andy-and-friends">
+                        <div class="andy-happy">🐿️</div>
+                        <div class="friend pigeon">🕊️</div>
+                        <div class="friend bat">🦇</div>
+                        <div class="friend lizard">🦎</div>
+                        <div class="friend possum">🐾</div>
+                    </div>
+                    <div class="story-text">Todo parecía normal en ICESI...</div>
+                </div>
+            </div>
+            
+            <!-- Frame 2: Aparición del villano -->
+            <div class="story-frame" data-frame="2">
+                <div class="frame-background campus-dark">
+                    <div class="dark-clouds"></div>
+                    <div class="icesi-tower-ominous">
+                        <div class="tower-shadow"></div>
+                        <div class="villain-silhouette">👹</div>
+                    </div>
+                </div>
+                <div class="frame-content">
+                    <div class="story-text">Hasta que alguien decidió arruinarlo todo...</div>
+                </div>
+            </div>
+            
+            <!-- Frame 3: Andy atrapado -->
+            <div class="story-frame" data-frame="3">
+                <div class="frame-background tower-capture">
+                    <div class="icesi-tower-active">
+                        <div class="tower-glow"></div>
+                        <div class="clock-countdown"></div>
+                    </div>
+                </div>
+                <div class="frame-content">
+                    <div class="friends-being-captured">
+                        <div class="friend-flying andy">🐿️</div>
+                        <div class="friend-flying pigeon">🕊️</div>
+                        <div class="friend-flying bat">🦇</div>
+                        <div class="friend-flying lizard">🦎</div>
+                        <div class="friend-flying possum">🐾</div>
+                    </div>
+                    <div class="story-text">Andy y sus amigos fueron encerrados en la torre de ICESI...</div>
+                </div>
+            </div>
+            
+            <!-- Frame 4: La urgencia del tiempo -->
+            <div class="story-frame" data-frame="4">
+                <div class="frame-background clock-closeup">
+                    <div class="giant-clock">
+                        <div class="clock-face"></div>
+                        <div class="clock-hands-fast"></div>
+                        <div class="tick-tock-effect">TIC TAC</div>
+                    </div>
+                </div>
+                <div class="frame-content">
+                    <div class="story-text urgent">El tiempo corre... si no los rescatas, será demasiado tarde.</div>
+                </div>
+            </div>
+            
+            <!-- Frame 5: Llamado a la acción -->
+            <div class="story-frame" data-frame="5">
+                <div class="frame-background tower-final">
+                    <div class="icesi-tower-dramatic">
+                        <div class="tower-shadows"></div>
+                        <div class="clock-glowing"></div>
+                    </div>
+                </div>
+                <div class="frame-content">
+                    <div class="final-call-to-action">
+                        <h2 class="mission-title">¡Es tu misión rescatar a Andy de ICESI!</h2>
+                        <button id="start-adventure-btn" class="btn-primary btn-large">COMENZAR AVENTURA</button>
+                    </div>
+                </div>
+            </div>
+            
+            <button id="next-frame-btn" class="btn-secondary story-nav">Siguiente</button>
+            <div class="story-progress">
+                <div class="progress-bar">
+                    <div class="progress-fill"></div>
+                </div>
+                <span class="frame-counter">1 / 5</span>
+                <div class="auto-play-indicator">▶ AUTO</div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Mapa del Mundo -->
+    <div id="world-map-screen" class="screen">
+        <!-- Fondo del mapa con paisaje -->
+        <div class="world-map-landscape">
+            <div class="sky-background">
+                <div class="tech-elements">
+                    <div class="floating-servers"></div>
+                    <div class="data-cables"></div>
+                    <div class="tech-symbols"></div>
+                </div>
+                <div class="floating-clouds"></div>
+                <div class="mountain-backdrop"></div>
+            </div>
+            
+            <!-- Bioma 1: Jardín (Paloma) -->
+            <div class="biome garden-biome">
+                <div class="garden-trees"></div>
+                <div class="garden-flowers"></div>
+            </div>
+            
+            <!-- Bioma 2: Cueva (Murciélago) -->
+            <div class="biome cave-biome">
+                <div class="cave-entrance"></div>
+                <div class="cave-rocks"></div>
+            </div>
+            
+            <!-- Bioma 3: Pantano (Iguana) -->
+            <div class="biome swamp-biome">
+                <div class="swamp-water"></div>
+                <div class="swamp-plants"></div>
+            </div>
+            
+            <!-- Bioma 4: Cima Ventosa (Zarigüeya) -->
+            <div class="biome windy-peak-biome">
+                <div class="wind-clouds"></div>
+                <div class="peak-platforms"></div>
+            </div>
+            
+            <!-- Torre ICESI Central -->
+            <div class="central-icesi-tower">
+                <div class="tower-base-large"></div>
+                <div class="tower-middle-large"></div>
+                <div class="tower-top-large"></div>
+                <div class="icesi-text-large">ICESI</div>
+                <div class="tower-clock-large"></div>
+                <div class="tower-glow-effect"></div>
+            </div>
+        </div>
+        
+        <!-- Caminos conectores -->
+        <div class="adventure-paths">
+            <div class="path path-1 unlocked"></div>
+            <div class="path path-2 locked"></div>
+            <div class="path path-3 locked"></div>
+            <div class="path path-4 locked"></div>
+            <div class="path path-final locked"></div>
+        </div>
+        
+        <!-- Niveles como estaciones en el mapa -->
+        <div class="level-stations">
+            <!-- Estación 1: Jardín de la Paloma -->
+            <div class="level-station station-1 unlocked" data-level="1">
+                <div class="station-platform garden-platform"></div>
+                <div class="level-icon pigeon-house">🏠</div>
+                <div class="friend-icon">🕊️</div>
+                <div class="level-label">Jardín de Redes</div>
+                <div class="level-status completed">✓</div>
+            </div>
+            
+            <!-- Estación 2: Cueva del Murciélago -->
+            <div class="level-station station-2 locked" data-level="2">
+                <div class="station-platform cave-platform"></div>
+                <div class="level-icon bat-cave">🌑</div>
+                <div class="friend-icon">🦇</div>
+                <div class="level-label">Cueva de Sistemas</div>
+                <div class="level-status">🔒</div>
+            </div>
+            
+            <!-- Estación 3: Pantano de la Iguana -->
+            <div class="level-station station-3 locked" data-level="3">
+                <div class="station-platform swamp-platform"></div>
+                <div class="level-icon lizard-pond">💧</div>
+                <div class="friend-icon">🦎</div>
+                <div class="level-label">Pantano de Datos</div>
+                <div class="level-status">🔒</div>
+            </div>
+            
+            <!-- Estación 4: Pico de la Zarigüeya -->
+            <div class="level-station station-4 locked" data-level="4">
+                <div class="station-platform peak-platform"></div>
+                <div class="level-icon possum-nest">🌪️</div>
+                <div class="friend-icon">🐾</div>
+                <div class="level-label">Pico de Software</div>
+                <div class="level-status">🔒</div>
+            </div>
+        </div>
+        
+        <!-- Avatar de Andy que se mueve por el mapa -->
+        <div class="andy-avatar" id="map-andy">
+            <div class="andy-sprite">🐿️</div>
+            <div class="andy-shadow"></div>
+        </div>
+        
+        <!-- Título del mapa -->
+        <div class="map-header">
+            <h2 class="adventure-title">¡Rescata a los Amigos de Andy!</h2>
+            <div class="progress-indicator">
+                <span class="rescued-count">0</span> / 4 amigos rescatados
+            </div>
+            <div class="gamification-stats">
+                <div class="stat-item">
+                    <span class="stat-icon">⭐</span>
+                    <span class="stat-value" id="total-stars">0</span>
+                </div>
+                <div class="stat-item">
+                    <span class="stat-icon">🏆</span>
+                    <span class="stat-value" id="total-medals">0</span>
+                </div>
+                <div class="stat-item">
+                    <span class="stat-icon">🎯</span>
+                    <span class="stat-value" id="total-points">0</span>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Tutorial Modal -->
+        <div id="tutorial-modal" class="tutorial-overlay">
+            <div class="tutorial-content">
+                <div class="tutorial-header">
+                    <h3>🎮 ¡Bienvenido a la Aventura!</h3>
+                </div>
+                <div class="tutorial-body">
+                    <div class="tutorial-step active" data-step="1">
+                        <div class="tutorial-icon">🐿️</div>
+                        <p>Andy debe salvar a sus amigos atrapados en diferentes <strong>mundos tecnológicos</strong>.</p>
+                    </div>
+                    <div class="tutorial-step" data-step="2">
+                        <div class="tutorial-icon">🗺️</div>
+                        <p>Cada nivel representa un concepto de <strong>Ingeniería de Sistemas</strong>.</p>
+                    </div>
+                    <div class="tutorial-step" data-step="3">
+                        <div class="tutorial-icon">🎯</div>
+                        <p>Haz clic en un área <strong>desbloqueada</strong> para comenzar tu misión.</p>
+                    </div>
+                    <div class="tutorial-step" data-step="4">
+                        <div class="tutorial-icon">⭐</div>
+                        <p>Gana <strong>estrellas, medallas y puntos</strong> por cada rescate exitoso.</p>
+                    </div>
+                </div>
+                <div class="tutorial-controls">
+                    <button id="tutorial-prev" class="btn-secondary tutorial-btn">Anterior</button>
+                    <div class="tutorial-dots">
+                        <span class="dot active" data-step="1"></span>
+                        <span class="dot" data-step="2"></span>
+                        <span class="dot" data-step="3"></span>
+                        <span class="dot" data-step="4"></span>
+                    </div>
+                    <button id="tutorial-next" class="btn-primary tutorial-btn">Siguiente</button>
+                    <button id="tutorial-finish" class="btn-primary tutorial-btn" style="display: none;">¡Comenzar!</button>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Highlight para primera misión -->
+        <div id="first-mission-highlight" class="mission-highlight"></div>
+    </div>
+
+    <!-- Pantalla de Nivel -->
+    <div id="level-screen" class="screen">
+        <!-- Cinemática de Introducción del Nivel -->
+        <div id="level-intro-cutscene" class="cutscene-overlay">
+            <div class="cutscene-content">
+                <div class="garden-background-intro">
+                    <div class="network-flowers"></div>
+                    <div class="broken-router"></div>
+                    <div class="pigeon-trapped">🕊️</div>
+                </div>
+                <div class="andy-dialogue">
+                    <div class="andy-avatar worried">🐿️😟</div>
+                    <div class="dialogue-box">
+                        <p id="intro-dialogue">La Paloma quedó atrapada… pero el Jardín está desconectado. ¡Las rutas de comunicación están rotas! Si no restablecemos la red, nunca podremos salvarla.</p>
+                    </div>
+                </div>
+                <div class="intro-instructions">
+                    <h3>🌻 Jardín de Redes - Nivel 1</h3>
+                    <p>Tu misión: Restablecer las conexiones de red para rescatar a la Paloma</p>
+                    <ul>
+                        <li>🏃 Mueve a Andy con las flechas o WASD</li>
+                        <li>🦘 Salta con ESPACIO</li>
+                        <li>📦 Recolecta paquetes de datos</li>
+                        <li>🔧 Repara los routers apagados</li>
+                        <li>🌐 Elige los protocolos correctos</li>
+                    </ul>
+                </div>
+                <button id="start-level-btn" class="btn-primary">¡Empezar Aventura!</button>
+            </div>
+        </div>
+
+        <!-- Pantalla de Inicio del Nivel -->
+        <div class="level-start">
+            <h2 id="level-title">Nivel 1 - Jardín de Redes</h2>
+            <div class="concept-info">
+                <h3>🌻 Redes y Comunicaciones</h3>
+                <p>Ayuda a Andy a restablecer las conexiones de red en el jardín para rescatar a la Paloma. ¡Aprende cómo funcionan los protocolos de comunicación!</p>
+            </div>
+            <div class="countdown" id="countdown">3</div>
+        </div>
+        
+        <div class="game-container" id="game-container">
+            <div class="hud">
+                <div class="friends-counter">
+                    <span class="close-friends-icon">🐿️</span>
+                    <span id="friends-count">0/5</span>
+                </div>
+                <div class="score-counter">
+                    <span class="coin-icon">🪙</span>
+                    <span id="score">00000</span>
+                </div>
+                <div class="lives-counter">
+                    <span class="lives-icon">❤️</span>
+                    <span id="lives">3</span>
+                </div>
+            </div>
+            
+            <div class="game-world" id="game-world">
+                <!-- Fondo del Jardín de Redes -->
+                <div class="garden-background">
+                    <div class="garden-sky"></div>
+                    <div class="network-trees"></div>
+                    <div class="garden-ground"></div>
+                </div>
+                
+                <!-- Plataformas del Jardín -->
+                <div class="garden-level" id="garden-level">
+                    <div class="flower-platform" data-ping="true">🌸</div>
+                    <div class="flower-platform" data-ping="true">🌺</div>
+                    <div class="flower-platform" data-ping="true">🌻</div>
+                    <div class="flower-platform" data-ping="true">🌷</div>
+                </div>
+                
+                <!-- Routers Interactivos -->
+                <div class="network-routers">
+                    <div class="router offline" id="router-1" data-puzzle="cable">
+                        <div class="router-body">📡</div>
+                        <div class="router-status offline">❌</div>
+                    </div>
+                    <div class="router offline" id="router-2" data-puzzle="protocol">
+                        <div class="router-body">🖥️</div>
+                        <div class="router-status offline">❌</div>
+                    </div>
+                </div>
+                
+                <!-- Puente de Datos -->
+                <div class="data-bridge locked" id="data-bridge">
+                    <div class="bridge-section"></div>
+                    <div class="bridge-section"></div>
+                    <div class="bridge-section"></div>
+                    <div class="bridge-requirement">Necesitas 3 paquetes de datos</div>
+                </div>
+                
+                <!-- Jaula de la Paloma -->
+                <div class="pigeon-cage" id="pigeon-cage">
+                    <div class="cage-bars"></div>
+                    <div class="pigeon-friend">🕊️</div>
+                    <div class="cage-lock">🔒</div>
+                </div>
+                
+                <!-- Elementos del Juego -->
+                <div class="player garden-andy" id="player">🐿️</div>
+                <div class="network-enemies" id="enemies"></div>
+                <div class="data-packets" id="collectibles"></div>
+                <div class="network-powerups" id="power-ups"></div>
+            </div>
+            
+            <!-- Overlays de Puzzles -->
+            <div id="cable-puzzle-overlay" class="puzzle-overlay">
+                <div class="puzzle-content">
+                    <h3>🔧 Restablece la Conexión</h3>
+                    <p>Un ingeniero de sistemas sabe cómo conectar los puntos. Restablece el camino de la información.</p>
+                    <div class="cable-puzzle">
+                        <div class="connection-point start" id="connection-start">🔌</div>
+                        <div class="cable-path" id="cable-path"></div>
+                        <div class="connection-point end" id="connection-end">🔌</div>
+                    </div>
+                    <button id="connect-cable-btn" class="btn-primary">Conectar Cable</button>
+                </div>
+            </div>
+            
+            <div id="protocol-puzzle-overlay" class="puzzle-overlay">
+                <div class="puzzle-content">
+                    <h3>🌐 Elige el Protocolo</h3>
+                    <p>Algunas veces debes elegir cómo transmitir los datos. ¿Qué protocolo usarías?</p>
+                    <div class="protocol-options">
+                        <button class="protocol-btn" data-protocol="tcp">
+                            <div class="protocol-icon">📦</div>
+                            <div class="protocol-name">TCP</div>
+                            <div class="protocol-desc">Confiable y ordenado</div>
+                        </button>
+                        <button class="protocol-btn" data-protocol="udp">
+                            <div class="protocol-icon">⚡</div>
+                            <div class="protocol-name">UDP</div>
+                            <div class="protocol-desc">Rápido pero inestable</div>
+                        </button>
+                    </div>
+                </div>
+            </div>
+            
+            <div id="packet-sorting-overlay" class="puzzle-overlay">
+                <div class="puzzle-content">
+                    <h3>📦 Reensambla los Paquetes</h3>
+                    <p>¡Estamos cerca! Restablece la conexión final para liberarla.</p>
+                    <div class="packet-sorting">
+                        <div class="packet-container">
+                            <div class="packet draggable" data-order="1">1</div>
+                            <div class="packet draggable" data-order="3">3</div>
+                            <div class="packet draggable" data-order="2">2</div>
+                            <div class="packet draggable" data-order="4">4</div>
+                        </div>
+                        <div class="sorting-slots">
+                            <div class="sort-slot" data-position="1"></div>
+                            <div class="sort-slot" data-position="2"></div>
+                            <div class="sort-slot" data-position="3"></div>
+                            <div class="sort-slot" data-position="4"></div>
+                        </div>
+                    </div>
+                    <button id="check-sorting-btn" class="btn-primary">Verificar Orden</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Pantalla de Resumen de Nivel -->
+    <div id="level-summary-screen" class="screen">
+        <div class="summary-container">
+            <h2>¡NIVEL COMPLETADO!</h2>
+            <div class="stats">
+                <div class="stat-item">
+                    <span class="stat-label">Puntaje Obtenido:</span>
+                    <span id="final-score">0</span>
+                </div>
+                <div class="stat-item">
+                    <span class="stat-label">Paquetes de Datos:</span>
+                    <span id="data-collected">0/0</span>
+                </div>
+                <div class="stat-item">
+                    <span class="stat-label">Amigos Rescatados:</span>
+                    <span id="friends-rescued">0</span>
+                </div>
+            </div>
+            <div class="knowledge-capsule">
+                <h3>Cápsula de Conocimiento Icesi</h3>
+                <p id="knowledge-text">Sabías que... La Universidad Icesi usa servicios en la nube como AWS y Azure para potenciar sus plataformas de investigación y aprendizaje. ¡Lo que acabas de hacer es el día a día de un ingeniero de sistemas!</p>
+            </div>
+            <button id="continue-btn" class="btn-primary">CONTINUAR</button>
+        </div>
+    </div>
+
+    <!-- Pantalla de Batalla Final -->
+    <div id="final-boss-screen" class="screen">
+        <div class="boss-container">
+            <h2>Nivel 5 - La Batalla contra EL GLITCH</h2>
+            <div class="andy-profile" id="andy-profile">
+                <div class="profile-header">
+                    <div class="profile-pic">🐿️</div>
+                    <div class="profile-info">
+                        <h3>Andy la Ardilla</h3>
+                        <p>@andy_icesi</p>
+                    </div>
+                </div>
+                <div class="profile-content">
+                    <div class="bio-section">
+                        <h4>Biografía</h4>
+                        <div class="bio-text" id="bio-text">Estudiante de Ingeniería de Sistemas en la Universidad Icesi. Amante de la tecnología y los algoritmos.</div>
+                    </div>
+                    <div class="close-friends-section">
+                        <h4>Close Friends</h4>
+                        <div class="friends-grid" id="friends-grid"></div>
+                    </div>
+                </div>
+            </div>
+            <div class="boss-hud">
+                <div class="glitch-health">
+                    <span>El Glitch:</span>
+                    <div class="health-bar">
+                        <div class="health-fill" id="glitch-health"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Pantalla de Victoria Final -->
+    <div id="victory-screen" class="screen">
+        <div class="victory-container">
+            <div class="victory-animation">
+                <div class="andy-celebration">🐿️🎉</div>
+                <div class="friends-video-call" id="friends-video-call"></div>
+            </div>
+            <h2>¡LO LOGRAMOS!</h2>
+            <p>¡Gracias a tu ingenio, mi comunidad está a salvo! ¡Eres increíble!</p>
+        </div>
+    </div>
+
+    <!-- Pantalla de Resultados Finales -->
+    <div id="final-results-screen" class="screen">
+        <div class="results-container">
+            <h1>¡MISIÓN CUMPLIDA, INGENIER@!</h1>
+            <div class="final-stats">
+                <div class="final-score">
+                    <span class="stat-label">Puntaje Total:</span>
+                    <span id="total-score">85,500</span>
+                </div>
+                <div class="engineer-rank">
+                    <span class="stat-label">Tu Rango de Ingeniero:</span>
+                    <span id="rank">Diseñador de Experiencias Legendario</span>
+                </div>
+            </div>
+            <div class="final-message">
+                Demostraste tener la lógica, la creatividad y la pasión de un Ingeniero de Sistemas de la Universidad Icesi. ¿Quieres convertir este juego en tu realidad profesional?
+            </div>
+            <div class="final-actions">
+                <a href="https://www.icesi.edu.co/programas/ingenieria-de-sistemas/" target="_blank" class="btn-primary btn-large">CONOCE EL PROGRAMA DE ING. DE SISTEMAS EN ICESI</a>
+                <button id="share-btn" class="btn-secondary">COMPARTE TU LOGRO</button>
+            </div>
+            <div class="final-footer">
+                <button id="play-again-btn" class="btn-small">Volver a Jugar</button>
+                <button id="credits-btn" class="btn-small">Créditos</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Pantalla de Créditos -->
+    <div id="credits-screen" class="screen">
+        <div class="credits-container">
+            <h2>Créditos</h2>
+            <div class="credits-content">
+                <p><strong>Desarrollado para:</strong> Universidad Icesi</p>
+                <p><strong>Programa:</strong> Ingeniería de Sistemas</p>
+                <p><strong>Personaje:</strong> Andy la Ardilla</p>
+                <p><strong>Concepto:</strong> Gamificación Educativa</p>
+            </div>
+            <button id="credits-back-btn" class="btn-primary">Volver</button>
+        </div>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+</html>
+

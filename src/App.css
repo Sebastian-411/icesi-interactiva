@@ -1,0 +1,18 @@
+/* Importar todos los estilos del juego */
+@import url('/styles.css');
+@import url('./components/styles/AndyMessage.css');
+
+/* Estilos específicos de React */
+#root {
+  width: 100%;
+  height: 100vh;
+  margin: 0;
+  padding: 0;
+}
+
+.react-game-container {
+  width: 100%;
+  height: 100vh;
+  position: relative;
+  overflow: hidden;
+}
