@@ -1,7 +1,7 @@
 import React from 'react';
 import { useGame } from '../../context/GameContext';
 
-const LevelSummaryScreen = () => {
+const LevelSummaryScreen = ({ isActive }) => {
   const { state, showScreen, completeLevel } = useGame();
 
   const handleContinue = () => {
@@ -19,7 +19,7 @@ const LevelSummaryScreen = () => {
   const levelData = state.levelData[state.currentLevel];
 
   return (
-    <div id="level-summary-screen" className="screen">
+    <div id="level-summary-screen" className={`screen ${isActive ? 'active' : ''}`}>
       <div className="summary-container">
         <h2>¡NIVEL COMPLETADO!</h2>
         <div className="stats">

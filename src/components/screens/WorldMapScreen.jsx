@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useGame } from '../../context/GameContext';
 
-const WorldMapScreen = () => {
+const WorldMapScreen = ({ isActive }) => {
   const { state, showScreen, setLevel, updateTutorial } = useGame();
   const [showTutorial, setShowTutorial] = useState(!state.tutorialCompleted);
   const [currentTutorialStep, setCurrentTutorialStep] = useState(1);
@@ -59,7 +59,7 @@ const WorldMapScreen = () => {
   ];
 
   return (
-    <div id="world-map-screen" className="screen">
+    <div id="world-map-screen" className={`screen ${isActive ? 'active' : ''}`}>
       {/* Fondo del mapa con paisaje */}
       <div className="world-map-landscape">
         <div className="sky-background">

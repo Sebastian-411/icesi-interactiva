@@ -28,33 +28,35 @@ function GameApp() {
 
   // Renderizar pantalla actual
   const renderCurrentScreen = () => {
+    const isActive = true; // En React, solo renderizamos la pantalla activa
+    
     switch (state.currentScreen) {
       case 'loading-screen':
-        return <LoadingScreen />;
+        return <LoadingScreen isActive={isActive} />;
       case 'home-screen':
-        return <HomeScreen />;
+        return <HomeScreen isActive={isActive} />;
       case 'instructions-screen':
-        return <InstructionsScreen />;
+        return <InstructionsScreen isActive={isActive} />;
       case 'options-screen':
-        return <OptionsScreen />;
+        return <OptionsScreen isActive={isActive} />;
       case 'intro-screen':
-        return <IntroScreen />;
+        return <IntroScreen isActive={isActive} />;
       case 'world-map-screen':
-        return <WorldMapScreen />;
+        return <WorldMapScreen isActive={isActive} />;
       case 'level-screen':
-        return <LevelScreen />;
+        return <LevelScreen isActive={isActive} />;
       case 'level-summary-screen':
-        return <LevelSummaryScreen />;
+        return <LevelSummaryScreen isActive={isActive} />;
       case 'final-boss-screen':
-        return <FinalBossScreen />;
+        return <FinalBossScreen isActive={isActive} />;
       case 'victory-screen':
-        return <VictoryScreen />;
+        return <VictoryScreen isActive={isActive} />;
       case 'final-results-screen':
-        return <FinalResultsScreen />;
+        return <FinalResultsScreen isActive={isActive} />;
       case 'credits-screen':
-        return <CreditsScreen />;
+        return <CreditsScreen isActive={isActive} />;
       default:
-        return <LoadingScreen />;
+        return <LoadingScreen isActive={isActive} />;
     }
   };
 

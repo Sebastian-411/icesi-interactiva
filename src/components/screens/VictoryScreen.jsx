@@ -1,7 +1,7 @@
 import React from 'react';
 import { useGame } from '../../context/GameContext';
 
-const VictoryScreen = () => {
+const VictoryScreen = ({ isActive }) => {
   const { showScreen } = useGame();
 
   const handleContinue = () => {
@@ -9,7 +9,7 @@ const VictoryScreen = () => {
   };
 
   return (
-    <div id="victory-screen" className="screen">
+    <div id="victory-screen" className={`screen ${isActive ? 'active' : ''}`}>
       <div className="victory-container">
         <div className="victory-animation">
           <div className="andy-celebration">🐿️🎉</div>

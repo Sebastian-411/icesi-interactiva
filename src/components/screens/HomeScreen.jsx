@@ -1,7 +1,7 @@
 import React from 'react';
 import { useGame } from '../../context/GameContext';
 
-const HomeScreen = () => {
+const HomeScreen = ({ isActive }) => {
   const { showScreen } = useGame();
 
   const handlePlayClick = () => {
@@ -13,7 +13,7 @@ const HomeScreen = () => {
   };
 
   return (
-    <div id="home-screen" className="screen">
+    <div id="home-screen" className={`screen ${isActive ? 'active' : ''}`}>
       <div className="background-animation">
         <div className="icesi-campus-background">
           <div className="pixel-sun"></div>

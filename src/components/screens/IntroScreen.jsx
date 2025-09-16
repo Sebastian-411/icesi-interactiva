@@ -1,174 +1,155 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { useGame } from '../../context/GameContext';
+import Frame1 from '../frames/Frame1';
+import Frame2 from '../frames/Frame2';
+import Frame3 from '../frames/Frame3';
+import Frame4 from '../frames/Frame4';
+import Frame5 from '../frames/Frame5';
 
-const IntroScreen = () => {
+const IntroScreen = ({ isActive }) => {
   const { showScreen } = useGame();
   const [currentFrame, setCurrentFrame] = useState(1);
   const [isAutoPlaying, setIsAutoPlaying] = useState(true);
-
-  const frames = [
-    {
-      id: 1,
-      background: 'campus-day',
-      content: (
-        <div className="frame-content">
-          <div className="andy-and-friends">
-            <div className="andy-happy">🐿️</div>
-            <div className="friend pigeon">🕊️</div>
-            <div className="friend bat">🦇</div>
-            <div className="friend lizard">🦎</div>
-            <div className="friend possum">🐾</div>
-          </div>
-          <div className="story-text">Todo parecía normal en ICESI...</div>
-        </div>
-      )
-    },
-    {
-      id: 2,
-      background: 'campus-dark',
-      content: (
-        <div className="frame-content">
-          <div className="story-text">Hasta que alguien decidió arruinarlo todo...</div>
-        </div>
-      )
-    },
-    {
-      id: 3,
-      background: 'tower-capture',
-      content: (
-        <div className="frame-content">
-          <div className="friends-being-captured">
-            <div className="friend-flying andy">🐿️</div>
-            <div className="friend-flying pigeon">🕊️</div>
-            <div className="friend-flying bat">🦇</div>
-            <div className="friend-flying lizard">🦎</div>
-            <div className="friend-flying possum">🐾</div>
-          </div>
-          <div className="story-text">Andy y sus amigos fueron encerrados en la torre de ICESI...</div>
-        </div>
-      )
-    },
-    {
-      id: 4,
-      background: 'clock-closeup',
-      content: (
-        <div className="frame-content">
-          <div className="story-text urgent">El tiempo corre... si no los rescatas, será demasiado tarde.</div>
-        </div>
-      )
-    },
-    {
-      id: 5,
-      background: 'tower-final',
-      content: (
-        <div className="frame-content">
-          <div className="final-call-to-action">
-            <h2 className="mission-title">¡Es tu misión rescatar a Andy de ICESI!</h2>
-            <button 
-              id="start-adventure-btn" 
-              className="btn-primary btn-large"
-              onClick={() => showScreen('world-map-screen')}
-            >
-              COMENZAR AVENTURA
-            </button>
-          </div>
-        </div>
-      )
-    }
-  ];
+  const intervalRef = useRef(null);
 
   const nextFrame = () => {
-    if (currentFrame < frames.length) {
-      setCurrentFrame(currentFrame + 1);
+    console.log('nextFrame called, currentFrame:', currentFrame);
+    if (currentFrame < 5) {
+      setCurrentFrame(prev => prev + 1);
     }
   };
 
   const previousFrame = () => {
     if (currentFrame > 1) {
-      setCurrentFrame(currentFrame - 1);
+      setCurrentFrame(prev => prev - 1);
     }
   };
 
-  // Auto-play
+  // Auto-play con setInterval en lugar de setTimeout
   useEffect(() => {
-    if (isAutoPlaying && currentFrame < frames.length) {
-      const timer = setTimeout(() => {
-        nextFrame();
+    console.log('Auto-play effect triggered, currentFrame:', currentFrame, 'isAutoPlaying:', isAutoPlaying);
+    
+    if (isAutoPlaying && currentFrame < 5) {
+      console.log('Starting auto-play interval');
+      intervalRef.current = setInterval(() => {
+        console.log('Interval fired, advancing frame');
+        setCurrentFrame(prev => {
+          console.log('setCurrentFrame called, prev:', prev);
+          if (prev >= 5) {
+            clearInterval(intervalRef.current);
+            return prev;
+          }
+          return prev + 1;
+        });
       }, 3000);
-      return () => clearTimeout(timer);
+    } else {
+      if (intervalRef.current) {
+        console.log('Clearing interval');
+        clearInterval(intervalRef.current);
+        intervalRef.current = null;
+      }
     }
-  }, [currentFrame, isAutoPlaying]);
+    
+    return () => {
+      if (intervalRef.current) {
+        console.log('Clearing interval on cleanup');
+        clearInterval(intervalRef.current);
+        intervalRef.current = null;
+      }
+    };
+  }, [isAutoPlaying]); // Solo depende de isAutoPlaying, no de currentFrame
 
-  const currentFrameData = frames.find(frame => frame.id === currentFrame);
+  const handleStartAdventure = () => {
+    showScreen('world-map-screen');
+  };
+
+  const handleSkipIntro = () => {
+    showScreen('world-map-screen');
+  };
+
+  const renderFrame = () => {
+    console.log('renderFrame called with currentFrame:', currentFrame);
+    switch (currentFrame) {
+      case 1:
+        return <Frame1 />;
+      case 2:
+        return <Frame2 />;
+      case 3:
+        return <Frame3 />;
+      case 4:
+        return <Frame4 />;
+      case 5:
+        return <Frame5 onStartAdventure={handleStartAdventure} />;
+      default:
+        return <Frame1 />;
+    }
+  };
 
   return (
-    <div id="intro-screen" className="screen">
+    <div id="intro-screen" className={`screen ${isActive ? 'active' : ''}`}>
       <div className="story-container">
-        {frames.map(frame => (
-          <div 
-            key={frame.id}
-            className={`story-frame ${frame.id === currentFrame ? 'active' : ''}`}
-            data-frame={frame.id}
+        {renderFrame()}
+        
+        {/* Navegación */}
+        <div className="story-navigation">
+          <button 
+            id="prev-frame-btn" 
+            className="btn-secondary story-nav"
+            onClick={previousFrame}
+            disabled={currentFrame <= 1}
           >
-            <div className={`frame-background ${frame.background}`}>
-              {frame.id === 1 && (
-                <div className="icesi-campus-peaceful">
-                  <div className="campus-buildings"></div>
-                  <div className="campus-trees"></div>
-                </div>
-              )}
-              {frame.id === 2 && (
-                <>
-                  <div className="dark-clouds"></div>
-                  <div className="icesi-tower-ominous">
-                    <div className="tower-shadow"></div>
-                    <div className="villain-silhouette">👹</div>
-                  </div>
-                </>
-              )}
-              {frame.id === 3 && (
-                <div className="icesi-tower-active">
-                  <div className="tower-glow"></div>
-                  <div className="clock-countdown"></div>
-                </div>
-              )}
-              {frame.id === 4 && (
-                <div className="giant-clock">
-                  <div className="clock-face"></div>
-                  <div className="clock-hands-fast"></div>
-                  <div className="tick-tock-effect">TIC TAC</div>
-                </div>
-              )}
-              {frame.id === 5 && (
-                <div className="icesi-tower-dramatic">
-                  <div className="tower-shadows"></div>
-                  <div className="clock-glowing"></div>
-                </div>
-              )}
-            </div>
-            {frame.content}
-          </div>
-        ))}
+            Anterior
+          </button>
+          <button 
+            id="play-pause-btn" 
+            className="btn-secondary story-nav"
+            onClick={() => setIsAutoPlaying(!isAutoPlaying)}
+          >
+            {isAutoPlaying ? '⏸ Pausar' : '▶ Reproducir'}
+          </button>
+          <button 
+            id="next-frame-btn" 
+            className="btn-secondary story-nav"
+            onClick={nextFrame}
+            disabled={currentFrame >= 5}
+          >
+            {currentFrame >= 5 ? 'Final' : 'Siguiente'}
+          </button>
+        </div>
         
-        <button 
-          id="next-frame-btn" 
-          className="btn-secondary story-nav"
-          onClick={nextFrame}
-          disabled={currentFrame === frames.length}
-        >
-          Siguiente
-        </button>
-        
+        {/* Progreso */}
         <div className="story-progress">
           <div className="progress-bar">
             <div 
               className="progress-fill" 
-              style={{ width: `${(currentFrame / frames.length) * 100}%` }}
+              style={{ width: `${(currentFrame / 5) * 100}%` }}
             ></div>
           </div>
-          <span className="frame-counter">{currentFrame} / {frames.length}</span>
-          <div className="auto-play-indicator">▶ AUTO</div>
+          <span className="frame-counter">{currentFrame} / 5</span>
+          <div className="auto-play-indicator">
+            {isAutoPlaying ? '▶ AUTO' : '⏸ MANUAL'}
+          </div>
         </div>
+        
+        {/* Indicadores de frame */}
+        <div className="frame-indicators">
+          {[1, 2, 3, 4, 5].map((frameNum) => (
+            <div 
+              key={frameNum}
+              className={`frame-dot ${frameNum === currentFrame ? 'active' : ''}`}
+              onClick={() => setCurrentFrame(frameNum)}
+            />
+          ))}
+        </div>
+        
+        {/* Botón para saltar */}
+        <button 
+          id="skip-intro-btn" 
+          className="btn-small skip-btn"
+          onClick={handleSkipIntro}
+        >
+          Saltar Cinemática
+        </button>
       </div>
     </div>
   );

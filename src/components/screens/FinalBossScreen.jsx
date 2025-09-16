@@ -1,11 +1,11 @@
 import React from 'react';
 import { useGame } from '../../context/GameContext';
 
-const FinalBossScreen = () => {
+const FinalBossScreen = ({ isActive }) => {
   const { state, showScreen } = useGame();
 
   return (
-    <div id="final-boss-screen" className="screen">
+    <div id="final-boss-screen" className={`screen ${isActive ? 'active' : ''}`}>
       <div className="boss-container">
         <h2>Nivel 5 - La Batalla contra EL GLITCH</h2>
         <div className="andy-profile" id="andy-profile">

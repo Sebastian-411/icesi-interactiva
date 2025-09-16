@@ -1,7 +1,7 @@
 import React from 'react';
 import { useGame } from '../../context/GameContext';
 
-const FinalResultsScreen = () => {
+const FinalResultsScreen = ({ isActive }) => {
   const { state, showScreen } = useGame();
 
   const calculateRank = (score) => {
@@ -21,7 +21,7 @@ const FinalResultsScreen = () => {
   };
 
   return (
-    <div id="final-results-screen" className="screen">
+    <div id="final-results-screen" className={`screen ${isActive ? 'active' : ''}`}>
       <div className="results-container">
         <h1>¡MISIÓN CUMPLIDA, INGENIER@!</h1>
         <div className="final-stats">

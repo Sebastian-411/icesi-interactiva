@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 
-const LoadingScreen = () => {
+const LoadingScreen = ({ isActive }) => {
   const [loadingTip, setLoadingTip] = useState('Compilando shaders...');
   const [progress, setProgress] = useState(0);
 
@@ -37,7 +37,7 @@ const LoadingScreen = () => {
   }, []);
 
   return (
-    <div id="loading-screen" className="screen active">
+    <div id="loading-screen" className={`screen ${isActive ? 'active' : ''}`}>
       <div className="loading-container">
         <div className="andy-silhouette">🐿️</div>
         <div className="loading-bar">

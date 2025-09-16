@@ -1,7 +1,7 @@
 import React from 'react';
 import { useGame } from '../../context/GameContext';
 
-const InstructionsScreen = () => {
+const InstructionsScreen = ({ isActive }) => {
   const { showScreen } = useGame();
 
   const handleBackClick = () => {
@@ -9,7 +9,7 @@ const InstructionsScreen = () => {
   };
 
   return (
-    <div id="instructions-screen" className="screen">
+    <div id="instructions-screen" className={`screen ${isActive ? 'active' : ''}`}>
       <div className="instructions-container">
         <h2>Instrucciones del Juego</h2>
         <div className="instructions-content">

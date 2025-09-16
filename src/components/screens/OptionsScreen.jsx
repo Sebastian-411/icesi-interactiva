@@ -1,7 +1,7 @@
 import React from 'react';
 import { useGame } from '../../context/GameContext';
 
-const OptionsScreen = () => {
+const OptionsScreen = ({ isActive }) => {
   const { state, toggleMusic, toggleSFX, showScreen } = useGame();
 
   const handleBackClick = () => {
@@ -9,7 +9,7 @@ const OptionsScreen = () => {
   };
 
   return (
-    <div id="options-screen" className="screen">
+    <div id="options-screen" className={`screen ${isActive ? 'active' : ''}`}>
       <div className="options-container">
         <h2>Opciones</h2>
         <div className="option-item">

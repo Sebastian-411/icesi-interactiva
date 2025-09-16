@@ -1,7 +1,7 @@
 import React from 'react';
 import { useGame } from '../../context/GameContext';
 
-const CreditsScreen = () => {
+const CreditsScreen = ({ isActive }) => {
   const { showScreen } = useGame();
 
   const handleBackClick = () => {
@@ -9,7 +9,7 @@ const CreditsScreen = () => {
   };
 
   return (
-    <div id="credits-screen" className="screen">
+    <div id="credits-screen" className={`screen ${isActive ? 'active' : ''}`}>
       <div className="credits-container">
         <h2>Créditos</h2>
         <div className="credits-content">
