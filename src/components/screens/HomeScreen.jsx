@@ -31,37 +31,41 @@ const HomeScreen = ({ isActive }) => {
       </div>
       
       <div className="main-content">
-        <div className="center-section">
-          <div className="andy-pixel-container">
-            <div className="andy-pixel-art">
-              <div className="andy-head"></div>
-              <div className="andy-body"></div>
-              <div className="andy-tail"></div>
-              <div className="andy-eye"></div>
+        <div className="layout-container">
+          {/* Lado izquierdo: Título y botones */}
+          <div className="left-section">
+            <div className="title-container">
+              <h1 className="game-title">RESCATA A ANDY Y A SUS MEJORES AMIGOS!</h1>
+              <div className="subtitle">Una aventura épica en la Universidad Icesi</div>
             </div>
-            <div className="andy-caption">Andy Secuestrado</div>
+            
+            <div className="menu-buttons">
+              <button 
+                id="play-btn" 
+                className="btn-primary pixel-btn"
+                onClick={handlePlayClick}
+              >
+                INICIAR AVENTURA
+              </button>
+              <button 
+                id="instructions-btn" 
+                className="btn-secondary pixel-btn"
+                onClick={handleInstructionsClick}
+              >
+                INSTRUCCIONES
+              </button>
+            </div>
           </div>
-          
-          <div className="title-container">
-            <h1 className="game-title">RESCATA A ANDY Y A SUS MEJORES AMIGOS!</h1>
-            <div className="subtitle">Una aventura épica en la Universidad Icesi</div>
-          </div>
-          
-          <div className="menu-buttons">
-            <button 
-              id="play-btn" 
-              className="btn-primary pixel-btn"
-              onClick={handlePlayClick}
-            >
-              INICIAR AVENTURA
-            </button>
-            <button 
-              id="instructions-btn" 
-              className="btn-secondary pixel-btn"
-              onClick={handleInstructionsClick}
-            >
-              INSTRUCCIONES
-            </button>
+
+          {/* Lado derecho: Imagen de personajes */}
+          <div className="right-section">
+            <div className="characters-container">
+              <img 
+                src="/image1.png" 
+                alt="Andy y sus amigos" 
+                className="characters-group-image"
+              />
+            </div>
           </div>
         </div>
       </div>

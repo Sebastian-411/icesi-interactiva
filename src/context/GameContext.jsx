@@ -49,6 +49,19 @@ const initialState = {
     plantsDefeated: 0,
     lilypadsUsed: 0
   },
+  // Estado específico del Nivel 4
+  level4State: {
+    introCompleted: false,
+    modulesCollected: 0,
+    testsCompleted: 0,
+    bugsFixed: 0,
+    codeReviewed: false,
+    deploymentReady: false,
+    possumRescued: false,
+    platformsActivated: 0,
+    windDirection: 'right', // 'left', 'right', 'up', 'down'
+    windStrength: 1
+  },
   // Estado del jugador
   playerState: {
     x: 10,
@@ -79,6 +92,7 @@ const gameActions = {
   UPDATE_LEVEL1_STATE: 'UPDATE_LEVEL1_STATE',
   UPDATE_LEVEL2_STATE: 'UPDATE_LEVEL2_STATE',
   UPDATE_LEVEL3_STATE: 'UPDATE_LEVEL3_STATE',
+  UPDATE_LEVEL4_STATE: 'UPDATE_LEVEL4_STATE',
   UPDATE_PLAYER_STATE: 'UPDATE_PLAYER_STATE',
   SET_AUDIO_CONTEXT: 'SET_AUDIO_CONTEXT',
   TOGGLE_MUSIC: 'TOGGLE_MUSIC',
@@ -102,9 +116,14 @@ function gameReducer(state, action) {
       return { ...state, lives: Math.max(0, state.lives + action.payload) };
     
     case gameActions.COMPLETE_LEVEL:
+      const levelId = action.payload.level;
+      const isAlreadyCompleted = state.completedLevels.includes(levelId);
+      
       return {
         ...state,
-        completedLevels: [...state.completedLevels, action.payload],
+        completedLevels: isAlreadyCompleted 
+          ? state.completedLevels 
+          : [...state.completedLevels, levelId],
         totalScore: state.totalScore + action.payload.points
       };
     
@@ -124,6 +143,12 @@ function gameReducer(state, action) {
       return {
         ...state,
         level3State: { ...state.level3State, ...action.payload }
+      };
+    
+    case gameActions.UPDATE_LEVEL4_STATE:
+      return {
+        ...state,
+        level4State: { ...state.level4State, ...action.payload }
       };
     
     case gameActions.UPDATE_PLAYER_STATE:
@@ -199,6 +224,9 @@ export function GameProvider({ children }) {
   },
   updateLevel3State: (updates) => {
     dispatch({ type: gameActions.UPDATE_LEVEL3_STATE, payload: updates });
+  },
+  updateLevel4State: (updates) => {
+    dispatch({ type: gameActions.UPDATE_LEVEL4_STATE, payload: updates });
   },
     
     // Jugador

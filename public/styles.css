@@ -167,6 +167,7 @@ body {
     height: 200px;
     background: linear-gradient(to top, #228B22, #32CD32, #90EE90);
     clip-path: polygon(0% 100%, 0% 60%, 15% 40%, 30% 50%, 45% 30%, 60% 40%, 75% 25%, 90% 35%, 100% 20%, 100% 100%);
+    z-index: 12;
 }
 
 .tropical-vegetation::before {
@@ -175,7 +176,8 @@ body {
     top: 0;
     width: 100%;
     height: 100%;
-    background: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 50"><rect x="10" y="30" width="8" height="20" fill="%23228B22"/><rect x="8" y="25" width="12" height="8" fill="%23228B22"/><rect x="25" y="35" width="6" height="15" fill="%23228B22"/><rect x="23" y="30" width="10" height="6" fill="%23228B22"/><rect x="40" y="32" width="7" height="18" fill="%23228B22"/><rect x="38" y="27" width="11" height="7" fill="%23228B22"/><rect x="60" y="28" width="9" height="22" fill="%23228B22"/><rect x="58" y="23" width="13" height="8" fill="%23228B22"/><rect x="80" y="30" width="6" height="20" fill="%23228B22"/><rect x="78" y="25" width="10" height="7" fill="%23228B22"/></svg>') repeat-x;
+    z-index: 15;
+    background: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 50"><rect x="12" y="40" width="4" height="10" fill="%23654321"/><ellipse cx="14" cy="38" rx="6" ry="4" fill="%23228B22"/><ellipse cx="14" cy="34" rx="5" ry="3.5" fill="%23228B22"/><ellipse cx="14" cy="30" rx="4.5" ry="3" fill="%23228B22"/><ellipse cx="14" cy="26" rx="4" ry="2.5" fill="%23228B22"/><ellipse cx="14" cy="22" rx="3" ry="2" fill="%23228B22"/><polygon points="12,20 14,15 16,20" fill="%23228B22"/><rect x="27" y="38" width="3" height="12" fill="%23654321"/><ellipse cx="28" cy="36" rx="5" ry="3.5" fill="%23228B22"/><ellipse cx="28" cy="32" rx="4" ry="3" fill="%23228B22"/><ellipse cx="28" cy="28" rx="3.5" ry="2.5" fill="%23228B22"/><ellipse cx="28" cy="24" rx="3" ry="2" fill="%23228B22"/><polygon points="26,22 28,18 30,22" fill="%23228B22"/><rect x="42" y="36" width="4" height="14" fill="%23654321"/><ellipse cx="44" cy="34" rx="6.5" ry="4" fill="%23228B22"/><ellipse cx="44" cy="30" rx="5.5" ry="3.5" fill="%23228B22"/><ellipse cx="44" cy="26" rx="5" ry="3" fill="%23228B22"/><ellipse cx="44" cy="22" rx="4" ry="2.5" fill="%23228B22"/><ellipse cx="44" cy="18" rx="3" ry="2" fill="%23228B22"/><polygon points="42,16 44,12 46,16" fill="%23228B22"/><rect x="62" y="39" width="3" height="11" fill="%23654321"/><ellipse cx="63" cy="37" rx="5" ry="3.5" fill="%23228B22"/><ellipse cx="63" cy="33" rx="4" ry="3" fill="%23228B22"/><ellipse cx="63" cy="29" rx="3.5" ry="2.5" fill="%23228B22"/><ellipse cx="63" cy="25" rx="3" ry="2" fill="%23228B22"/><polygon points="61,23 63,19 65,23" fill="%23228B22"/><rect x="82" y="37" width="4" height="13" fill="%23654321"/><ellipse cx="84" cy="35" rx="6" ry="4" fill="%23228B22"/><ellipse cx="84" cy="31" rx="5" ry="3.5" fill="%23228B22"/><ellipse cx="84" cy="27" rx="4.5" ry="3" fill="%23228B22"/><ellipse cx="84" cy="23" rx="4" ry="2.5" fill="%23228B22"/><ellipse cx="84" cy="19" rx="3" ry="2" fill="%23228B22"/><polygon points="82,17 84,13 86,17" fill="%23228B22"/></svg>') repeat-x;
     opacity: 0.7;
 }
 
@@ -185,7 +187,7 @@ body {
     right: 5%;
     width: 250px;
     height: 500px;
-    z-index: 10;
+    z-index: 2;
 }
 
 .tower-base {
@@ -403,7 +405,7 @@ body {
 
 .main-content {
     position: relative;
-    z-index: 20;
+    z-index: 2;
     display: flex;
     height: 100vh;
     align-items: center;
@@ -420,13 +422,199 @@ body {
     width: 100%;
 }
 
+/* Nuevo layout horizontal */
+.layout-container {
+    display: flex;
+    align-items: center;
+    justify-content: flex-start;
+    min-height: 80vh;
+    max-width: 1400px;
+    width: 100%;
+    padding: 0 2rem;
+    gap: 1.5rem;
+}
+
+.left-section {
+    flex: 2;
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    justify-content: center;
+    text-align: left;
+    max-width: 800px;
+    padding-right: 1rem;
+}
+
+.right-section {
+    flex: 1;
+    display: flex;
+    align-items: center;
+    justify-content: flex-start;
+    max-width: 450px;
+    min-width: 350px;
+}
+
+.characters-container {
+    position: relative;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.characters-group-image {
+    max-width: 100%;
+    max-height: 400px;
+    width: auto;
+    height: auto;
+    filter: drop-shadow(0 8px 16px rgba(0, 0, 0, 0.3));
+    animation: characters-float 3s ease-in-out infinite;
+}
+
+@keyframes characters-float {
+    0%, 100% {
+        transform: translateY(0px);
+    }
+    50% {
+        transform: translateY(-10px);
+    }
+}
+
+/* Estilos específicos para el nuevo layout */
+.left-section .title-container {
+    margin-bottom: 3rem;
+    text-align: left;
+}
+
+.left-section .game-title {
+    font-size: 2.5rem;
+    color: #8B4513;
+    text-shadow: 
+        3px 3px 0 #000,
+        6px 6px 0 #654321,
+        9px 9px 0 #000;
+    margin-bottom: 1.5rem;
+    line-height: 1.1;
+    font-family: 'Press Start 2P', monospace;
+    letter-spacing: 1px;
+    animation: titleGlow 3s infinite alternate;
+    text-align: left;
+    max-width: 100%;
+}
+
+.left-section .subtitle {
+    font-size: 1rem;
+    color: #654321;
+    font-family: 'Press Start 2P', monospace;
+    text-shadow: 2px 2px 0 #000;
+    margin-bottom: 0;
+    text-align: left;
+    max-width: 100%;
+}
+
+.left-section .menu-buttons {
+    display: flex;
+    flex-direction: row;
+    gap: 1.5rem;
+    align-items: flex-start;
+    margin-top: 2rem;
+}
+
+.left-section .btn-primary,
+.left-section .btn-secondary {
+    flex: 0 0 280px;
+    width: 280px;
+    min-width: 280px;
+    max-width: 280px;
+    text-align: center;
+    box-sizing: border-box;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    font-size: 0.7rem !important;
+    padding: 1rem 2rem !important;
+    font-family: 'Press Start 2P', monospace;
+    font-weight: normal;
+}
+
+/* Responsive para el nuevo layout */
+@media (max-width: 768px) {
+    .layout-container {
+        flex-direction: column;
+        gap: 2rem;
+        padding: 1rem;
+    }
+    
+    .left-section {
+        text-align: center;
+        align-items: center;
+        max-width: 100%;
+    }
+    
+    .left-section .title-container,
+    .left-section .game-title,
+    .left-section .subtitle {
+        text-align: center;
+    }
+    
+    .left-section .menu-buttons {
+        align-items: center;
+        flex-direction: column;
+        gap: 1rem;
+    }
+    
+    .left-section .btn-primary,
+    .left-section .btn-secondary {
+        max-width: 300px;
+        width: 100%;
+    }
+    
+    .characters-group-image {
+        max-height: 300px;
+    }
+}
+
 .andy-pixel-container {
     margin-bottom: 2rem;
-    background: rgba(255, 255, 255, 0.9);
+    background: linear-gradient(135deg, rgba(101, 67, 33, 0.8), rgba(139, 69, 19, 0.9));
     border: 4px solid #654321;
     border-radius: 0;
     padding: 2rem;
-    box-shadow: inset 4px 4px 0 #fff, inset -4px -4px 0 #ccc, 4px 4px 0 #000;
+    box-shadow: inset 4px 4px 0 rgba(255, 255, 255, 0.3), inset -4px -4px 0 rgba(0, 0, 0, 0.5), 4px 4px 0 #000;
+}
+
+.andy-image-container {
+    position: relative;
+    width: 200px;
+    height: 200px;
+    margin: 0 auto 1rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.andy-captured-image {
+    max-width: 100%;
+    max-height: 100%;
+    width: auto;
+    height: auto;
+    border-radius: 10px;
+    filter: drop-shadow(0 4px 8px rgba(0, 0, 0, 0.3));
+    animation: worried 2s ease-in-out infinite;
+}
+
+@keyframes worried {
+    0%, 100% {
+        transform: translateY(0px) rotate(0deg);
+    }
+    25% {
+        transform: translateY(-3px) rotate(-1deg);
+    }
+    50% {
+        transform: translateY(0px) rotate(0deg);
+    }
+    75% {
+        transform: translateY(-3px) rotate(1deg);
+    }
 }
 
 .andy-pixel-art {
@@ -556,9 +744,9 @@ body {
 
 .andy-caption {
     font-size: 0.8rem;
-    color: #654321;
+    color: #FFD700;
     font-weight: bold;
-    text-shadow: 1px 1px 0 #000;
+    text-shadow: 2px 2px 0 #000, -1px -1px 0 #000, 1px -1px 0 #000, -1px 1px 0 #000;
     font-family: 'Press Start 2P', monospace;
 }
 
@@ -802,7 +990,7 @@ body {
 
 .frame-content {
     position: relative;
-    z-index: 10;
+    z-index: 2;
     display: flex;
     flex-direction: column;
     align-items: center;
@@ -838,7 +1026,8 @@ body {
     bottom: 0;
     width: 100%;
     height: 80%;
-    background: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 50"><rect x="15" y="30" width="6" height="20" fill="%23228B22"/><circle cx="18" cy="28" r="8" fill="%23228B22"/><rect x="35" y="32" width="5" height="18" fill="%23228B22"/><circle cx="37" cy="30" r="6" fill="%23228B22"/><rect x="60" y="28" width="7" height="22" fill="%23228B22"/><circle cx="63" cy="26" r="9" fill="%23228B22"/><rect x="80" y="35" width="4" height="15" fill="%23228B22"/><circle cx="82" cy="33" r="5" fill="%23228B22"/></svg>') repeat-x;
+    z-index: 12;
+    background: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 50"><rect x="17" y="35" width="3" height="15" fill="%23654321"/><ellipse cx="18" cy="33" rx="5" ry="3.5" fill="%23228B22"/><ellipse cx="18" cy="29" rx="4" ry="3" fill="%23228B22"/><ellipse cx="18" cy="25" rx="3.5" ry="2.5" fill="%23228B22"/><ellipse cx="18" cy="21" rx="3" ry="2" fill="%23228B22"/><ellipse cx="18" cy="17" rx="2.5" ry="1.5" fill="%23228B22"/><polygon points="16,15 18,11 20,15" fill="%23228B22"/><rect x="37" y="37" width="3" height="13" fill="%23654321"/><ellipse cx="38" cy="35" rx="4.5" ry="3" fill="%23228B22"/><ellipse cx="38" cy="31" rx="4" ry="2.5" fill="%23228B22"/><ellipse cx="38" cy="27" rx="3" ry="2" fill="%23228B22"/><ellipse cx="38" cy="23" rx="2.5" ry="1.5" fill="%23228B22"/><polygon points="36,21 38,18 40,21" fill="%23228B22"/><rect x="62" y="33" width="4" height="17" fill="%23654321"/><ellipse cx="64" cy="31" rx="6" ry="4" fill="%23228B22"/><ellipse cx="64" cy="27" rx="5" ry="3.5" fill="%23228B22"/><ellipse cx="64" cy="23" rx="4" ry="3" fill="%23228B22"/><ellipse cx="64" cy="19" rx="3.5" ry="2.5" fill="%23228B22"/><ellipse cx="64" cy="15" rx="3" ry="2" fill="%23228B22"/><polygon points="62,13 64,9 66,13" fill="%23228B22"/><rect x="82" y="38" width="3" height="12" fill="%23654321"/><ellipse cx="83" cy="36" rx="4.5" ry="3" fill="%23228B22"/><ellipse cx="83" cy="32" rx="4" ry="2.5" fill="%23228B22"/><ellipse cx="83" cy="28" rx="3" ry="2" fill="%23228B22"/><ellipse cx="83" cy="24" rx="2.5" ry="1.5" fill="%23228B22"/><polygon points="81,22 83,19 85,22" fill="%23228B22"/></svg>') repeat-x;
     opacity: 0.8;
 }
 
@@ -1114,7 +1303,7 @@ body {
     position: absolute;
     bottom: 100px;
     right: 50px;
-    z-index: 20;
+    z-index: 3;
     display: none; /* Oculto por defecto - reproducción automática */
 }
 
@@ -1126,7 +1315,7 @@ body {
     display: flex;
     align-items: center;
     gap: 1rem;
-    z-index: 20;
+    z-index: 3;
 }
 
 .progress-bar {
@@ -1240,7 +1429,7 @@ body {
     flex-direction: column;
     gap: 2rem;
     align-items: center;
-    z-index: 10;
+    z-index: 2;
 }
 
 .level-node {
@@ -1377,7 +1566,8 @@ body {
     bottom: 0;
     width: 100%;
     height: 80%;
-    background: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 100"><rect x="20" y="60" width="8" height="40" fill="%23654321"/><circle cx="24" cy="55" r="20" fill="%2332CD32"/><rect x="60" y="65" width="6" height="35" fill="%23654321"/><circle cx="63" cy="60" r="15" fill="%2332CD32"/><rect x="120" y="55" width="10" height="45" fill="%23654321"/><circle cx="125" cy="50" r="25" fill="%2332CD32"/><rect x="160" y="70" width="7" height="30" fill="%23654321"/><circle cx="163" cy="65" r="18" fill="%2332CD32"/></svg>') no-repeat;
+    z-index: 12;
+    background: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 100"><rect x="22" y="70" width="4" height="30" fill="%23654321"/><ellipse cx="24" cy="68" rx="8" ry="5" fill="%23228B22"/><ellipse cx="24" cy="62" rx="7" ry="4.5" fill="%23228B22"/><ellipse cx="24" cy="56" rx="6" ry="4" fill="%23228B22"/><ellipse cx="24" cy="50" rx="5" ry="3.5" fill="%23228B22"/><ellipse cx="24" cy="44" rx="4" ry="3" fill="%23228B22"/><ellipse cx="24" cy="38" rx="3" ry="2.5" fill="%23228B22"/><polygon points="22,35 24,30 26,35" fill="%23228B22"/><rect x="62" y="75" width="3" height="25" fill="%23654321"/><ellipse cx="63" cy="73" rx="6" ry="4" fill="%23228B22"/><ellipse cx="63" cy="68" rx="5" ry="3.5" fill="%23228B22"/><ellipse cx="63" cy="63" rx="4" ry="3" fill="%23228B22"/><ellipse cx="63" cy="58" rx="3.5" ry="2.5" fill="%23228B22"/><ellipse cx="63" cy="53" rx="3" ry="2" fill="%23228B22"/><ellipse cx="63" cy="48" rx="2.5" ry="1.5" fill="%23228B22"/><polygon points="61,46 63,42 65,46" fill="%23228B22"/><rect x="124" y="65" width="5" height="35" fill="%23654321"/><ellipse cx="127" cy="63" rx="9" ry="6" fill="%23228B22"/><ellipse cx="127" cy="56" rx="8" ry="5.5" fill="%23228B22"/><ellipse cx="127" cy="49" rx="7" ry="5" fill="%23228B22"/><ellipse cx="127" cy="42" rx="6" ry="4.5" fill="%23228B22"/><ellipse cx="127" cy="35" rx="5" ry="4" fill="%23228B22"/><ellipse cx="127" cy="28" rx="4" ry="3" fill="%23228B22"/><ellipse cx="127" cy="21" rx="3" ry="2.5" fill="%23228B22"/><polygon points="125,18 127,13 129,18" fill="%23228B22"/><rect x="162" y="78" width="4" height="22" fill="%23654321"/><ellipse cx="164" cy="76" rx="7" ry="4.5" fill="%23228B22"/><ellipse cx="164" cy="70" rx="6" ry="4" fill="%23228B22"/><ellipse cx="164" cy="64" rx="5" ry="3.5" fill="%23228B22"/><ellipse cx="164" cy="58" rx="4" ry="3" fill="%23228B22"/><ellipse cx="164" cy="52" rx="3.5" ry="2.5" fill="%23228B22"/><ellipse cx="164" cy="46" rx="3" ry="2" fill="%23228B22"/><polygon points="162,44 164,39 166,44" fill="%23228B22"/></svg>') no-repeat;
 }
 
 .garden-flowers {
@@ -1624,7 +1814,7 @@ body {
     left: 0;
     width: 100%;
     height: 100%;
-    z-index: 10;
+    z-index: 2;
 }
 
 .level-station {
@@ -1783,13 +1973,167 @@ body {
     right: 18%;
 }
 
+/* Estados de las estaciones de nivel */
+.level-station.completed {
+    border: 3px solid #27ae60 !important;
+    box-shadow: 0 0 20px rgba(39, 174, 96, 0.6) !important;
+}
+
+.level-station.current-level {
+    border: 3px solid #f39c12 !important;
+    box-shadow: 0 0 25px rgba(243, 156, 18, 0.8) !important;
+    animation: pulse-current 2s infinite;
+}
+
+.level-station.locked {
+    filter: grayscale(0.8);
+}
+
+@keyframes pulse-current {
+    0%, 100% {
+        box-shadow: 0 0 25px rgba(243, 156, 18, 0.8);
+        transform: scale(1);
+    }
+    50% {
+        box-shadow: 0 0 35px rgba(243, 156, 18, 1);
+        transform: scale(1.05);
+    }
+}
+
+/* Torre Final Activada */
+.central-icesi-tower.tower-activated {
+    animation: tower-pulse 3s infinite;
+    transform-origin: center bottom;
+}
+
+.tower-final-glow {
+    animation: final-glow 2s infinite alternate !important;
+    box-shadow: 0 0 50px rgba(255, 215, 0, 0.8), 
+                0 0 100px rgba(255, 215, 0, 0.6),
+                0 0 150px rgba(255, 215, 0, 0.4) !important;
+}
+
+.tower-access-indicator {
+    position: absolute;
+    top: -40px;
+    left: 50%;
+    transform: translateX(-50%);
+    background: linear-gradient(45deg, #FFD700, #FFA500);
+    border: 2px solid #FF8C00;
+    border-radius: 15px;
+    padding: 8px 12px;
+    animation: indicator-bounce 1.5s infinite;
+    z-index: 3;
+}
+
+.access-icon {
+    font-size: 1.2rem;
+    animation: spark 1s infinite;
+}
+
+.access-text {
+    font-family: 'Press Start 2P', monospace;
+    font-size: 0.5rem;
+    color: #8B4513;
+    font-weight: bold;
+    text-align: center;
+}
+
+.andy-trapped {
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    animation: trapped-shake 2s infinite;
+    z-index: 15;
+}
+
+.andy-icon {
+    font-size: 1.5rem;
+    animation: desperate 1s infinite;
+}
+
+.help-text {
+    font-family: 'Press Start 2P', monospace;
+    font-size: 0.4rem;
+    color: #FF4444;
+    text-align: center;
+    font-weight: bold;
+    text-shadow: 0 0 5px rgba(255, 68, 68, 0.8);
+}
+
+@keyframes tower-pulse {
+    0%, 100% {
+        transform: scale(1);
+        filter: brightness(1.3);
+    }
+    50% {
+        transform: scale(1.05);
+        filter: brightness(1.5);
+    }
+}
+
+@keyframes final-glow {
+    0% {
+        box-shadow: 0 0 30px rgba(255, 215, 0, 0.6), 
+                    0 0 60px rgba(255, 215, 0, 0.4),
+                    0 0 90px rgba(255, 215, 0, 0.2);
+    }
+    100% {
+        box-shadow: 0 0 50px rgba(255, 215, 0, 1), 
+                    0 0 100px rgba(255, 215, 0, 0.8),
+                    0 0 150px rgba(255, 215, 0, 0.6);
+    }
+}
+
+@keyframes indicator-bounce {
+    0%, 100% {
+        transform: translateX(-50%) translateY(0);
+    }
+    50% {
+        transform: translateX(-50%) translateY(-10px);
+    }
+}
+
+@keyframes spark {
+    0%, 100% {
+        transform: scale(1);
+        filter: brightness(1);
+    }
+    50% {
+        transform: scale(1.2);
+        filter: brightness(1.5);
+    }
+}
+
+@keyframes trapped-shake {
+    0%, 100% {
+        transform: translateX(0);
+    }
+    25% {
+        transform: translateX(-3px);
+    }
+    75% {
+        transform: translateX(3px);
+    }
+}
+
+@keyframes desperate {
+    0%, 100% {
+        transform: rotate(0deg);
+    }
+    25% {
+        transform: rotate(-10deg);
+    }
+    75% {
+        transform: rotate(10deg);
+    }
+}
+
 /* Avatar de Andy */
 .andy-avatar {
     position: absolute;
-    bottom: 20%;
-    left: 10%;
     z-index: 15;
-    transition: all 1s ease;
+    /* Posición se controla dinámicamente desde JavaScript */
 }
 
 .andy-sprite {
@@ -1817,7 +2161,7 @@ body {
     left: 50%;
     transform: translateX(-50%);
     text-align: center;
-    z-index: 20;
+    z-index: 3;
 }
 
 .adventure-title {
@@ -2189,7 +2533,8 @@ body {
     bottom: 30%;
     width: 100%;
     height: 40%;
-    background: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 300 120"><rect x="30" y="80" width="8" height="40" fill="%23654321"/><circle cx="34" cy="75" r="20" fill="%2332CD32"/><circle cx="36" cy="70" r="4" fill="%2300ff00"/><rect x="80" y="85" width="6" height="35" fill="%23654321"/><circle cx="83" cy="80" r="15" fill="%2332CD32"/><circle cx="85" cy="75" r="3" fill="%2300ff00"/><rect x="150" y="75" width="10" height="45" fill="%23654321"/><circle cx="155" cy="70" r="25" fill="%2332CD32"/><circle cx="158" cy="65" r="5" fill="%2300ff00"/><rect x="220" y="90" width="7" height="30" fill="%23654321"/><circle cx="223" cy="85" r="18" fill="%2332CD32"/><circle cx="225" cy="80" r="4" fill="%2300ff00"/></svg>') repeat-x;
+    z-index: 12;
+    background: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 300 120"><rect x="32" y="90" width="4" height="30" fill="%23654321"/><ellipse cx="34" cy="88" rx="8" ry="5" fill="%23228B22"/><ellipse cx="34" cy="82" rx="7" ry="4.5" fill="%23228B22"/><ellipse cx="34" cy="76" rx="6" ry="4" fill="%23228B22"/><ellipse cx="34" cy="70" rx="5" ry="3.5" fill="%23228B22"/><ellipse cx="34" cy="64" rx="4" ry="3" fill="%23228B22"/><ellipse cx="34" cy="58" rx="3" ry="2.5" fill="%23228B22"/><polygon points="32,55 34,50 36,55" fill="%23228B22"/><circle cx="34" cy="60" r="2" fill="%2300ff00"/><rect x="82" y="95" width="3" height="25" fill="%23654321"/><ellipse cx="83" cy="93" rx="6" ry="4" fill="%23228B22"/><ellipse cx="83" cy="88" rx="5" ry="3.5" fill="%23228B22"/><ellipse cx="83" cy="83" rx="4" ry="3" fill="%23228B22"/><ellipse cx="83" cy="78" rx="3.5" ry="2.5" fill="%23228B22"/><ellipse cx="83" cy="73" rx="3" ry="2" fill="%23228B22"/><ellipse cx="83" cy="68" rx="2.5" ry="1.5" fill="%23228B22"/><polygon points="81,66 83,62 85,66" fill="%23228B22"/><circle cx="83" cy="70" r="2" fill="%2300ff00"/><rect x="154" y="85" width="5" height="35" fill="%23654321"/><ellipse cx="157" cy="83" rx="9" ry="6" fill="%23228B22"/><ellipse cx="157" cy="76" rx="8" ry="5.5" fill="%23228B22"/><ellipse cx="157" cy="69" rx="7" ry="5" fill="%23228B22"/><ellipse cx="157" cy="62" rx="6" ry="4.5" fill="%23228B22"/><ellipse cx="157" cy="55" rx="5" ry="4" fill="%23228B22"/><ellipse cx="157" cy="48" rx="4" ry="3" fill="%23228B22"/><ellipse cx="157" cy="41" rx="3" ry="2.5" fill="%23228B22"/><polygon points="155,38 157,33 159,38" fill="%23228B22"/><circle cx="157" cy="50" r="3" fill="%2300ff00"/><rect x="222" y="100" width="4" height="20" fill="%23654321"/><ellipse cx="224" cy="98" rx="7" ry="4.5" fill="%23228B22"/><ellipse cx="224" cy="92" rx="6" ry="4" fill="%23228B22"/><ellipse cx="224" cy="86" rx="5" ry="3.5" fill="%23228B22"/><ellipse cx="224" cy="80" rx="4" ry="3" fill="%23228B22"/><ellipse cx="224" cy="74" rx="3.5" ry="2.5" fill="%23228B22"/><ellipse cx="224" cy="68" rx="3" ry="2" fill="%23228B22"/><polygon points="222,66 224,62 226,66" fill="%23228B22"/><circle cx="224" cy="75" r="2" fill="%2300ff00"/></svg>') repeat-x;
     animation: networkTreesGlow 3s ease-in-out infinite;
 }
 
@@ -2262,7 +2607,7 @@ body {
     position: absolute;
     width: 100%;
     height: 100%;
-    z-index: 10;
+    z-index: 2;
 }
 
 .router {
@@ -2997,7 +3342,7 @@ body {
     transform: translateX(-50%);
     width: 400px;
     height: 100%;
-    z-index: 10;
+    z-index: 2;
 }
 
 .brick-row {
@@ -3952,7 +4297,7 @@ body {
     font-size: 1.5rem;
     cursor: grab;
     transition: all 0.3s ease;
-    z-index: 10;
+    z-index: 2;
 }
 
 .connection-start:hover, .connection-end:hover {

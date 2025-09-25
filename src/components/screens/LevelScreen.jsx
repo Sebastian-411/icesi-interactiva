@@ -3,6 +3,8 @@ import { useGame } from '../../context/GameContext';
 import Level1Garden from '../levels/Level1Garden';
 import Level2Cave from '../levels/Level2Cave';
 import Level3Swamp from '../levels/Level3Swamp';
+import Level4Peak from '../levels/Level4Peak';
+import Level5TowerFinal from '../levels/Level5TowerFinal';
 import CablePuzzle from '../puzzles/CablePuzzle';
 import ProtocolPuzzle from '../puzzles/ProtocolPuzzle';
 import PacketSortingPuzzle from '../puzzles/PacketSortingPuzzle';
@@ -52,6 +54,10 @@ const LevelScreen = ({ isActive }) => {
         return <Level2Cave />;
       case 3:
         return <Level3Swamp />;
+      case 4:
+        return <Level4Peak />;
+      case 5:
+        return <Level5TowerFinal />;
       default:
         return <div>Nivel en desarrollo...</div>;
     }
