@@ -26,6 +26,29 @@ const initialState = {
     enemiesDefeated: 0,
     powerupsCollected: 0
   },
+  // Estado específico del Nivel 2
+  level2State: {
+    introCompleted: false,
+    cpuCollected: 0,
+    ramCollected: 0,
+    torchRadius: 80,
+    altarActivated: false,
+    batRescued: false,
+    rocksPushed: 0,
+    batsDefeated: 0
+  },
+  // Estado específico del Nivel 3
+  level3State: {
+    introCompleted: false,
+    fieldsCollected: 0,
+    keysCollected: 0,
+    indexesCollected: 0,
+    backpackItems: 0,
+    databaseComplete: false,
+    lizardRescued: false,
+    plantsDefeated: 0,
+    lilypadsUsed: 0
+  },
   // Estado del jugador
   playerState: {
     x: 10,
@@ -54,6 +77,8 @@ const gameActions = {
   UPDATE_LIVES: 'UPDATE_LIVES',
   COMPLETE_LEVEL: 'COMPLETE_LEVEL',
   UPDATE_LEVEL1_STATE: 'UPDATE_LEVEL1_STATE',
+  UPDATE_LEVEL2_STATE: 'UPDATE_LEVEL2_STATE',
+  UPDATE_LEVEL3_STATE: 'UPDATE_LEVEL3_STATE',
   UPDATE_PLAYER_STATE: 'UPDATE_PLAYER_STATE',
   SET_AUDIO_CONTEXT: 'SET_AUDIO_CONTEXT',
   TOGGLE_MUSIC: 'TOGGLE_MUSIC',
@@ -87,6 +112,18 @@ function gameReducer(state, action) {
       return {
         ...state,
         level1State: { ...state.level1State, ...action.payload }
+      };
+    
+    case gameActions.UPDATE_LEVEL2_STATE:
+      return {
+        ...state,
+        level2State: { ...state.level2State, ...action.payload }
+      };
+    
+    case gameActions.UPDATE_LEVEL3_STATE:
+      return {
+        ...state,
+        level3State: { ...state.level3State, ...action.payload }
       };
     
     case gameActions.UPDATE_PLAYER_STATE:
@@ -155,6 +192,14 @@ export function GameProvider({ children }) {
     updateLevel1State: (updates) => {
       dispatch({ type: gameActions.UPDATE_LEVEL1_STATE, payload: updates });
     },
+    
+    // Nivel 2 específico
+  updateLevel2State: (updates) => {
+    dispatch({ type: gameActions.UPDATE_LEVEL2_STATE, payload: updates });
+  },
+  updateLevel3State: (updates) => {
+    dispatch({ type: gameActions.UPDATE_LEVEL3_STATE, payload: updates });
+  },
     
     // Jugador
     updatePlayerState: (updates) => {

@@ -18,8 +18,18 @@ const ProtocolPuzzle = () => {
     
     // Completar puzzle después de mostrar resultado
     setTimeout(() => {
+      console.log('🔧 Router 2 completado! Jaula desbloqueada');
       updateLevel1State({ routersFixed: state.level1State.routersFixed + 1 });
       updateLevel1State({ currentPuzzle: null });
+      
+      // Guía al jugador hacia la jaula
+      setTimeout(() => {
+        // Mostrar mensaje guía (se puede mostrar desde el nivel padre)
+        const event = new CustomEvent('showGuideMessage', { 
+          detail: { message: '¡Ahora la jaula puede abrirse! Ve hacia la Paloma para liberarla.' }
+        });
+        window.dispatchEvent(event);
+      }, 1000);
     }, 4000);
   };
 

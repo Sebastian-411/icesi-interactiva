@@ -5,6 +5,8 @@ const LevelSummaryScreen = ({ isActive }) => {
   const { state, showScreen, completeLevel } = useGame();
 
   const handleContinue = () => {
+    console.log('🏆 Yendo al mapa del mundo');
+    
     // Completar el nivel actual
     completeLevel({
       level: state.currentLevel,

@@ -18,13 +18,18 @@ function GameApp() {
 
   // Inicializar el juego
   useEffect(() => {
-    // Simular carga inicial
+    // Solo iniciar el temporizador si seguimos en la pantalla de carga
+    if (state.currentScreen !== 'loading-screen') return;
+
     const timer = setTimeout(() => {
-      showScreen('home-screen');
+      // Evitar sobrescribir si el usuario ya navegó a otra pantalla
+      if (state.currentScreen === 'loading-screen') {
+        showScreen('home-screen');
+      }
     }, 2000);
 
     return () => clearTimeout(timer);
-  }, [showScreen]);
+  }, [state.currentScreen, showScreen]);
 
   // Renderizar pantalla actual
   const renderCurrentScreen = () => {

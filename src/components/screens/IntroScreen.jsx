@@ -25,39 +25,40 @@ const IntroScreen = ({ isActive }) => {
     }
   };
 
-  // Auto-play con setInterval en lugar de setTimeout
+  // Auto-play con setInterval y dependencia de frame actual
   useEffect(() => {
-    console.log('Auto-play effect triggered, currentFrame:', currentFrame, 'isAutoPlaying:', isAutoPlaying);
-    
-    if (isAutoPlaying && currentFrame < 5) {
-      console.log('Starting auto-play interval');
-      intervalRef.current = setInterval(() => {
-        console.log('Interval fired, advancing frame');
-        setCurrentFrame(prev => {
-          console.log('setCurrentFrame called, prev:', prev);
-          if (prev >= 5) {
-            clearInterval(intervalRef.current);
-            return prev;
-          }
-          return prev + 1;
-        });
-      }, 3000);
-    } else {
+    if (!isAutoPlaying) {
       if (intervalRef.current) {
-        console.log('Clearing interval');
         clearInterval(intervalRef.current);
         intervalRef.current = null;
       }
+      return;
     }
-    
+
+    if (currentFrame >= 5) {
+      if (intervalRef.current) {
+        clearInterval(intervalRef.current);
+        intervalRef.current = null;
+      }
+      return;
+    }
+
+    // Reiniciar el intervalo cada vez que cambie el frame o el estado de autoplay
+    if (intervalRef.current) {
+      clearInterval(intervalRef.current);
+    }
+
+    intervalRef.current = setInterval(() => {
+      setCurrentFrame(prev => Math.min(prev + 1, 5));
+    }, 3000);
+
     return () => {
       if (intervalRef.current) {
-        console.log('Clearing interval on cleanup');
         clearInterval(intervalRef.current);
         intervalRef.current = null;
       }
     };
-  }, [isAutoPlaying]); // Solo depende de isAutoPlaying, no de currentFrame
+  }, [isAutoPlaying, currentFrame]);
 
   const handleStartAdventure = () => {
     showScreen('world-map-screen');
