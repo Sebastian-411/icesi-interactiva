@@ -1429,7 +1429,7 @@ body {
     flex-direction: column;
     gap: 2rem;
     align-items: center;
-    z-index: 2;
+    z-index: 20;
 }
 
 .level-node {
@@ -1663,7 +1663,7 @@ body {
     transform: translateX(-50%);
     width: 180px;
     height: 300px;
-    z-index: 5;
+    z-index: 25;
 }
 
 .tower-base-large {
@@ -1814,13 +1814,14 @@ body {
     left: 0;
     width: 100%;
     height: 100%;
-    z-index: 2;
+    z-index: 20;
 }
 
 .level-station {
     position: absolute;
     cursor: pointer;
     transition: all 0.3s ease;
+    z-index: 25;
 }
 
 .level-station:hover:not(.locked) {
@@ -4662,6 +4663,1052 @@ body {
     justify-content: center;
     z-index: 10000;
     animation: fadeIn 0.5s ease-in;
+}
+
+/* Estilos para Level 1 Garden - Jardín de Redes (Nueva versión) */
+.level1-garden-new {
+    position: relative;
+    width: 100%;
+    height: 100vh;
+    background: linear-gradient(to bottom, #87CEEB, #98FB98);
+    overflow: hidden;
+}
+
+.puzzle-area-new {
+    position: absolute;
+    top: 120px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 90%;
+    max-width: 1000px;
+    height: calc(100vh - 140px);
+    background: rgba(255, 255, 255, 0.95);
+    border-radius: 20px;
+    border: 4px solid #2c3e50;
+    box-shadow: 0 0 30px rgba(0, 0, 0, 0.3);
+    overflow-y: auto;
+}
+
+/* Mensaje de historia superpuesto */
+.story-message-overlay {
+    position: absolute;
+    top: 80px;
+    left: 50%;
+    transform: translateX(-50%);
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    background: rgba(0, 0, 0, 0.9);
+    color: white;
+    padding: 1.5rem 2rem;
+    border-radius: 20px;
+    border: 3px solid #f39c12;
+    z-index: 200;
+    max-width: 80%;
+    font-family: 'Press Start 2P', monospace;
+    font-size: 0.7rem;
+    line-height: 1.6;
+    animation: storyMessageIn 0.5s ease-out;
+}
+
+.andy-avatar {
+    font-size: 2rem;
+    animation: bounce 2s infinite;
+}
+
+.message-bubble {
+    flex: 1;
+}
+
+@keyframes storyMessageIn {
+    from { opacity: 0; transform: translateX(-50%) translateY(-20px); }
+    to { opacity: 1; transform: translateX(-50%) translateY(0); }
+}
+
+/* Intro del jardín */
+.garden-story-intro {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 3rem;
+    padding: 3rem 2rem;
+}
+
+.garden-scene {
+    display: flex;
+    align-items: center;
+    gap: 4rem;
+    font-size: 3rem;
+    margin: 2rem 0;
+}
+
+.andy-character {
+    animation: bounce 2s infinite;
+}
+
+.garden-flowers-sad {
+    opacity: 0.6;
+    filter: grayscale(0.8);
+}
+
+.pigeon-cage-locked {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.cage {
+    font-size: 2.5rem;
+    filter: grayscale(0.5);
+}
+
+.trapped-pigeon {
+    font-size: 1.5rem;
+    animation: trapShake 1s infinite;
+}
+
+@keyframes trapShake {
+    0%, 100% { transform: translateX(0); }
+    25% { transform: translateX(-2px); }
+    75% { transform: translateX(2px); }
+}
+
+.story-message h2 {
+    color: #27ae60;
+    font-size: 1.5rem;
+    margin-bottom: 1.5rem;
+    text-align: center;
+}
+
+.story-message p {
+    color: #2c3e50;
+    font-size: 0.8rem;
+    line-height: 1.8;
+    margin-bottom: 1.5rem;
+    text-align: center;
+    max-width: 800px;
+}
+
+.adventure-start-btn {
+    font-size: 1rem !important;
+    padding: 1.5rem 3rem !important;
+    background: linear-gradient(45deg, #27ae60, #2ecc71) !important;
+    border: none !important;
+    box-shadow: 0 5px 15px rgba(39, 174, 96, 0.4) !important;
+    animation: pulse 2s infinite;
+}
+
+/* Información pedagógica */
+.learning-info {
+    background: rgba(52, 152, 219, 0.1);
+    border: 2px solid #3498db;
+    border-radius: 15px;
+    padding: 1.5rem;
+    margin: 1.5rem 0;
+    font-size: 0.6rem;
+    line-height: 1.6;
+}
+
+.learning-info p {
+    margin: 0.5rem 0;
+    color: #2c3e50;
+}
+
+.learning-info strong {
+    color: #e67e22;
+}
+
+/* Puzzle 1: WiFi */
+.wifi-puzzle-area {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 3rem;
+    padding: 2rem;
+}
+
+.garden-router {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 2rem;
+}
+
+.router-device {
+    font-size: 4rem;
+    padding: 2rem;
+    border-radius: 20px;
+    border: 4px solid #95a5a6;
+    background: #ecf0f1;
+    position: relative;
+    transition: all 0.5s ease;
+}
+
+.router-device.router-off {
+    filter: grayscale(1);
+    opacity: 0.6;
+}
+
+.router-device.router-on {
+    border-color: #27ae60;
+    background: #d5f4e6;
+    box-shadow: 0 0 30px rgba(39, 174, 96, 0.5);
+}
+
+.router-device.router-animating {
+    animation: poweringOn 1.5s ease-in-out;
+}
+
+@keyframes poweringOn {
+    0%, 100% { transform: scale(1); }
+    50% { transform: scale(1.1); filter: brightness(1.5); }
+}
+
+.wifi-signals {
+    position: absolute;
+    top: -20px;
+    right: -20px;
+    font-size: 1.5rem;
+    animation: signalPulse 2s infinite;
+}
+
+@keyframes signalPulse {
+    0%, 100% { opacity: 0.5; }
+    50% { opacity: 1; }
+}
+
+.power-button {
+    font-size: 1.2rem;
+    padding: 1.5rem 3rem;
+    border: none;
+    border-radius: 15px;
+    background: #e74c3c;
+    color: white;
+    font-family: 'Press Start 2P', monospace;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    box-shadow: 0 5px 15px rgba(231, 76, 60, 0.3);
+}
+
+.power-button:hover:not(:disabled) {
+    transform: scale(1.05);
+    box-shadow: 0 8px 25px rgba(231, 76, 60, 0.4);
+}
+
+.power-button.powered-on {
+    background: #27ae60;
+    box-shadow: 0 5px 15px rgba(39, 174, 96, 0.3);
+}
+
+.power-button:disabled {
+    opacity: 0.7;
+    cursor: not-allowed;
+}
+
+.garden-flowers-waiting {
+    text-align: center;
+    font-size: 2rem;
+    margin-top: 2rem;
+}
+
+.garden-flowers-waiting p {
+    font-size: 0.7rem;
+    color: #7f8c8d;
+    margin-top: 1rem;
+}
+
+/* Puzzle 2: Cables */
+.cables-puzzle-area {
+    padding: 2rem;
+}
+
+.garden-network {
+    background: rgba(236, 240, 241, 0.3);
+    border-radius: 15px;
+    border: 2px solid #bdc3c7;
+    margin: 2rem 0;
+}
+
+.network-cable {
+    animation: cableFlow 2s infinite;
+}
+
+@keyframes cableFlow {
+    0%, 100% { stroke-dasharray: 0; }
+    50% { stroke-dasharray: 10; }
+}
+
+.flower-node {
+    transition: all 0.3s ease;
+}
+
+.flower-node:hover {
+    transform: scale(1.1);
+    filter: brightness(1.2);
+}
+
+.cables-instructions {
+    text-align: center;
+    font-size: 0.7rem;
+    color: #2c3e50;
+    line-height: 1.6;
+}
+
+.cables-instructions p {
+    margin: 0.5rem 0;
+}
+
+.drag-hint {
+    color: #f39c12 !important;
+    font-weight: bold;
+    animation: pulse 1s infinite;
+}
+
+/* Puzzle 3: Puertas */
+.doors-puzzle-area {
+    padding: 2rem;
+}
+
+.doors-row {
+    display: flex;
+    justify-content: center;
+    gap: 2rem;
+    margin: 3rem 0;
+}
+
+.door-option {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 1rem;
+    padding: 2rem;
+    border: 3px solid #95a5a6;
+    border-radius: 20px;
+    background: white;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    min-width: 200px;
+}
+
+.door-option:hover:not(.opened) {
+    transform: scale(1.05);
+    border-color: #3498db;
+    box-shadow: 0 5px 15px rgba(52, 152, 219, 0.3);
+}
+
+.door-option.selected {
+    border-color: #f39c12;
+    background: rgba(243, 156, 18, 0.1);
+}
+
+.door-option.opened {
+    border-color: #27ae60;
+    background: rgba(39, 174, 96, 0.1);
+    box-shadow: 0 0 30px rgba(39, 174, 96, 0.3);
+}
+
+.door-visual {
+    font-size: 3rem;
+    position: relative;
+}
+
+.door-opened {
+    position: absolute;
+    top: -10px;
+    right: -10px;
+    font-size: 1.5rem;
+    animation: pigeonFree 2s infinite;
+}
+
+@keyframes pigeonFree {
+    0%, 100% { transform: translateY(0); }
+    50% { transform: translateY(-10px); }
+}
+
+.door-number {
+    font-family: 'Press Start 2P', monospace;
+    font-size: 0.8rem;
+    color: #2c3e50;
+    font-weight: bold;
+}
+
+.door-label {
+    font-size: 0.6rem;
+    color: #7f8c8d;
+}
+
+.doors-hint {
+    text-align: center;
+    font-size: 0.7rem;
+    color: #e67e22;
+    line-height: 1.6;
+    margin-top: 2rem;
+}
+
+/* Puzzle 4: Mensajes */
+.messages-puzzle-area {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    gap: 3rem;
+    padding: 2rem;
+}
+
+.messages-source {
+    flex: 1;
+}
+
+.messages-source h4 {
+    color: #2c3e50;
+    font-size: 0.8rem;
+    margin-bottom: 1.5rem;
+}
+
+.messages-list {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+}
+
+.message-envelope {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    padding: 1rem;
+    border: 2px solid #3498db;
+    border-radius: 15px;
+    background: white;
+    cursor: grab;
+    transition: all 0.3s ease;
+}
+
+.message-envelope:hover {
+    transform: scale(1.05);
+    box-shadow: 0 5px 15px rgba(52, 152, 219, 0.3);
+}
+
+.message-envelope:active {
+    cursor: grabbing;
+}
+
+.message-emoji {
+    font-size: 2rem;
+}
+
+.message-label {
+    font-size: 0.6rem;
+    color: #2c3e50;
+    font-family: 'Press Start 2P', monospace;
+}
+
+.pigeon-mailbox-area {
+    flex: 1;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.pigeon-mailbox {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 1rem;
+    padding: 2rem;
+    border: 3px dashed #f39c12;
+    border-radius: 20px;
+    background: rgba(243, 156, 18, 0.1);
+    min-height: 200px;
+    justify-content: center;
+}
+
+.mailbox-icon {
+    font-size: 3rem;
+}
+
+.pigeon-waiting {
+    font-size: 2rem;
+    animation: pigeonWait 2s infinite;
+}
+
+@keyframes pigeonWait {
+    0%, 100% { transform: scale(1); }
+    50% { transform: scale(1.1); }
+}
+
+.mailbox-label {
+    font-size: 0.7rem;
+    color: #e67e22;
+    font-family: 'Press Start 2P', monospace;
+}
+
+.messages-count {
+    font-size: 0.6rem;
+    color: #27ae60;
+    font-weight: bold;
+}
+
+.messages-instructions {
+    position: absolute;
+    bottom: 20px;
+    left: 50%;
+    transform: translateX(-50%);
+    text-align: center;
+    font-size: 0.6rem;
+    color: #7f8c8d;
+    line-height: 1.6;
+}
+
+/* Responsive para nueva estructura */
+@media (max-width: 768px) {
+    .puzzle-area-new {
+        width: 95%;
+        top: 100px;
+        height: calc(100vh - 120px);
+    }
+    
+    .garden-scene {
+        flex-direction: column;
+        gap: 2rem;
+    }
+    
+    .doors-row {
+        flex-direction: column;
+        align-items: center;
+    }
+    
+    .messages-puzzle-area {
+        flex-direction: column;
+        gap: 2rem;
+    }
+    
+    .cables-puzzle-area svg {
+        width: 100%;
+        height: 300px;
+    }
+}
+
+/* Estilos para Level 1 Garden - Jardín de Redes (Versión anterior) */
+.level1-garden {
+    position: relative;
+    width: 100%;
+    height: 100vh;
+    background: linear-gradient(to bottom, #87CEEB, #98FB98);
+    overflow: hidden;
+}
+
+.level-hud {
+    position: absolute;
+    top: 20px;
+    left: 20px;
+    right: 20px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    z-index: 100;
+    font-family: 'Press Start 2P', monospace;
+    font-size: 0.7rem;
+}
+
+.progress-indicator,
+.time-indicator {
+    background: rgba(0, 0, 0, 0.8);
+    color: white;
+    padding: 0.5rem 1rem;
+    border-radius: 20px;
+    border: 2px solid #00ff00;
+}
+
+.dev-skip-btn {
+    background: rgba(255, 193, 7, 0.9);
+    color: black;
+    border: 2px solid #ffc107;
+    border-radius: 5px;
+    padding: 0.5rem 1rem;
+    font-family: 'Press Start 2P', monospace;
+    font-size: 0.5rem;
+    cursor: pointer;
+    box-shadow: 0 0 10px rgba(255, 193, 7, 0.5);
+}
+
+.hint-message {
+    position: absolute;
+    top: 80px;
+    left: 50%;
+    transform: translateX(-50%);
+    background: rgba(0, 0, 0, 0.9);
+    color: #ffff00;
+    padding: 1rem 2rem;
+    border-radius: 15px;
+    border: 2px solid #ffff00;
+    z-index: 200;
+    font-family: 'Press Start 2P', monospace;
+    font-size: 0.7rem;
+    max-width: 80%;
+    text-align: center;
+    animation: fadeInOut 4s ease-in-out;
+}
+
+@keyframes fadeInOut {
+    0%, 100% { opacity: 0; transform: translateX(-50%) translateY(-20px); }
+    10%, 90% { opacity: 1; transform: translateX(-50%) translateY(0); }
+}
+
+.puzzle-area {
+    position: absolute;
+    top: 120px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 90%;
+    max-width: 900px;
+    height: calc(100vh - 140px);
+    background: rgba(255, 255, 255, 0.95);
+    border-radius: 20px;
+    border: 4px solid #2c3e50;
+    box-shadow: 0 0 30px rgba(0, 0, 0, 0.3);
+    overflow-y: auto;
+}
+
+.puzzle-container {
+    padding: 2rem;
+    font-family: 'Press Start 2P', monospace;
+}
+
+.puzzle-header {
+    text-align: center;
+    margin-bottom: 2rem;
+    border-bottom: 3px solid #3498db;
+    padding-bottom: 1rem;
+}
+
+.puzzle-header h3 {
+    color: #2c3e50;
+    font-size: 1rem;
+    margin-bottom: 1rem;
+}
+
+.puzzle-header p {
+    color: #7f8c8d;
+    font-size: 0.6rem;
+    line-height: 1.4;
+    margin-bottom: 1rem;
+}
+
+.hint-btn {
+    background: #f39c12;
+    color: white;
+    border: none;
+    padding: 0.5rem 1rem;
+    border-radius: 10px;
+    font-family: 'Press Start 2P', monospace;
+    font-size: 0.5rem;
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+.hint-btn:hover {
+    background: #e67e22;
+    transform: scale(1.05);
+}
+
+/* Puzzle Intro Styles */
+.garden-intro {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 2rem;
+}
+
+.garden-visual {
+    display: flex;
+    align-items: center;
+    gap: 3rem;
+    font-size: 2rem;
+}
+
+.garden-central {
+    font-size: 3rem;
+    animation: pulse 2s infinite;
+}
+
+.pigeon-tower {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.tower {
+    font-size: 2.5rem;
+}
+
+.caged-pigeon {
+    font-size: 1.5rem;
+    opacity: 0.7;
+}
+
+.intro-message {
+    text-align: center;
+    max-width: 600px;
+}
+
+.intro-message h2 {
+    color: #27ae60;
+    font-size: 1.2rem;
+    margin-bottom: 1.5rem;
+}
+
+.intro-message p {
+    color: #2c3e50;
+    font-size: 0.7rem;
+    line-height: 1.6;
+    margin-bottom: 2rem;
+}
+
+/* Puzzle A - WiFi Styles */
+.wifi-visual {
+    display: flex;
+    justify-content: space-around;
+    align-items: flex-start;
+    margin: 2rem 0;
+    padding: 1.5rem;
+    background: rgba(52, 152, 219, 0.1);
+    border-radius: 15px;
+    border: 2px solid #3498db;
+}
+
+.ap-device {
+    font-size: 2rem;
+    text-align: center;
+    color: #2980b9;
+}
+
+.neighbor-networks h4 {
+    color: #2c3e50;
+    font-size: 0.7rem;
+    margin-bottom: 1rem;
+}
+
+.neighbor-network {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 0.5rem;
+    padding: 0.5rem;
+    background: rgba(0, 0, 0, 0.05);
+    border-radius: 8px;
+    font-size: 0.5rem;
+}
+
+.signal-bars {
+    font-size: 0.8rem;
+}
+
+.channel-selector {
+    text-align: center;
+    margin: 2rem 0;
+}
+
+.channel-selector h4 {
+    color: #2c3e50;
+    font-size: 0.8rem;
+    margin-bottom: 1.5rem;
+}
+
+.channel-btn {
+    background: #95a5a6;
+    color: white;
+    border: none;
+    padding: 1rem 2rem;
+    margin: 0 0.5rem;
+    border-radius: 15px;
+    font-family: 'Press Start 2P', monospace;
+    font-size: 0.6rem;
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+.channel-btn:hover {
+    transform: scale(1.05);
+}
+
+.channel-btn.selected {
+    background: #27ae60;
+    box-shadow: 0 0 15px rgba(39, 174, 96, 0.5);
+}
+
+.rssi-indicator {
+    text-align: center;
+    margin-top: 1.5rem;
+    padding: 1rem;
+    background: rgba(39, 174, 96, 0.1);
+    border-radius: 10px;
+    color: #27ae60;
+    font-size: 0.6rem;
+}
+
+/* Puzzle B - Identity Styles */
+.identity-explanation {
+    text-align: center;
+    margin: 1.5rem 0;
+    padding: 1rem;
+    background: rgba(52, 152, 219, 0.1);
+    border-radius: 10px;
+    font-size: 0.6rem;
+    color: #2c3e50;
+}
+
+.devices-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 1rem;
+    margin: 2rem 0;
+}
+
+.device-card {
+    padding: 1.5rem;
+    border: 3px solid #95a5a6;
+    border-radius: 15px;
+    text-align: center;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    background: white;
+}
+
+.device-card:hover {
+    transform: scale(1.02);
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+}
+
+.device-card.selected {
+    border-color: #3498db;
+    background: rgba(52, 152, 219, 0.1);
+    box-shadow: 0 0 20px rgba(52, 152, 219, 0.3);
+}
+
+.device-icon {
+    font-size: 2rem;
+    margin-bottom: 1rem;
+}
+
+.mac-address,
+.assigned-ip {
+    font-size: 0.5rem;
+    margin: 0.5rem 0;
+    color: #2c3e50;
+}
+
+.assigned-ip {
+    color: #27ae60;
+    font-weight: bold;
+}
+
+.ip-selector {
+    text-align: center;
+    margin: 2rem 0;
+}
+
+.ip-selector h4 {
+    color: #2c3e50;
+    font-size: 0.8rem;
+    margin-bottom: 1.5rem;
+}
+
+.ip-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+    gap: 1rem;
+    max-width: 600px;
+    margin: 0 auto;
+}
+
+.ip-btn {
+    background: #3498db;
+    color: white;
+    border: none;
+    padding: 1rem;
+    border-radius: 10px;
+    font-family: 'Press Start 2P', monospace;
+    font-size: 0.5rem;
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+.ip-btn:hover:not(:disabled) {
+    background: #2980b9;
+    transform: scale(1.05);
+}
+
+.ip-btn:disabled {
+    background: #95a5a6;
+    cursor: not-allowed;
+    opacity: 0.5;
+}
+
+/* Puzzle C - DHCP Styles */
+.router-panel {
+    text-align: center;
+    margin: 2rem 0;
+    padding: 2rem;
+    background: rgba(52, 152, 219, 0.1);
+    border-radius: 15px;
+    border: 2px solid #3498db;
+}
+
+.router-icon {
+    font-size: 2rem;
+    color: #2980b9;
+    margin-bottom: 1.5rem;
+}
+
+.router-panel h4 {
+    color: #2c3e50;
+    font-size: 0.8rem;
+    margin-bottom: 2rem;
+}
+
+.range-option {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin: 1rem 0;
+    padding: 1rem;
+    background: white;
+    border-radius: 10px;
+    border: 2px solid #ecf0f1;
+}
+
+.range-btn {
+    background: #95a5a6;
+    color: white;
+    border: none;
+    padding: 0.8rem 1.5rem;
+    border-radius: 10px;
+    font-family: 'Press Start 2P', monospace;
+    font-size: 0.5rem;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    flex: 1;
+    text-align: left;
+}
+
+.range-btn:hover {
+    transform: scale(1.02);
+}
+
+.range-btn.selected {
+    background: #27ae60;
+    box-shadow: 0 0 15px rgba(39, 174, 96, 0.5);
+}
+
+.range-status {
+    font-size: 0.5rem;
+    margin-left: 1rem;
+    min-width: 150px;
+    text-align: right;
+}
+
+.pigeon-status {
+    margin: 2rem 0;
+    text-align: center;
+}
+
+.pigeon-device {
+    display: inline-block;
+    padding: 1.5rem;
+    background: white;
+    border: 3px solid #95a5a6;
+    border-radius: 15px;
+    font-size: 0.6rem;
+}
+
+.connection-status {
+    margin-top: 0.5rem;
+    font-size: 0.5rem;
+}
+
+.connection-status.connected {
+    color: #27ae60;
+}
+
+.connection-status.disconnected {
+    color: #e74c3c;
+}
+
+/* Puzzle D - Routing Styles */
+.network-graph {
+    text-align: center;
+    margin: 2rem 0;
+    padding: 1rem;
+    background: rgba(236, 240, 241, 0.5);
+    border-radius: 15px;
+    border: 2px solid #bdc3c7;
+}
+
+.routing-instructions {
+    text-align: center;
+    margin: 2rem 0;
+    font-size: 0.6rem;
+    color: #7f8c8d;
+    line-height: 1.6;
+}
+
+.routing-instructions p {
+    margin: 0.5rem 0;
+}
+
+.packet-animation {
+    animation: packetPulse 1s infinite;
+}
+
+@keyframes packetPulse {
+    0%, 100% { r: 8; opacity: 1; }
+    50% { r: 12; opacity: 0.7; }
+}
+
+/* Responsive Design para Level 1 Garden */
+@media (max-width: 768px) {
+    .puzzle-area {
+        width: 95%;
+        top: 100px;
+        height: calc(100vh - 120px);
+    }
+    
+    .puzzle-container {
+        padding: 1rem;
+    }
+    
+    .puzzle-header h3 {
+        font-size: 0.8rem;
+    }
+    
+    .devices-grid {
+        grid-template-columns: 1fr;
+    }
+    
+    .wifi-visual {
+        flex-direction: column;
+        gap: 1rem;
+    }
+    
+    .garden-visual {
+        flex-direction: column;
+        gap: 1rem;
+    }
+    
+    .range-option {
+        flex-direction: column;
+        gap: 1rem;
+    }
+    
+    .range-btn {
+        text-align: center;
+    }
+    
+    .range-status {
+        text-align: center;
+        margin-left: 0;
+    }
 }
 
 .rewards-container {

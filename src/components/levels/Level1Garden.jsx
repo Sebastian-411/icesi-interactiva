@@ -1,461 +1,788 @@
-import React, { useEffect, useState, useCallback } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useGame } from '../../context/GameContext';
+import NetworkConnectionsPuzzle from '../puzzles/NetworkConnectionsPuzzle';
+import PacketAdventurePuzzle from '../puzzles/PacketAdventurePuzzle';
+import ARPMazePuzzle from '../puzzles/ARPMazePuzzle';
+import BGPBossPuzzle from '../puzzles/BGPBossPuzzle';
 
 const Level1Garden = () => {
   const { state, updateLevel1State, updateScore, showScreen } = useGame();
   
-  // Estados del juego
+  // Estados principales del nivel
+  const [currentPhase, setCurrentPhase] = useState('intro'); // intro, connections, packet-adventure, arp-maze, boss-fight, completed
+  const [showIntroAnimation, setShowIntroAnimation] = useState(true);
+  const [showPuzzle, setShowPuzzle] = useState(false);
+  const [completedPuzzles, setCompletedPuzzles] = useState({
+    connections: false,
+    packetAdventure: false,
+    arpMaze: false,
+    bossFight: false
+  });
+  const [timeElapsed, setTimeElapsed] = useState(0);
   const [gameStarted, setGameStarted] = useState(false);
-  const [playerPosition, setPlayerPosition] = useState({ x: 20, y: 20 });
-  const [playerVelocity, setPlayerVelocity] = useState({ x: 0, y: 0 });
-  const [isJumping, setIsJumping] = useState(false);
-  const [enemies, setEnemies] = useState([]);
-  const [packets, setPackets] = useState([]);
-  const [coins, setCoins] = useState([]);
-  const [obstacles, setObstacles] = useState([]);
-  const [currentMessage, setCurrentMessage] = useState('');
   const [showMessage, setShowMessage] = useState(false);
-  const [introVisible, setIntroVisible] = useState(true);
-  const [carryingPackage, setCarryingPackage] = useState(false);
-  const [collisionsCount, setCollisionsCount] = useState(0);
-  const [speedMultiplier, setSpeedMultiplier] = useState(1);
-  const [canDoubleJump, setCanDoubleJump] = useState(false);
-  const [hasDoubleJumped, setHasDoubleJumped] = useState(false);
-  const [flowers] = useState([
-    { id: 1, x: 120 },
-    { id: 2, x: 260 },
-    { id: 3, x: 420 },
-    { id: 4, x: 760 }
-  ]);
+  const [currentMessage, setCurrentMessage] = useState('');
 
-  // Constantes del juego
-  const GRAVITY = -0.8;
-  const JUMP_POWER = 12;
-  const BASE_PLAYER_SPEED = 3;
-  const GROUND_LEVEL = 20;
-  const WORLD_WIDTH = 1000;
-  const BRIDGE_X_START = 470; // posición de inicio del hueco/puente
-  const BRIDGE_X_END = 530;   // posición de fin del hueco/puente
-  const ROUTER1_X = 80;
-  const ROUTER2_X = 900;
-
-  // Mostrar mensaje temporal
-  const showTemporaryMessage = useCallback((message, duration = 3000) => {
-    setCurrentMessage(message);
-    setShowMessage(true);
-    setTimeout(() => {
-      setShowMessage(false);
-    }, duration);
-  }, []);
-
-  // Escuchar mensajes de guía desde puzzles
+  // Timer para medir tiempo
   useEffect(() => {
-    const handleGuideMessage = (event) => {
-      showTemporaryMessage(event.detail.message, 4000);
-    };
-    
-    window.addEventListener('showGuideMessage', handleGuideMessage);
-    return () => window.removeEventListener('showGuideMessage', handleGuideMessage);
-  }, [showTemporaryMessage]);
+    if (gameStarted && currentPhase !== 'completed') {
+      const timer = setInterval(() => {
+        setTimeElapsed(prev => prev + 1);
+      }, 1000);
+      return () => clearInterval(timer);
+    }
+  }, [gameStarted, currentPhase]);
 
-  // Inicializar elementos del juego
+  // Inicializar el nivel
   useEffect(() => {
     if (!gameStarted) {
-      // Crear enemigos iniciales
-      const initialEnemies = [
-        { id: 1, x: 240, y: 100, defeated: false },
-        { id: 2, x: 520, y: 120, defeated: false },
-        { id: 3, x: 700, y: 110, defeated: false }
-      ];
-      setEnemies(initialEnemies);
-
-      // Sin paquetes a recolectar (mecánica deshabilitada)
-      setPackets([]);
-
-      // Monedas de energía
-      const initialCoins = [
-        { id: 1, x: 200, y: 90, collected: false },
-        { id: 2, x: 480, y: 120, collected: false },
-        { id: 3, x: 780, y: 140, collected: false }
-      ];
-      setCoins(initialCoins);
-
-      // Obstáculos (congestión)
-      const initialObstacles = [
-        { id: 1, x: 300, y: 40 },
-        { id: 2, x: 520, y: 40 },
-        { id: 3, x: 700, y: 40 }
-      ];
-      setObstacles(initialObstacles);
-
       setGameStarted(true);
-      setTimeout(() => setIntroVisible(false), 3500);
-      showTemporaryMessage("¡Usa ← → para moverte, ESPACIO para saltar. Repara los Routers 1 y 2 para liberar a la Paloma!");
+      // Mostrar intro animada por 30 segundos
+      setTimeout(() => {
+        setShowIntroAnimation(false);
+        startFirstPuzzle();
+      }, 5000); // Reducido para desarrollo, en producción sería 30000
     }
-  }, [gameStarted, showTemporaryMessage]);
+  }, [gameStarted]);
 
-  // Desbloquear puente: por Router 1 (cable) o por 3 paquetes (fallback)
-  useEffect(() => {
-    if (state.level1State.routersFixed >= 1 && !state.level1State.bridgeUnlocked) {
-      updateLevel1State({ bridgeUnlocked: true });
-      showTemporaryMessage("¡Conexión establecida! El camino dorado se desbloquea.");
-      return;
-    }
-    if (state.level1State.dataPacketsCollected >= 3 && !state.level1State.bridgeUnlocked) {
-      updateLevel1State({ bridgeUnlocked: true });
-      showTemporaryMessage("Puente activado: ¡la red comienza a fluir!");
-    }
-  }, [state.level1State.dataPacketsCollected, state.level1State.bridgeUnlocked, state.level1State.routersFixed, updateLevel1State, showTemporaryMessage]);
-
-  // Controles del jugador
-  useEffect(() => {
-    const handleKeyDown = (e) => {
-      if (!gameStarted) return;
-      if (introVisible) return;
-
-      switch (e.key) {
-        case 'ArrowLeft':
-        case 'a':
-        case 'A':
-          setPlayerVelocity(prev => ({ ...prev, x: -BASE_PLAYER_SPEED * speedMultiplier }));
-          break;
-        case 'ArrowRight':
-        case 'd':
-        case 'D':
-          setPlayerVelocity(prev => ({ ...prev, x: BASE_PLAYER_SPEED * speedMultiplier }));
-          break;
-        case ' ':
-          if (!isJumping && playerPosition.y <= GROUND_LEVEL) {
-            setPlayerVelocity(prev => ({ ...prev, y: JUMP_POWER }));
-            setIsJumping(true);
-            showTemporaryMessage("¡Perfecto! ESPACIO hace que Andy salte.");
-            setHasDoubleJumped(false);
-          } else if (canDoubleJump && !hasDoubleJumped) {
-            setPlayerVelocity(prev => ({ ...prev, y: JUMP_POWER * 0.9 }));
-            setHasDoubleJumped(true);
-            showTemporaryMessage("¡Doble salto activado!");
-          }
-          break;
-      }
-    };
-
-    const handleKeyUp = (e) => {
-      switch (e.key) {
-        case 'ArrowLeft':
-        case 'a':
-        case 'A':
-        case 'ArrowRight':
-        case 'd':
-        case 'D':
-          setPlayerVelocity(prev => ({ ...prev, x: 0 }));
-          break;
-      }
-    };
-
-    document.addEventListener('keydown', handleKeyDown);
-    document.addEventListener('keyup', handleKeyUp);
-
-    return () => {
-      document.removeEventListener('keydown', handleKeyDown);
-      document.removeEventListener('keyup', handleKeyUp);
-    };
-  }, [gameStarted, isJumping, playerPosition.y, speedMultiplier, canDoubleJump, hasDoubleJumped, introVisible, showTemporaryMessage]);
-
-  // Física del jugador
-  useEffect(() => {
-    if (!gameStarted) return;
-
-    const gameLoop = setInterval(() => {
-      setPlayerPosition(prev => {
-        let newX = prev.x + playerVelocity.x;
-        let newY = prev.y + playerVelocity.y;
-
-        // Limitar movimiento horizontal
-        newX = Math.max(0, Math.min(WORLD_WIDTH, newX));
-
-        // Bloquear paso por el hueco si el puente no está activado
-        if (!state.level1State.bridgeUnlocked) {
-          if (prev.x < BRIDGE_X_START && newX >= BRIDGE_X_START) {
-            newX = BRIDGE_X_START - 1;
-            showTemporaryMessage("Este puente está caído. Recolecta 3 paquetes para activarlo.");
-          }
-        }
-
-        // Aplicar gravedad (y es la distancia desde el suelo).
-        if (newY <= GROUND_LEVEL) {
-          newY = GROUND_LEVEL;
-          if (isJumping) setIsJumping(false);
-          setPlayerVelocity(prevVel => ({ ...prevVel, y: 0 }));
-        } else {
-          setPlayerVelocity(prevVel => ({ ...prevVel, y: prevVel.y + GRAVITY }));
-        }
-
-        return { x: newX, y: newY };
-      });
-    }, 16); // ~60fps
-
-    return () => clearInterval(gameLoop);
-  }, [gameStarted, playerVelocity, GROUND_LEVEL, state.level1State.bridgeUnlocked, showTemporaryMessage]);
-
-  // Detectar colisiones
-  useEffect(() => {
-    if (!gameStarted) return;
-
-    const checkCollisions = () => {
-      // Colisión con enemigos => genera paquete
-      enemies.forEach(enemy => {
-        if (!enemy.defeated) {
-          const distance = Math.sqrt(
-            Math.pow(playerPosition.x - enemy.x, 2) + 
-            Math.pow(playerPosition.y - enemy.y, 2)
-          );
-          if (distance < 40) {
-            defeatEnemy(enemy.id);
-          }
-        }
-      });
-
-      // Sin colisión con paquetes (deshabilitado)
-
-      // Colisión con obstáculos => pierdes paquete y vuelves a checkpoint
-      obstacles.forEach(obs => {
-        const distance = Math.abs(playerPosition.x - obs.x);
-        if (distance < 20 && playerPosition.y <= 40) {
-          handleObstacleHit();
-        }
-      });
-
-      // Colisión con monedas (energía)
-      coins.forEach(coin => {
-        if (!coin.collected) {
-          const distance = Math.sqrt(
-            Math.pow(playerPosition.x - coin.x, 2) + 
-            Math.pow(playerPosition.y - coin.y, 2)
-          );
-          if (distance < 25) {
-            collectCoin(coin.id);
-          }
-        }
-      });
-
-      // No hay entrega en R2 en el modo de 3 puzzles
-    };
-
-    const collisionInterval = setInterval(checkCollisions, 100);
-    return () => clearInterval(collisionInterval);
-  }, [gameStarted, playerPosition, enemies, packets, carryingPackage, obstacles, coins]);
-
-  // Funciones del juego
-  const defeatEnemy = (enemyId) => {
-    setEnemies(prev => prev.map(enemy => 
-      enemy.id === enemyId ? { ...enemy, defeated: true } : enemy
-    ));
-    showTemporaryMessage("¡Un error de transmisión eliminado!");
-    updateScore(100);
+  // Funciones de utilidad
+  const showTemporaryMessage = (message, duration = 4000) => {
+    setCurrentMessage(message);
+    setShowMessage(true);
+    setTimeout(() => setShowMessage(false), duration);
   };
 
-  const collectPacket = () => {};
+  const startFirstPuzzle = () => {
+    setCurrentPhase('connections');
+    showTemporaryMessage("¡Nadie podrá comunicarse sin mí! Si quieres liberar a tu amiga, tendrás que demostrar que sabes cómo viajan los mensajes en una red.", 6000);
+    setTimeout(() => {
+      setShowPuzzle(true);
+    }, 6000);
+  };
 
-  const collectCoin = (coinId) => {
-    setCoins(prev => prev.map(c => c.id === coinId ? { ...c, collected: true } : c));
-    updateScore(50);
-    if (!canDoubleJump) {
-      setCanDoubleJump(true);
-      showTemporaryMessage("⚡ Energía de red: puedes hacer doble salto por un rato.");
-      setTimeout(() => setCanDoubleJump(false), 8000);
-    } else {
-      setSpeedMultiplier(1.6);
-      showTemporaryMessage("⚡ Energía de red: ¡corres más rápido!");
-      setTimeout(() => setSpeedMultiplier(1), 8000);
+  const handlePuzzleComplete = (puzzleType) => {
+    setShowPuzzle(false);
+    setCompletedPuzzles(prev => ({ ...prev, [puzzleType]: true }));
+    
+    // Determinar siguiente fase
+    switch (puzzleType) {
+      case 'connections':
+        showTemporaryMessage("¡Excelente! Has entendido la topología de red. Ahora veamos cómo viajan los paquetes...", 3000);
+        setTimeout(() => {
+          setCurrentPhase('packet-adventure');
+          setShowPuzzle(true);
+        }, 3000);
+        break;
+        
+      case 'packetAdventure':
+        showTemporaryMessage("¡Perfecto! Conoces el handshake TCP. Pero cuidado, no todo en la red es confiable...", 3000);
+        setTimeout(() => {
+          setCurrentPhase('arp-maze');
+          setShowPuzzle(true);
+        }, 3000);
+        break;
+        
+      case 'arpMaze':
+        showTemporaryMessage("¡Impresionante! Has evitado los ataques. Ahora enfréntate al desafío final...", 3000);
+        setTimeout(() => {
+          setCurrentPhase('boss-fight');
+          setShowPuzzle(true);
+        }, 3000);
+        break;
+        
+      case 'bossFight':
+        completeLevel();
+        break;
     }
   };
 
-  const handleObstacleHit = () => {
-    setCollisionsCount(prev => prev + 1);
-    if (carryingPackage) {
-      setCarryingPackage(false);
-      showTemporaryMessage("❌ Congestión de red: perdiste el paquete. Vuelve a recoger otro.");
-    } else {
-      showTemporaryMessage("❌ Congestión de red: te detuvo el tráfico.");
+  const handlePuzzleClose = () => {
+    setShowPuzzle(false);
+    // Permitir volver a abrir el puzzle
+  };
+
+  const completeLevel = () => {
+    setCurrentPhase('completed');
+    const totalTime = timeElapsed;
+    let stars = 3;
+    if (totalTime > 300) stars = 2; // Más de 5 minutos
+    if (totalTime > 600) stars = 1; // Más de 10 minutos
+    
+    updateLevel1State({ 
+      pigeonRescued: true, 
+      completionTime: totalTime,
+      stars: stars
+    });
+    
+    showTemporaryMessage("¡La paloma es libre! Has demostrado que entiendes cómo funcionan las redes. ¡Eres un verdadero ingeniero de sistemas!", 5000);
+    
+    setTimeout(() => {
+      showScreen('level-summary-screen');
+    }, 5000);
+  };
+
+  // Renderizar la intro animada
+  const renderIntroAnimation = () => (
+    <div className="intro-animation">
+      <div className="animation-scene">
+        <div className="scene-background">
+          <div className="garden-background">🌳🌸🌺🌻</div>
+        </div>
+        
+        <div className="characters">
+          <div className="andy-arrival">
+            <div className="andy-character">🐿️</div>
+            <div className="andy-speech">¡Andy llega al jardín!</div>
+          </div>
+          
+          <div className="pigeon-cage">
+            <div className="cage-container">
+              <div className="digital-cage">🏛️</div>
+              <div className="trapped-pigeon">🕊️💔</div>
+              <div className="digital-lock">🔒</div>
+            </div>
+            <div className="cage-label">Paloma atrapada</div>
+          </div>
+        </div>
+        
+        <div className="villain-appearance">
+          <div className="villain-character">🦹‍♂️</div>
+          <div className="villain-speech">
+            <p>"¡Nadie podrá comunicarse sin mí!"</p>
+            <p>"Si quieres liberar a tu amiga, tendrás que demostrar que sabes cómo viajan los mensajes en una red."</p>
+          </div>
+        </div>
+      </div>
+      
+      <div className="intro-progress">
+        <div className="progress-bar">
+          <div className="progress-fill"></div>
+        </div>
+        <p>Preparando el primer desafío...</p>
+      </div>
+    </div>
+  );
+
+  // Renderizar el estado actual del juego
+  const renderGameState = () => {
+    if (showIntroAnimation) {
+      return renderIntroAnimation();
     }
-    // Retroceso leve
-    setPlayerPosition(prev => ({ x: Math.max(20, prev.x - 40), y: GROUND_LEVEL }));
+
+    return (
+      <div className="garden-game-area">
+        <div className="garden-scene">
+          <div className="scene-elements">
+            <div className="andy-character">
+              <div className="character">🐿️</div>
+              <div className="character-label">Andy</div>
+            </div>
+            
+            <div className="network-elements">
+              <div className={`network-device ${completedPuzzles.connections ? 'active' : 'inactive'}`}>
+                <div className="device">📡</div>
+                <div className="device-label">Red</div>
+                {completedPuzzles.connections && <div className="completion-check">✅</div>}
+              </div>
+              
+              <div className={`packet-flow ${completedPuzzles.packetAdventure ? 'active' : 'inactive'}`}>
+                <div className="packet">📦</div>
+                <div className="packet-label">Paquetes</div>
+                {completedPuzzles.packetAdventure && <div className="completion-check">✅</div>}
+              </div>
+              
+              <div className={`security-shield ${completedPuzzles.arpMaze ? 'active' : 'inactive'}`}>
+                <div className="shield">🛡️</div>
+                <div className="shield-label">Seguridad</div>
+                {completedPuzzles.arpMaze && <div className="completion-check">✅</div>}
+              </div>
+            </div>
+            
+            <div className="pigeon-area">
+              <div className={`pigeon-cage ${currentPhase === 'completed' ? 'opened' : 'locked'}`}>
+                <div className="cage">🏛️</div>
+                <div className={`pigeon ${currentPhase === 'completed' ? 'free' : 'trapped'}`}>
+                  {currentPhase === 'completed' ? '🕊️✨' : '🕊️💔'}
+                </div>
+                <div className={`lock ${currentPhase === 'completed' ? 'broken' : 'active'}`}>
+                  {currentPhase === 'completed' ? '🔓' : '🔒'}
+                </div>
+              </div>
+              <div className="pigeon-label">
+                {currentPhase === 'completed' ? '¡Paloma libre!' : 'Paloma atrapada'}
+              </div>
+            </div>
+          </div>
+          
+          <div className="phase-indicator">
+            <h3>📍 Fase Actual: {getCurrentPhaseDescription()}</h3>
+            <div className="progress-indicators">
+              <div className={`phase-dot ${completedPuzzles.connections ? 'completed' : currentPhase === 'connections' ? 'active' : 'pending'}`}>1</div>
+              <div className={`phase-dot ${completedPuzzles.packetAdventure ? 'completed' : currentPhase === 'packet-adventure' ? 'active' : 'pending'}`}>2</div>
+              <div className={`phase-dot ${completedPuzzles.arpMaze ? 'completed' : currentPhase === 'arp-maze' ? 'active' : 'pending'}`}>3</div>
+              <div className={`phase-dot ${completedPuzzles.bossFight ? 'completed' : currentPhase === 'boss-fight' ? 'active' : 'pending'}`}>👑</div>
+            </div>
+          </div>
+          
+          {!showPuzzle && currentPhase !== 'completed' && (
+            <div className="action-area">
+              <button 
+                className="puzzle-trigger-btn"
+                onClick={() => setShowPuzzle(true)}
+              >
+                {getPuzzleButtonText()}
+              </button>
+            </div>
+          )}
+        </div>
+      </div>
+    );
   };
 
-  const deliverPackage = () => {
-    setCarryingPackage(false);
-    setDeliveredCount(prev => prev + 1);
-    updateScore(200);
-    showTemporaryMessage("📡 Paquete entregado en Router 2. ¡Sigue así!");
-  };
-
-  // Abrir puzzles
-  const openRouterPuzzle = (routerId) => {
-    if (routerId === 1) {
-      showTemporaryMessage("Un ingeniero de sistemas sabe cómo conectar los puntos. Restablece el camino de la información.");
-      updateLevel1State({ currentPuzzle: 'cable' });
-    } else {
-      showTemporaryMessage("Algunas veces debes elegir cómo transmitir los datos. ¿Qué protocolo usarías?");
-      updateLevel1State({ currentPuzzle: 'protocol' });
+  const getCurrentPhaseDescription = () => {
+    switch (currentPhase) {
+      case 'connections': return 'Conexiones de Red';
+      case 'packet-adventure': return 'Aventura del Paquete';
+      case 'arp-maze': return 'Evitando Ataques';
+      case 'boss-fight': return 'Desafío Final';
+      case 'completed': return '¡Nivel Completado!';
+      default: return 'Preparando...';
     }
   };
 
-  const openCagePuzzle = () => {
-    console.log('🕊️ Level1Garden: Intentando abrir jaula, routersFixed:', state.level1State.routersFixed);
-    if (state.level1State.routersFixed >= 2) {
-      console.log('🕊️ Level1Garden: Jaula desbloqueada, abriendo puzzle final');
-      showTemporaryMessage("¡Estamos cerca! Restablece la conexión final para liberarla.");
-      updateLevel1State({ currentPuzzle: 'packet-sorting' });
-    } else {
-      console.log('🕊️ Level1Garden: Jaula bloqueada, necesitas reparar más routers');
-      showTemporaryMessage("Repara primero ambos routers para liberar a la Paloma.");
+  const getPuzzleButtonText = () => {
+    switch (currentPhase) {
+      case 'connections': return '🔌 Conectar Dispositivos';
+      case 'packet-adventure': return '📦 Guiar el Paquete';
+      case 'arp-maze': return '🛡️ Evitar Impostores';
+      case 'boss-fight': return '⚔️ Enfrentar al Villano';
+      default: return '🎮 Continuar';
     }
   };
-
-  // Final al entregar 3 paquetes
-
-  // Log del estado actual (solo cuando cambia)
-  if (state.level1State.routersFixed >= 2) {
-    console.log('🌱 Level1Garden: Jaula debería estar desbloqueada, routersFixed:', state.level1State.routersFixed);
-  }
-
-  if (!gameStarted) {
-    return <div>Cargando nivel...</div>;
-  }
 
   return (
-    <div className="level-container" style={{ position: 'relative', width: '100%', height: '100%' }}>
-      {/* Intro fade-in */}
-      {introVisible && (
-        <div style={{ position: 'absolute', inset: 0, background: 'rgba(0,0,0,0.9)', color: 'white', display: 'flex', alignItems: 'center', justifyContent: 'center', zIndex: 20 }}>
-          <div style={{ maxWidth: '720px', textAlign: 'center', padding: '1.5rem' }}>
-            <h2 style={{ fontFamily: 'Press Start 2P, monospace', fontSize: '1rem', marginBottom: '1rem' }}>Bienvenido a la Red de los Bosques</h2>
-            <p style={{ fontFamily: 'Press Start 2P, monospace', fontSize: '0.7rem', lineHeight: 1.6 }}>
-              Aquí los paquetes (📦) deben llegar desde el Router 1 hasta el Router 2. Tú, ardilla veloz, harás que la información fluya sin pérdidas.
-            </p>
-            <button onClick={() => setIntroVisible(false)} className="btn-primary" style={{ marginTop: '1.2rem' }}>Comenzar</button>
-          </div>
-        </div>
-      )}
-
+    <div className="level1-garden-new">
       {/* HUD */}
-      <div style={{ position: 'absolute', top: 10, left: 10, zIndex: 10, color: 'white', fontFamily: 'Press Start 2P, monospace', fontSize: '0.6rem', textShadow: '0 2px 6px rgba(0,0,0,0.6)' }}>
-        <div>Colisiones: {collisionsCount}</div>
-        <div>Energía: {canDoubleJump ? 'Doble salto' : speedMultiplier > 1 ? 'Velocidad' : '—'}</div>
+      <div className="level-hud">
+        <div className="progress-indicator">
+          Progreso: {Object.values(completedPuzzles).filter(Boolean).length}/4
+        </div>
+        <div className="time-indicator">
+          Tiempo: {Math.floor(timeElapsed / 60)}:{(timeElapsed % 60).toString().padStart(2, '0')}
+        </div>
+        
+        {/* Botón de desarrollo */}
+        <button 
+          className="dev-skip-btn"
+          onClick={() => completeLevel()}
+          title="Modo desarrollo - Completar nivel"
+        >
+          🚀 COMPLETAR
+        </button>
       </div>
 
-      {/* Botón de desarrollo - Pasar a siguiente nivel */}
-      <button 
-        onClick={() => {
-          console.log('🚀 Modo desarrollo: Pasando al siguiente nivel');
-          updateLevel1State({ pigeonRescued: true });
-          showScreen('level-summary-screen');
-        }}
-        style={{ 
-          position: 'absolute', 
-          top: 10, 
-          right: 10, 
-          zIndex: 10, 
-          background: 'rgba(255, 193, 7, 0.9)', 
-          color: 'black', 
-          border: '2px solid #ffc107', 
-          borderRadius: '5px', 
-          padding: '0.5rem 1rem', 
-          fontFamily: 'Press Start 2P, monospace', 
-          fontSize: '0.5rem', 
-          cursor: 'pointer',
-          boxShadow: '0 0 10px rgba(255, 193, 7, 0.5)'
-        }}
-        title="Modo desarrollo - Saltar al siguiente nivel"
-      >
-        🚀 SIGUIENTE NIVEL
-      </button>
-
-      {/* Mensajes */}
+      {/* Mensaje temporal */}
       {showMessage && (
-        <div style={{ position: 'absolute', top: 10, right: 10, background: 'rgba(0,0,0,0.6)', color: 'white', padding: '0.8rem 1rem', borderRadius: '8px', zIndex: 10, maxWidth: '360px', fontFamily: 'Press Start 2P, monospace', fontSize: '0.6rem', lineHeight: 1.4 }}>
-          {currentMessage}
+        <div className="story-message-overlay">
+          <div className="andy-avatar">🐿️</div>
+          <div className="message-bubble">
+            {currentMessage}
+          </div>
         </div>
       )}
 
-      {/* Mundo */}
-      <div style={{ position: 'absolute', left: 0, right: 0, bottom: 0, top: 0, display: 'flex', justifyContent: 'center', alignItems: 'flex-end' }}>
-        <div style={{ position: 'relative', width: `${WORLD_WIDTH}px`, height: '360px', background: 'linear-gradient(#b8e994, #60a3bc)', border: '3px solid #2c3e50', borderRadius: '12px', overflow: 'hidden' }}>
-          {/* Suelo */}
-          <div style={{ position: 'absolute', left: 0, right: 0, bottom: 0, height: '40px', background: '#27ae60' }} />
-
-          {/* Flores (nodos con ping al pisarlas) */}
-          {flowers.map(f => (
-            <div key={f.id} style={{ position: 'absolute', left: `${f.x}px`, bottom: '40px', width: '24px', height: '24px', borderRadius: '50%', background: '#f1c40f', boxShadow: '0 0 12px rgba(241,196,15,0.8)' }} />
-          ))}
-
-          {/* Hueco y puente */}
-          <div style={{ position: 'absolute', left: `${BRIDGE_X_START}px`, width: `${BRIDGE_X_END - BRIDGE_X_START}px`, bottom: 0, height: '40px', background: state.level1State.bridgeUnlocked ? '#f1c40f' : '#2c3e50' }} />
-          {!state.level1State.bridgeUnlocked && (
-            <div style={{ position: 'absolute', left: `${BRIDGE_X_START}px`, width: `${BRIDGE_X_END - BRIDGE_X_START}px`, bottom: '40px', top: 0, background: 'rgba(0,0,0,0.15)' }} />
-          )}
-
-          {/* Router 1 (antena parpadeando) */}
-          <div onClick={() => openRouterPuzzle(1)} title="Router 1" style={{ position: 'absolute', left: `${ROUTER1_X}px`, bottom: '60px', width: '90px', height: '60px', background: '#2980b9', borderRadius: '10px', display: 'flex', alignItems: 'center', justifyContent: 'center', color: 'white', fontFamily: 'Press Start 2P, monospace', fontSize: '0.5rem', cursor: 'pointer' }}>
-            R1
-            <div style={{ position: 'absolute', top: '-10px', width: '6px', height: '10px', background: '#f1c40f', boxShadow: '0 0 8px rgba(241,196,15,0.9)' }} />
-          </div>
-
-          {/* Router 2 (puzzle de protocolo) */}
-          <div onClick={() => openRouterPuzzle(2)} title="Router 2" style={{ position: 'absolute', left: `${ROUTER2_X}px`, bottom: '60px', width: '90px', height: '60px', background: state.level1State.routersFixed >= 2 ? '#27ae60' : '#7f8c8d', borderRadius: '10px', display: 'flex', alignItems: 'center', justifyContent: 'center', color: 'white', fontFamily: 'Press Start 2P, monospace', fontSize: '0.5rem', cursor: 'pointer', boxShadow: state.level1State.routersFixed >= 2 ? '0 0 12px rgba(39,174,96,0.9)' : 'none' }}>
-            R2
-            <div style={{ position: 'absolute', top: '-10px', width: '6px', height: '10px', background: state.level1State.routersFixed >= 2 ? '#2ecc71' : '#bdc3c7', boxShadow: state.level1State.routersFixed >= 2 ? '0 0 8px rgba(46,204,113,0.9)' : 'none' }} />
-          </div>
-
-          {/* Jaula de la Paloma */}
-          <div onClick={() => {
-            console.log('🕊️ Level1Garden: Click en jaula detectado, routersFixed:', state.level1State.routersFixed);
-            openCagePuzzle();
-          }} title="Jaula de la Paloma" style={{ 
-            position: 'absolute', 
-            left: `${ROUTER2_X - 100}px`, 
-            bottom: '60px', 
-            width: '80px', 
-            height: '80px', 
-            background: state.level1State.routersFixed >= 2 ? '#f39c12' : '#95a5a6', 
-            borderRadius: '10px', 
-            display: 'flex', 
-            alignItems: 'center', 
-            justifyContent: 'center', 
-            fontSize: '1.5rem', 
-            cursor: state.level1State.routersFixed >= 2 ? 'pointer' : 'not-allowed',
-            boxShadow: state.level1State.routersFixed >= 2 ? '0 0 15px rgba(243,156,18,0.8)' : 'none',
-            border: state.level1State.routersFixed >= 2 ? '2px solid #e67e22' : '2px solid #7f8c8d'
-          }}>
-            🕊️
-            {state.level1State.routersFixed < 2 && (
-              <div style={{ position: 'absolute', top: '-5px', right: '-5px', fontSize: '0.8rem' }}>🔒</div>
-            )}
-          </div>
-
-          {/* Obstáculos (congestión ❌) */}
-          {obstacles.map(obs => (
-            <div key={obs.id} style={{ position: 'absolute', left: `${obs.x}px`, bottom: `${obs.y}px`, fontSize: '1.2rem', color: '#e74c3c' }}>❌</div>
-          ))}
-
-          {/* Enemigos */}
-          {enemies.filter(e => !e.defeated).map(enemy => (
-            <div key={enemy.id} style={{ position: 'absolute', left: `${enemy.x}px`, bottom: `${enemy.y}px`, transform: 'translateY(-20px)', fontSize: '1.2rem' }}>❌</div>
-          ))}
-
-          {/* Paquetes coleccionables ocultos */}
-
-          {/* Monedas de energía */}
-          {coins.filter(c => !c.collected).map(coin => (
-            <div key={coin.id} style={{ position: 'absolute', left: `${coin.x}px`, bottom: `${coin.y}px`, fontSize: '1.1rem', color: '#f1c40f', textShadow: '0 0 8px rgba(241,196,15,0.9)' }}>⚡</div>
-          ))}
-
-          {/* Jugador (Andy) con animaciones sencillas */}
-          <div style={{ position: 'absolute', left: `${playerPosition.x}px`, bottom: `${playerPosition.y}px`, fontSize: '1.6rem', transition: 'transform 120ms' }}>
-            {isJumping ? '🐿️🦘' : (playerVelocity.x !== 0 ? '🐿️💨' : '🐿️')}
-          </div>
-        </div>
+      {/* Área principal del juego */}
+      <div className="game-main-area">
+        {renderGameState()}
       </div>
+
+      {/* Puzzles */}
+      {showPuzzle && currentPhase === 'connections' && (
+        <NetworkConnectionsPuzzle 
+          onComplete={() => handlePuzzleComplete('connections')}
+          onClose={handlePuzzleClose}
+        />
+      )}
+      
+      {showPuzzle && currentPhase === 'packet-adventure' && (
+        <PacketAdventurePuzzle 
+          onComplete={() => handlePuzzleComplete('packetAdventure')}
+          onClose={handlePuzzleClose}
+        />
+      )}
+      
+      {showPuzzle && currentPhase === 'arp-maze' && (
+        <ARPMazePuzzle 
+          onComplete={() => handlePuzzleComplete('arpMaze')}
+          onClose={handlePuzzleClose}
+        />
+      )}
+      
+      {showPuzzle && currentPhase === 'boss-fight' && (
+        <BGPBossPuzzle 
+          onComplete={() => handlePuzzleComplete('bossFight')}
+          onClose={handlePuzzleClose}
+        />
+      )}
+
+      <style>{`
+        .level1-garden-new {
+          width: 100%;
+          height: 100vh;
+          background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+          position: relative;
+          overflow: hidden;
+        }
+
+        .level-hud {
+          position: absolute;
+          top: 1rem;
+          left: 1rem;
+          right: 1rem;
+          display: flex;
+          justify-content: space-between;
+          align-items: center;
+          background: rgba(255, 255, 255, 0.9);
+          padding: 1rem;
+          border-radius: 10px;
+          font-family: 'Press Start 2P', monospace;
+          font-size: 0.7rem;
+          z-index: 100;
+        }
+
+        .dev-skip-btn {
+          background: #e74c3c;
+          color: white;
+          border: none;
+          padding: 0.5rem 1rem;
+          border-radius: 5px;
+          font-family: 'Press Start 2P', monospace;
+          font-size: 0.6rem;
+          cursor: pointer;
+        }
+
+        .story-message-overlay {
+          position: absolute;
+          bottom: 2rem;
+          left: 2rem;
+          right: 2rem;
+          display: flex;
+          align-items: center;
+          gap: 1rem;
+          background: rgba(0, 0, 0, 0.8);
+          padding: 1.5rem;
+          border-radius: 15px;
+          z-index: 200;
+        }
+
+        .andy-avatar {
+          font-size: 3rem;
+          animation: bounce 1s ease-in-out infinite alternate;
+        }
+
+        .message-bubble {
+          background: white;
+          padding: 1rem;
+          border-radius: 10px;
+          font-family: 'Press Start 2P', monospace;
+          font-size: 0.7rem;
+          line-height: 1.4;
+          flex: 1;
+        }
+
+        .game-main-area {
+          width: 100%;
+          height: 100%;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          padding: 6rem 2rem 2rem 2rem;
+        }
+
+        .intro-animation {
+          text-align: center;
+          color: white;
+          width: 100%;
+          max-width: 800px;
+        }
+
+        .animation-scene {
+          background: rgba(0, 0, 0, 0.7);
+          padding: 3rem;
+          border-radius: 20px;
+          margin-bottom: 2rem;
+        }
+
+        .scene-background {
+          font-size: 3rem;
+          margin-bottom: 2rem;
+        }
+
+        .characters {
+          display: flex;
+          justify-content: space-between;
+          align-items: center;
+          margin-bottom: 2rem;
+        }
+
+        .andy-arrival {
+          text-align: center;
+        }
+
+        .andy-character {
+          font-size: 4rem;
+          margin-bottom: 1rem;
+          animation: andy-walk 2s ease-in-out infinite alternate;
+        }
+
+        .andy-speech {
+          font-family: 'Press Start 2P', monospace;
+          font-size: 0.7rem;
+          background: rgba(255, 255, 255, 0.2);
+          padding: 0.5rem;
+          border-radius: 8px;
+        }
+
+        .pigeon-cage {
+          text-align: center;
+          position: relative;
+        }
+
+        .cage-container {
+          font-size: 4rem;
+          position: relative;
+          margin-bottom: 1rem;
+        }
+
+        .digital-cage {
+          position: relative;
+        }
+
+        .trapped-pigeon {
+          position: absolute;
+          top: 0.5rem;
+          left: 50%;
+          transform: translateX(-50%);
+          font-size: 2.5rem;
+          animation: pigeon-struggle 1.5s ease-in-out infinite;
+        }
+
+        .digital-lock {
+          position: absolute;
+          top: -0.5rem;
+          right: -0.5rem;
+          font-size: 2rem;
+          animation: lock-pulse 1s ease-in-out infinite;
+        }
+
+        .cage-label {
+          font-family: 'Press Start 2P', monospace;
+          font-size: 0.6rem;
+          color: #f39c12;
+        }
+
+        .villain-appearance {
+          text-align: center;
+          margin-top: 2rem;
+        }
+
+        .villain-character {
+          font-size: 4rem;
+          margin-bottom: 1rem;
+          animation: villain-hover 2s ease-in-out infinite alternate;
+        }
+
+        .villain-speech {
+          background: rgba(231, 76, 60, 0.8);
+          padding: 1rem;
+          border-radius: 10px;
+          font-family: 'Press Start 2P', monospace;
+          font-size: 0.6rem;
+          line-height: 1.4;
+        }
+
+        .villain-speech p {
+          margin-bottom: 0.5rem;
+        }
+
+        .intro-progress {
+          text-align: center;
+        }
+
+        .progress-bar {
+          width: 300px;
+          height: 20px;
+          background: rgba(255, 255, 255, 0.3);
+          border-radius: 10px;
+          margin: 0 auto 1rem auto;
+          overflow: hidden;
+        }
+
+        .progress-fill {
+          height: 100%;
+          background: linear-gradient(90deg, #3498db, #2ecc71);
+          width: 0;
+          animation: progress-fill 5s ease-out forwards;
+        }
+
+        .intro-progress p {
+          font-family: 'Press Start 2P', monospace;
+          font-size: 0.7rem;
+          color: white;
+        }
+
+        .garden-game-area {
+          width: 100%;
+          max-width: 1000px;
+          color: white;
+        }
+
+        .garden-scene {
+          background: rgba(0, 0, 0, 0.6);
+          padding: 3rem;
+          border-radius: 20px;
+        }
+
+        .scene-elements {
+          display: flex;
+          justify-content: space-between;
+          align-items: center;
+          margin-bottom: 3rem;
+          flex-wrap: wrap;
+          gap: 2rem;
+        }
+
+        .andy-character,
+        .pigeon-area {
+          text-align: center;
+        }
+
+        .character,
+        .device,
+        .packet,
+        .shield,
+        .cage {
+          font-size: 4rem;
+          margin-bottom: 0.5rem;
+        }
+
+        .character-label,
+        .device-label,
+        .packet-label,
+        .shield-label,
+        .pigeon-label {
+          font-family: 'Press Start 2P', monospace;
+          font-size: 0.6rem;
+          color: #ecf0f1;
+        }
+
+        .network-elements {
+          display: flex;
+          gap: 2rem;
+          align-items: center;
+        }
+
+        .network-device,
+        .packet-flow,
+        .security-shield {
+          text-align: center;
+          position: relative;
+          padding: 1rem;
+          border-radius: 10px;
+          transition: all 0.3s;
+        }
+
+        .network-device.active,
+        .packet-flow.active,
+        .security-shield.active {
+          background: rgba(46, 204, 113, 0.2);
+          border: 2px solid #2ecc71;
+        }
+
+        .network-device.inactive,
+        .packet-flow.inactive,
+        .security-shield.inactive {
+          background: rgba(149, 165, 166, 0.2);
+          border: 2px solid #95a5a6;
+        }
+
+        .completion-check {
+          position: absolute;
+          top: -0.5rem;
+          right: -0.5rem;
+          font-size: 1.5rem;
+          animation: completion-pop 0.5s ease-out;
+        }
+
+        .pigeon-cage {
+          position: relative;
+          text-align: center;
+        }
+
+        .pigeon {
+          position: absolute;
+          top: 1rem;
+          left: 50%;
+          transform: translateX(-50%);
+          font-size: 3rem;
+          transition: all 1s ease;
+        }
+
+        .pigeon.free {
+          animation: pigeon-fly-free 2s ease-out infinite;
+        }
+
+        .pigeon.trapped {
+          animation: pigeon-struggle 1.5s ease-in-out infinite;
+        }
+
+        .lock {
+          position: absolute;
+          top: -0.5rem;
+          right: -0.5rem;
+          font-size: 2rem;
+          transition: all 0.5s;
+        }
+
+        .lock.broken {
+          transform: rotate(45deg) scale(0.8);
+          opacity: 0.5;
+        }
+
+        .phase-indicator {
+          text-align: center;
+          margin-bottom: 2rem;
+        }
+
+        .phase-indicator h3 {
+          font-family: 'Press Start 2P', monospace;
+          font-size: 1rem;
+          margin-bottom: 1rem;
+          color: white;
+        }
+
+        .progress-indicators {
+          display: flex;
+          justify-content: center;
+          gap: 1rem;
+        }
+
+        .phase-dot {
+          width: 50px;
+          height: 50px;
+          border-radius: 50%;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          font-family: 'Press Start 2P', monospace;
+          font-size: 0.8rem;
+          transition: all 0.3s;
+        }
+
+        .phase-dot.pending {
+          background: rgba(149, 165, 166, 0.5);
+          color: #bdc3c7;
+        }
+
+        .phase-dot.active {
+          background: #f39c12;
+          color: white;
+          animation: pulse 1s ease-in-out infinite alternate;
+        }
+
+        .phase-dot.completed {
+          background: #2ecc71;
+          color: white;
+        }
+
+        .action-area {
+          text-align: center;
+        }
+
+        .puzzle-trigger-btn {
+          background: linear-gradient(45deg, #3498db, #2ecc71);
+          color: white;
+          border: none;
+          padding: 1.5rem 3rem;
+          border-radius: 15px;
+          font-family: 'Press Start 2P', monospace;
+          font-size: 0.8rem;
+          cursor: pointer;
+          transition: all 0.3s;
+          box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+        }
+
+        .puzzle-trigger-btn:hover {
+          transform: translateY(-3px);
+          box-shadow: 0 8px 25px rgba(0, 0, 0, 0.4);
+        }
+
+        @keyframes bounce {
+          0% { transform: translateY(0); }
+          100% { transform: translateY(-10px); }
+        }
+
+        @keyframes andy-walk {
+          0% { transform: translateX(-10px); }
+          100% { transform: translateX(10px); }
+        }
+
+        @keyframes pigeon-struggle {
+          0%, 100% { transform: translateX(-50%) translateY(0); }
+          50% { transform: translateX(-50%) translateY(-5px); }
+        }
+
+        @keyframes lock-pulse {
+          0%, 100% { transform: scale(1); }
+          50% { transform: scale(1.1); }
+        }
+
+        @keyframes villain-hover {
+          0% { transform: translateY(0) rotate(-2deg); }
+          100% { transform: translateY(-15px) rotate(2deg); }
+        }
+
+        @keyframes progress-fill {
+          0% { width: 0; }
+          100% { width: 100%; }
+        }
+
+        @keyframes completion-pop {
+          0% { transform: scale(0); }
+          50% { transform: scale(1.3); }
+          100% { transform: scale(1); }
+        }
+
+        @keyframes pigeon-fly-free {
+          0%, 100% { transform: translateX(-50%) translateY(0); }
+          50% { transform: translateX(-50%) translateY(-20px); }
+        }
+
+        @keyframes pulse {
+          0% { transform: scale(1); }
+          100% { transform: scale(1.1); }
+        }
+
+        @media (max-width: 768px) {
+          .scene-elements {
+            flex-direction: column;
+            gap: 1rem;
+          }
+          
+          .network-elements {
+            flex-wrap: wrap;
+            justify-content: center;
+          }
+          
+          .character,
+          .device,
+          .packet,
+          .shield,
+          .cage {
+            font-size: 2.5rem;
+          }
+        }
+      `}</style>
     </div>
   );
 };

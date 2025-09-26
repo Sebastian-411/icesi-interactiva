@@ -1,557 +1,789 @@
-import React, { useState, useEffect, useCallback } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useGame } from '../../context/GameContext';
+import ProcessSchedulerPuzzle from '../puzzles/ProcessSchedulerPuzzle';
+import MemoryManagementPuzzle from '../puzzles/MemoryManagementPuzzle';
+import DeadlockBossPuzzle from '../puzzles/DeadlockBossPuzzle';
 
 const Level2Cave = () => {
   const { state, updateLevel2State, updateScore, showScreen } = useGame();
   
-  // Estados del juego
+  // Estados principales del nivel
+  const [currentPhase, setCurrentPhase] = useState('intro'); // intro, scheduler, memory, deadlock, completed
+  const [showIntroAnimation, setShowIntroAnimation] = useState(true);
+  const [showPuzzle, setShowPuzzle] = useState(false);
+  const [completedPuzzles, setCompletedPuzzles] = useState({
+    scheduler: false,
+    memory: false,
+    deadlock: false
+  });
+  const [timeElapsed, setTimeElapsed] = useState(0);
   const [gameStarted, setGameStarted] = useState(false);
-  const [playerPosition, setPlayerPosition] = useState({ x: 50, y: 20 });
-  const [playerVelocity, setPlayerVelocity] = useState({ x: 0, y: 0 });
-  const [isJumping, setIsJumping] = useState(false);
-  const [torchRadius, setTorchRadius] = useState(80); // Radio de visión inicial
-  const [cpuBlocks, setCpuBlocks] = useState([]);
-  const [ramFragments, setRamFragments] = useState([]);
-  const [rocks, setRocks] = useState([]);
-  const [bats, setBats] = useState([]);
-  const [traps, setTraps] = useState([]);
-  const [collectedCPU, setCollectedCPU] = useState(0);
-  const [collectedRAM, setCollectedRAM] = useState(0);
-  const [showIntro, setShowIntro] = useState(true);
-  const [currentMessage, setCurrentMessage] = useState('');
   const [showMessage, setShowMessage] = useState(false);
-  const [altarActivated, setAltarActivated] = useState(false);
-  const [batRescued, setBatRescued] = useState(false);
+  const [currentMessage, setCurrentMessage] = useState('');
 
-  // Constantes del juego
-  const GRAVITY = -0.8;
-  const JUMP_POWER = 12;
-  const GROUND_LEVEL = 20;
-  const WORLD_WIDTH = 1000;
-  const CAVE_HEIGHT = 400;
-  const ALTAR_X = 500;
-  const ALTAR_Y = 50;
+  // Timer para medir tiempo
+  useEffect(() => {
+    if (gameStarted && currentPhase !== 'completed') {
+      const timer = setInterval(() => {
+        setTimeElapsed(prev => prev + 1);
+      }, 1000);
+      return () => clearInterval(timer);
+    }
+  }, [gameStarted, currentPhase]);
 
-  // Mostrar mensaje temporal
-  const showTemporaryMessage = useCallback((message, duration = 3000) => {
-    setCurrentMessage(message);
-    setShowMessage(true);
-    setTimeout(() => {
-      setShowMessage(false);
-    }, duration);
-  }, []);
-
-  // Inicializar elementos del juego
+  // Inicializar el nivel
   useEffect(() => {
     if (!gameStarted) {
-      // Crear bloques de CPU
-      const initialCPU = [
-        { id: 1, x: 150, y: 100, collected: false },
-        { id: 2, x: 300, y: 150, collected: false },
-        { id: 3, x: 700, y: 120, collected: false },
-        { id: 4, x: 850, y: 180, collected: false }
-      ];
-      setCpuBlocks(initialCPU);
-
-      // Crear fragmentos de RAM
-      const initialRAM = [
-        { id: 1, x: 200, y: 200, collected: false },
-        { id: 2, x: 400, y: 250, collected: false },
-        { id: 3, x: 600, y: 300, collected: false },
-        { id: 4, x: 800, y: 220, collected: false }
-      ];
-      setRamFragments(initialRAM);
-
-      // Crear rocas que bloquean el paso
-      const initialRocks = [
-        { id: 1, x: 250, y: 50, pushable: true },
-        { id: 2, x: 450, y: 80, pushable: true },
-        { id: 3, x: 750, y: 60, pushable: true }
-      ];
-      setRocks(initialRocks);
-
-      // Crear murciélagos voladores
-      const initialBats = [
-        { id: 1, x: 180, y: 120, defeated: false },
-        { id: 2, x: 350, y: 180, defeated: false },
-        { id: 3, x: 650, y: 140, defeated: false }
-      ];
-      setBats(initialBats);
-
-      // Crear trampas (huecos negros)
-      const initialTraps = [
-        { id: 1, x: 320, y: 0, width: 40 },
-        { id: 2, x: 520, y: 0, width: 30 },
-        { id: 3, x: 720, y: 0, width: 35 }
-      ];
-      setTraps(initialTraps);
-
       setGameStarted(true);
+      // Mostrar intro animada por 30 segundos
+      setTimeout(() => {
+        setShowIntroAnimation(false);
+        startFirstPuzzle();
+      }, 5000); // Reducido para desarrollo, en producción sería 30000
     }
   }, [gameStarted]);
 
-  // Física del jugador
-  useEffect(() => {
-    if (!gameStarted) return;
+  // Funciones de utilidad
+  const showTemporaryMessage = (message, duration = 4000) => {
+    setCurrentMessage(message);
+    setShowMessage(true);
+    setTimeout(() => setShowMessage(false), duration);
+  };
+
+  const startFirstPuzzle = () => {
+    setCurrentPhase('scheduler');
+    showTemporaryMessage("¡Sin un sistema operativo que administre recursos, el caos reina aquí! Si quieres liberar al murciélago, deberás demostrar que entiendes cómo funciona un SO.", 6000);
+    setTimeout(() => {
+      setShowPuzzle(true);
+    }, 6000);
+  };
+
+  const handlePuzzleComplete = (puzzleType) => {
+    setShowPuzzle(false);
+    setCompletedPuzzles(prev => ({ ...prev, [puzzleType]: true }));
     
-    const gameLoop = setInterval(() => {
-      setPlayerPosition(prev => {
-        let newX = prev.x + playerVelocity.x;
-        let newY = prev.y + playerVelocity.y;
-        
-        // Límites horizontales
-        newX = Math.max(10, Math.min(WORLD_WIDTH - 10, newX));
-        
-        // Aplicar gravedad
-        if (newY <= GROUND_LEVEL) {
-          newY = GROUND_LEVEL;
-          if (isJumping) setIsJumping(false);
-          setPlayerVelocity(prevVel => ({ ...prevVel, y: 0 }));
-        } else {
-          setPlayerVelocity(prevVel => ({ ...prevVel, y: prevVel.y + GRAVITY }));
-        }
-        
-        return { x: newX, y: newY };
-      });
-    }, 16);
-    
-    return () => clearInterval(gameLoop);
-  }, [gameStarted, playerVelocity, GROUND_LEVEL, isJumping]);
-
-  // Controles del jugador
-  useEffect(() => {
-    const handleKeyPress = (e) => {
-      if (!gameStarted) return;
-      
-      switch(e.key) {
-        case 'ArrowLeft':
-        case 'a':
-        case 'A':
-          setPlayerVelocity(prev => ({ ...prev, x: -3 }));
-          break;
-        case 'ArrowRight':
-        case 'd':
-        case 'D':
-          setPlayerVelocity(prev => ({ ...prev, x: 3 }));
-          break;
-        case 'ArrowUp':
-        case 'w':
-        case 'W':
-        case ' ':
-          if (!isJumping && playerPosition.y <= GROUND_LEVEL) {
-            setPlayerVelocity(prev => ({ ...prev, y: JUMP_POWER }));
-            setIsJumping(true);
-          }
-          break;
-        case 'ArrowDown':
-        case 's':
-        case 'S':
-          // Empujar rocas
-          pushRock();
-          break;
-      }
-    };
-
-    const handleKeyRelease = (e) => {
-      if (!gameStarted) return;
-      
-      switch(e.key) {
-        case 'ArrowLeft':
-        case 'a':
-        case 'A':
-        case 'ArrowRight':
-        case 'd':
-        case 'D':
-          setPlayerVelocity(prev => ({ ...prev, x: 0 }));
-          break;
-      }
-    };
-
-    document.addEventListener('keydown', handleKeyPress);
-    document.addEventListener('keyup', handleKeyRelease);
-    
-    return () => {
-      document.removeEventListener('keydown', handleKeyPress);
-      document.removeEventListener('keyup', handleKeyRelease);
-    };
-  }, [gameStarted, isJumping, playerPosition.y]);
-
-  // Función para empujar rocas
-  const pushRock = () => {
-    const playerRect = {
-      x: playerPosition.x - 10,
-      y: playerPosition.y - 20,
-      width: 20,
-      height: 20
-    };
-
-    setRocks(prev => prev.map(rock => {
-      const rockRect = {
-        x: rock.x - 15,
-        y: rock.y - 15,
-        width: 30,
-        height: 30
-      };
-
-      if (isColliding(playerRect, rockRect) && rock.pushable) {
-        // Empujar roca hacia la derecha
-        const newX = Math.min(WORLD_WIDTH - 20, rock.x + 30);
-        showTemporaryMessage("¡Roca empujada! El camino está más despejado.");
-        return { ...rock, x: newX };
-      }
-      return rock;
-    }));
-  };
-
-  // Función de colisión
-  const isColliding = (rect1, rect2) => {
-    return rect1.x < rect2.x + rect2.width &&
-           rect1.x + rect1.width > rect2.x &&
-           rect1.y < rect2.y + rect2.height &&
-           rect1.y + rect1.height > rect2.y;
-  };
-
-  // Recolectar CPU
-  const collectCPU = (cpuId) => {
-    setCpuBlocks(prev => prev.filter(cpu => cpu.id !== cpuId));
-    setCollectedCPU(prev => prev + 1);
-    updateScore(150);
-    showTemporaryMessage("¡Bloque de CPU recolectado! Tu velocidad aumenta.");
-  };
-
-  // Recolectar RAM
-  const collectRAM = (ramId) => {
-    setRamFragments(prev => prev.filter(ram => ram.id !== ramId));
-    setCollectedRAM(prev => prev + 1);
-    setTorchRadius(prev => prev + 20); // Aumentar radio de visión
-    updateScore(100);
-    showTemporaryMessage("¡Fragmento de RAM recolectado! Tu visión se expande.");
-  };
-
-  // Activar altar
-  const activateAltar = () => {
-    if (collectedCPU >= 3 && collectedRAM >= 3 && !altarActivated) {
-      setAltarActivated(true);
-      showTemporaryMessage("¡El altar se activa! El Sistema Operativo despierta...");
-      
-      setTimeout(() => {
-        setBatRescued(true);
-        showTemporaryMessage("¡El Murciélago Guardián está libre! El sistema operativo funciona.");
-        
+    // Determinar siguiente fase
+    switch (puzzleType) {
+      case 'scheduler':
+        showTemporaryMessage("¡Excelente! Has dominado la planificación de procesos. Ahora necesitamos organizar la memoria...", 3000);
         setTimeout(() => {
-          updateLevel2State({ batRescued: true });
-          showScreen('level-summary-screen');
+          setCurrentPhase('memory');
+          setShowPuzzle(true);
         }, 3000);
-      }, 2000);
-    } else {
-      showTemporaryMessage(`Necesitas más recursos: ${collectedCPU}/3 CPU, ${collectedRAM}/3 RAM`);
+        break;
+        
+      case 'memory':
+        showTemporaryMessage("¡Perfecto! La memoria está optimizada. Ahora hay un último desafío: resolver el deadlock final...", 3000);
+        setTimeout(() => {
+          setCurrentPhase('deadlock');
+          setShowPuzzle(true);
+        }, 3000);
+        break;
+        
+      case 'deadlock':
+        completeLevel();
+          break;
+      }
+    };
+
+  const handlePuzzleClose = () => {
+    setShowPuzzle(false);
+    // Permitir volver a abrir el puzzle
+  };
+
+  const completeLevel = () => {
+    setCurrentPhase('completed');
+    const totalTime = timeElapsed;
+    let stars = 3;
+    if (totalTime > 400) stars = 2; // Más de 6.5 minutos
+    if (totalTime > 800) stars = 1; // Más de 13 minutos
+    
+    updateLevel2State({ 
+      batRescued: true, 
+      completionTime: totalTime,
+      stars: stars
+    });
+    
+    showTemporaryMessage("¡El murciélago está libre! Has demostrado que entiendes los sistemas operativos. ¡El sistema funciona perfectamente!", 5000);
+    
+    setTimeout(() => {
+      showScreen('level-summary-screen');
+    }, 5000);
+  };
+
+  // Renderizar la intro animada
+  const renderIntroAnimation = () => (
+    <div className="intro-animation">
+      <div className="animation-scene">
+        <div className="cave-background">
+          <div className="cave-entrance">🕳️🌑</div>
+          <div className="cave-stalactites">🪨🪨🪨🪨</div>
+        </div>
+        
+        <div className="characters">
+          <div className="andy-entrance">
+            <div className="andy-character">🐿️🔥</div>
+            <div className="andy-speech">¡Andy entra a la cueva con su antorcha!</div>
+          </div>
+          
+          <div className="trapped-bat-scene">
+            <div className="process-network">
+              <div className="frozen-processes">
+                <span className="frozen-process">🦇❄️</span>
+                <span className="frozen-process">🦇❄️</span>
+                <span className="frozen-process">🦇❄️</span>
+                <span className="frozen-process">🦇❄️</span>
+              </div>
+            </div>
+            <div className="trap-label">Murciélago atrapado en procesos congelados</div>
+          </div>
+        </div>
+        
+        <div className="villain-appearance">
+          <div className="villain-character">🦹‍♂️</div>
+          <div className="villain-speech">
+            <p>"¡Sin un sistema operativo que administre recursos, el caos reina aquí!"</p>
+            <p>"Si quieres liberar al murciélago, deberás demostrar que entiendes cómo funciona un SO."</p>
+          </div>
+        </div>
+      </div>
+      
+      <div className="intro-progress">
+        <div className="progress-bar">
+          <div className="progress-fill"></div>
+        </div>
+        <p>Iniciando sistemas operativos...</p>
+      </div>
+    </div>
+  );
+
+  // Renderizar el estado actual del juego
+  const renderGameState = () => {
+    if (showIntroAnimation) {
+      return renderIntroAnimation();
+    }
+
+    return (
+      <div className="cave-game-area">
+        <div className="cave-scene">
+          <div className="scene-elements">
+            <div className="andy-character">
+              <div className="character">🐿️🔥</div>
+              <div className="character-label">Andy</div>
+            </div>
+            
+            <div className="system-elements">
+              <div className={`cpu-scheduler ${completedPuzzles.scheduler ? 'active' : 'inactive'}`}>
+                <div className="system-icon">⚙️</div>
+                <div className="system-label">Planificador</div>
+                {completedPuzzles.scheduler && <div className="completion-check">✅</div>}
+              </div>
+              
+              <div className={`memory-manager ${completedPuzzles.memory ? 'active' : 'inactive'}`}>
+                <div className="system-icon">💾</div>
+                <div className="system-label">Memoria</div>
+                {completedPuzzles.memory && <div className="completion-check">✅</div>}
+              </div>
+              
+              
+              <div className={`deadlock-resolver ${completedPuzzles.deadlock ? 'active' : 'inactive'}`}>
+                <div className="system-icon">🔓</div>
+                <div className="system-label">Deadlock</div>
+                {completedPuzzles.deadlock && <div className="completion-check">✅</div>}
+              </div>
+            </div>
+            
+            <div className="bat-area">
+              <div className={`bat-container ${currentPhase === 'completed' ? 'freed' : 'trapped'}`}>
+                <div className="cave-chamber">🏛️</div>
+                <div className={`bat ${currentPhase === 'completed' ? 'free' : 'frozen'}`}>
+                  {currentPhase === 'completed' ? '🦇✨' : '🦇❄️'}
+                </div>
+                <div className={`system-lock ${currentPhase === 'completed' ? 'unlocked' : 'locked'}`}>
+                  {currentPhase === 'completed' ? '🔓' : '🔒'}
+                </div>
+              </div>
+              <div className="bat-label">
+                {currentPhase === 'completed' ? '¡Murciélago libre!' : 'Murciélago congelado'}
+              </div>
+            </div>
+          </div>
+
+          <div className="phase-indicator">
+            <h3>📍 Fase Actual: {getCurrentPhaseDescription()}</h3>
+            <div className="progress-indicators">
+              <div className={`phase-dot ${completedPuzzles.scheduler ? 'completed' : currentPhase === 'scheduler' ? 'active' : 'pending'}`}>1</div>
+              <div className={`phase-dot ${completedPuzzles.memory ? 'completed' : currentPhase === 'memory' ? 'active' : 'pending'}`}>2</div>
+              <div className={`phase-dot ${completedPuzzles.deadlock ? 'completed' : currentPhase === 'deadlock' ? 'active' : 'pending'}`}>👑</div>
+            </div>
+          </div>
+
+          {!showPuzzle && currentPhase !== 'completed' && (
+            <div className="action-area">
+              <button 
+                className="puzzle-trigger-btn"
+                onClick={() => setShowPuzzle(true)}
+              >
+                {getPuzzleButtonText()}
+              </button>
+          </div>
+          )}
+        </div>
+      </div>
+    );
+  };
+
+  const getCurrentPhaseDescription = () => {
+    switch (currentPhase) {
+      case 'scheduler': return 'Cola de Procesos';
+      case 'memory': return 'Gestión de Memoria';
+      case 'deadlock': return 'Resolución de Deadlock';
+      case 'completed': return '¡Nivel Completado!';
+      default: return 'Iniciando...';
     }
   };
 
-  if (!gameStarted) {
-    return <div>Cargando cueva...</div>;
-  }
+  const getPuzzleButtonText = () => {
+    switch (currentPhase) {
+      case 'scheduler': return '⚙️ Organizar Procesos';
+      case 'memory': return '💾 Gestionar Memoria';
+      case 'deadlock': return '🔓 Resolver Deadlock';
+      default: return '🎮 Continuar';
+    }
+  };
 
   return (
-    <div className="level-container" style={{ 
-      position: 'relative', 
-      width: '100%', 
-      height: '100%',
-      background: 'linear-gradient(180deg, #1a1a2e 0%, #16213e 50%, #0f3460 100%)',
-      overflow: 'hidden'
-    }}>
-      {/* Intro */}
-      {showIntro && (
-        <div style={{ 
-          position: 'absolute', 
-          inset: 0, 
-          background: 'rgba(0,0,0,0.9)', 
-          color: 'white', 
-          display: 'flex', 
-          alignItems: 'center', 
-          justifyContent: 'center', 
-          zIndex: 20 
-        }}>
-          <div style={{ maxWidth: '720px', textAlign: 'center', padding: '1.5rem' }}>
-            <h2 style={{ fontFamily: 'Press Start 2P, monospace', fontSize: '1rem', marginBottom: '1rem' }}>
-              🌑 Cueva de Sistemas
-            </h2>
-            <p style={{ fontFamily: 'Press Start 2P, monospace', fontSize: '0.7rem', lineHeight: 1.6 }}>
-              En lo profundo de esta cueva descansa el Murciélago, guardián de los Sistemas Operativos. 
-              Recolecta recursos (CPU ⚙️ y RAM 💾) para activar el altar y liberarlo.
-            </p>
-            <p style={{ fontFamily: 'Press Start 2P, monospace', fontSize: '0.6rem', marginTop: '1rem', color: '#ffd700' }}>
-              Controles: ← → para mover, ESPACIO para saltar, ↓ para empujar rocas
-            </p>
-            <button 
-              onClick={() => setShowIntro(false)} 
-              className="btn-primary" 
-              style={{ marginTop: '1.2rem' }}
-            >
-              Entrar a la Cueva
-            </button>
-          </div>
-        </div>
-      )}
-
-      {/* Cueva principal */}
-      {!showIntro && (
-        <div style={{ position: 'relative', width: '100%', height: '100%' }}>
-          {/* Suelo de la cueva */}
-          <div style={{ 
-            position: 'absolute', 
-            left: 0, 
-            right: 0, 
-            bottom: 0, 
-            height: '40px', 
-            background: 'linear-gradient(90deg, #2c3e50, #34495e, #2c3e50)',
-            borderTop: '2px solid #7f8c8d'
-          }} />
-
-          {/* Estalactitas (teclas rotas) */}
-          {[...Array(8)].map((_, i) => (
-            <div 
-              key={i} 
-              style={{ 
-                position: 'absolute', 
-                left: `${100 + i * 100}px`, 
-                top: '20px', 
-                width: '20px', 
-                height: '60px', 
-                background: 'linear-gradient(180deg, #95a5a6, #7f8c8d)', 
-                borderRadius: '10px 10px 0 0',
-                boxShadow: '0 0 10px rgba(149,165,166,0.5)'
-              }} 
-            />
-          ))}
-
-          {/* Trampas (huecos negros) */}
-          {traps.map(trap => (
-            <div 
-              key={trap.id} 
-              style={{ 
-                position: 'absolute', 
-                left: `${trap.x}px`, 
-                bottom: '40px', 
-                width: `${trap.width}px`, 
-                height: '40px', 
-                background: 'black',
-                borderRadius: '0 0 20px 20px'
-              }} 
-            />
-          ))}
-
-          {/* Rocas empujables */}
-          {rocks.map(rock => (
-            <div 
-              key={rock.id} 
-              style={{ 
-                position: 'absolute', 
-                left: `${rock.x}px`, 
-                bottom: `${rock.y}px`, 
-                width: '30px', 
-                height: '30px', 
-                background: 'linear-gradient(45deg, #7f8c8d, #95a5a6)', 
-                borderRadius: '5px',
-                cursor: 'pointer',
-                boxShadow: '0 2px 8px rgba(0,0,0,0.3)'
-              }} 
-              title="Roca - Presiona ↓ para empujar"
-            />
-          ))}
-
-          {/* Murciélagos voladores */}
-          {bats.filter(bat => !bat.defeated).map(bat => (
-            <div 
-              key={bat.id} 
-              style={{ 
-                position: 'absolute', 
-                left: `${bat.x}px`, 
-                bottom: `${bat.y}px`, 
-                fontSize: '1.2rem',
-                animation: 'batFly 2s ease-in-out infinite',
-                animationDelay: `${bat.id * 0.5}s`
-              }}
-            >
-              🦇
-            </div>
-          ))}
-
-          {/* Bloques de CPU */}
-          {cpuBlocks.filter(cpu => !cpu.collected).map(cpu => (
-            <div 
-              key={cpu.id} 
-              onClick={() => collectCPU(cpu.id)}
-              style={{ 
-                position: 'absolute', 
-                left: `${cpu.x}px`, 
-                bottom: `${cpu.y}px`, 
-                fontSize: '1.2rem', 
-                cursor: 'pointer',
-                textShadow: '0 0 10px rgba(52,152,219,0.8)',
-                animation: 'cpuGlow 1.5s ease-in-out infinite'
-              }}
-              title="Bloque de CPU - Aumenta velocidad"
-            >
-              ⚙️
-            </div>
-          ))}
-
-          {/* Fragmentos de RAM */}
-          {ramFragments.filter(ram => !ram.collected).map(ram => (
-            <div 
-              key={ram.id} 
-              onClick={() => collectRAM(ram.id)}
-              style={{ 
-                position: 'absolute', 
-                left: `${ram.x}px`, 
-                bottom: `${ram.y}px`, 
-                fontSize: '1.2rem', 
-                cursor: 'pointer',
-                textShadow: '0 0 10px rgba(155,89,182,0.8)',
-                animation: 'ramGlow 1.5s ease-in-out infinite'
-              }}
-              title="Fragmento de RAM - Expande visión"
-            >
-              💾
-            </div>
-          ))}
-
-          {/* Altar del Sistema Operativo */}
-          <div 
-            onClick={activateAltar}
-            style={{ 
-              position: 'absolute', 
-              left: `${ALTAR_X}px`, 
-              bottom: `${ALTAR_Y}px`, 
-              width: '80px', 
-              height: '60px', 
-              background: altarActivated ? 
-                'linear-gradient(45deg, #f39c12, #e67e22)' : 
-                'linear-gradient(45deg, #7f8c8d, #95a5a6)', 
-              borderRadius: '10px', 
-              display: 'flex', 
-              alignItems: 'center', 
-              justifyContent: 'center', 
-              fontSize: '1.5rem', 
-              cursor: 'pointer',
-              boxShadow: altarActivated ? 
-                '0 0 20px rgba(243,156,18,0.8)' : 
-                '0 0 10px rgba(0,0,0,0.3)',
-              border: altarActivated ? '2px solid #e67e22' : '2px solid #7f8c8d'
-            }}
-            title="Altar del Sistema Operativo - Activa con recursos"
-          >
-            {altarActivated ? '⚡' : '🖥️'}
-          </div>
-
-          {/* Murciélago Guardián */}
-          <div 
-            style={{ 
-              position: 'absolute', 
-              left: `${ALTAR_X + 100}px`, 
-              bottom: `${ALTAR_Y + 20}px`, 
-              fontSize: '2rem',
-              opacity: batRescued ? 1 : 0.3,
-              animation: batRescued ? 'batRescue 2s ease-out' : 'none',
-              textShadow: batRescued ? '0 0 20px rgba(52,152,219,0.8)' : 'none'
-            }}
-          >
-            🦇
-          </div>
-
-          {/* Jugador (Andy con antorcha) */}
-          <div style={{ 
-            position: 'absolute', 
-            left: `${playerPosition.x}px`, 
-            bottom: `${playerPosition.y}px`, 
-            fontSize: '1.6rem',
-            transition: 'transform 120ms',
-            textShadow: '0 0 15px rgba(255,193,7,0.8)'
-          }}>
-            🐿️🔥
-          </div>
-
-          {/* Efecto de visión limitada (círculo de luz) */}
-          <div 
-            style={{ 
-              position: 'absolute', 
-              left: `${playerPosition.x - torchRadius}px`, 
-              bottom: `${playerPosition.y - torchRadius}px`, 
-              width: `${torchRadius * 2}px`, 
-              height: `${torchRadius * 2}px`, 
-              background: `radial-gradient(circle, transparent 0%, transparent 70%, rgba(0,0,0,0.8) 100%)`,
-              borderRadius: '50%',
-              pointerEvents: 'none',
-              zIndex: 5
-            }} 
-          />
-        </div>
-      )}
-
+    <div className="level2-cave-new">
       {/* HUD */}
-      <div style={{ 
-        position: 'absolute', 
-        top: 10, 
-        left: 10, 
-        zIndex: 10, 
-        color: 'white', 
-        fontFamily: 'Press Start 2P, monospace', 
-        fontSize: '0.6rem', 
-        textShadow: '0 2px 6px rgba(0,0,0,0.6)' 
-      }}>
-        <div>CPU: {collectedCPU}/3</div>
-        <div>RAM: {collectedRAM}/3</div>
-        <div>Visión: {torchRadius}px</div>
+      <div className="level-hud">
+        <div className="progress-indicator">
+          Progreso: {Object.values(completedPuzzles).filter(Boolean).length}/3
+        </div>
+        <div className="time-indicator">
+          Tiempo: {Math.floor(timeElapsed / 60)}:{(timeElapsed % 60).toString().padStart(2, '0')}
       </div>
 
-      {/* Botón de desarrollo - Pasar a siguiente nivel */}
+        {/* Botón de desarrollo */}
       <button 
-        onClick={() => {
-          console.log('🚀 Modo desarrollo: Pasando al siguiente nivel');
-          updateLevel2State({ batRescued: true });
-          showScreen('level-summary-screen');
-        }}
-        style={{ 
-          position: 'absolute', 
-          top: 10, 
-          right: 10, 
-          zIndex: 10, 
-          background: 'rgba(255, 193, 7, 0.9)', 
-          color: 'black', 
-          border: '2px solid #ffc107', 
-          borderRadius: '5px', 
-          padding: '0.5rem 1rem', 
-          fontFamily: 'Press Start 2P, monospace', 
-          fontSize: '0.5rem', 
-          cursor: 'pointer',
-          boxShadow: '0 0 10px rgba(255, 193, 7, 0.5)'
-        }}
-        title="Modo desarrollo - Saltar al siguiente nivel"
-      >
-        🚀 SIGUIENTE NIVEL
+          className="dev-skip-btn"
+          onClick={() => completeLevel()}
+          title="Modo desarrollo - Completar nivel"
+        >
+          🚀 COMPLETAR
       </button>
+      </div>
 
-      {/* Mensajes */}
+      {/* Mensaje temporal */}
       {showMessage && (
-        <div style={{ 
-          position: 'absolute', 
-          top: '50%', 
-          left: '50%', 
-          transform: 'translate(-50%, -50%)', 
-          background: 'rgba(0,0,0,0.8)', 
-          color: '#ffd700', 
-          padding: '1rem 2rem', 
-          borderRadius: '10px', 
-          fontFamily: 'Press Start 2P, monospace', 
-          fontSize: '0.6rem', 
-          zIndex: 15, 
-          textAlign: 'center', 
-          border: '2px solid #ffd700' 
-        }}>
+        <div className="story-message-overlay">
+          <div className="andy-avatar">🐿️🔥</div>
+          <div className="message-bubble">
           {currentMessage}
+          </div>
         </div>
       )}
+
+      {/* Área principal del juego */}
+      <div className="game-main-area">
+        {renderGameState()}
+      </div>
+
+      {/* Puzzles */}
+      {showPuzzle && currentPhase === 'scheduler' && (
+        <ProcessSchedulerPuzzle 
+          onComplete={() => handlePuzzleComplete('scheduler')}
+          onClose={handlePuzzleClose}
+        />
+      )}
+      
+      {showPuzzle && currentPhase === 'memory' && (
+        <MemoryManagementPuzzle 
+          onComplete={() => handlePuzzleComplete('memory')}
+          onClose={handlePuzzleClose}
+        />
+      )}
+      
+      
+      {showPuzzle && currentPhase === 'deadlock' && (
+        <DeadlockBossPuzzle 
+          onComplete={() => handlePuzzleComplete('deadlock')}
+          onClose={handlePuzzleClose}
+        />
+      )}
+
+      <style>{`
+        .level2-cave-new {
+          width: 100%;
+          height: 100vh;
+          background: linear-gradient(135deg, #2c3e50 0%, #34495e 50%, #1a1a2e 100%);
+          position: relative;
+          overflow: hidden;
+        }
+
+        .level-hud {
+          position: absolute;
+          top: 1rem;
+          left: 1rem;
+          right: 1rem;
+          display: flex;
+          justify-content: space-between;
+          align-items: center;
+          background: rgba(44, 62, 80, 0.9);
+          padding: 1rem;
+          border-radius: 10px;
+          font-family: 'Press Start 2P', monospace;
+          font-size: 0.7rem;
+          z-index: 100;
+          color: white;
+        }
+
+        .dev-skip-btn {
+          background: #e74c3c;
+          color: white;
+          border: none;
+          padding: 0.5rem 1rem;
+          border-radius: 5px;
+          font-family: 'Press Start 2P', monospace;
+          font-size: 0.6rem;
+          cursor: pointer;
+        }
+
+        .story-message-overlay {
+          position: absolute;
+          bottom: 2rem;
+          left: 2rem;
+          right: 2rem;
+          display: flex;
+          align-items: center;
+          gap: 1rem;
+          background: rgba(44, 62, 80, 0.9);
+          padding: 1.5rem;
+          border-radius: 15px;
+          z-index: 200;
+        }
+
+        .andy-avatar {
+          font-size: 3rem;
+          animation: torch-flicker 2s ease-in-out infinite alternate;
+        }
+
+        .message-bubble {
+          background: rgba(236, 240, 241, 0.95);
+          color: #2c3e50;
+          padding: 1rem;
+          border-radius: 10px;
+          font-family: 'Press Start 2P', monospace;
+          font-size: 0.7rem;
+          line-height: 1.4;
+          flex: 1;
+        }
+
+        .game-main-area {
+          width: 100%;
+          height: 100%;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          padding: 6rem 2rem 2rem 2rem;
+        }
+
+        .intro-animation {
+          text-align: center;
+          color: white;
+          width: 100%;
+          max-width: 900px;
+        }
+
+        .animation-scene {
+          background: rgba(0, 0, 0, 0.8);
+          padding: 3rem;
+          border-radius: 20px;
+          margin-bottom: 2rem;
+          border: 2px solid #34495e;
+        }
+
+        .cave-background {
+          font-size: 3rem;
+          margin-bottom: 2rem;
+          display: flex;
+          justify-content: center;
+          gap: 2rem;
+        }
+
+        .cave-entrance {
+          animation: cave-echo 3s ease-in-out infinite;
+        }
+
+        .cave-stalactites {
+          animation: stalactite-drip 4s ease-in-out infinite;
+        }
+
+        .characters {
+          display: flex;
+          justify-content: space-between;
+          align-items: center;
+          margin-bottom: 2rem;
+        }
+
+        .andy-entrance {
+          text-align: center;
+        }
+
+        .andy-character {
+          font-size: 4rem;
+          margin-bottom: 1rem;
+          animation: torch-walk 2s ease-in-out infinite alternate;
+        }
+
+        .andy-speech {
+          font-family: 'Press Start 2P', monospace;
+          font-size: 0.7rem;
+          background: rgba(52, 152, 219, 0.2);
+          padding: 0.5rem;
+          border-radius: 8px;
+        }
+
+        .trapped-bat-scene {
+          text-align: center;
+          position: relative;
+        }
+
+        .process-network {
+          font-size: 3rem;
+          position: relative;
+          margin-bottom: 1rem;
+        }
+
+        .frozen-processes {
+          display: flex;
+          justify-content: center;
+          gap: 1rem;
+          margin-bottom: 1rem;
+        }
+
+        .frozen-process {
+          font-size: 2rem;
+          animation: frozen-struggle 2s ease-in-out infinite;
+        }
+
+        .frozen-process:nth-child(2) { animation-delay: 0.3s; }
+        .frozen-process:nth-child(3) { animation-delay: 0.6s; }
+        .frozen-process:nth-child(4) { animation-delay: 0.9s; }
+
+        .trap-label {
+          font-family: 'Press Start 2P', monospace;
+          font-size: 0.6rem;
+          color: #e74c3c;
+        }
+
+        .villain-appearance {
+          text-align: center;
+          margin-top: 2rem;
+        }
+
+        .villain-character {
+          font-size: 4rem;
+          margin-bottom: 1rem;
+          animation: villain-menace 2s ease-in-out infinite alternate;
+        }
+
+        .villain-speech {
+          background: rgba(231, 76, 60, 0.8);
+          padding: 1rem;
+          border-radius: 10px;
+          font-family: 'Press Start 2P', monospace;
+          font-size: 0.6rem;
+          line-height: 1.4;
+        }
+
+        .villain-speech p {
+          margin-bottom: 0.5rem;
+        }
+
+        .intro-progress {
+          text-align: center;
+        }
+
+        .progress-bar {
+          width: 400px;
+          height: 20px;
+          background: rgba(255, 255, 255, 0.3);
+          border-radius: 10px;
+          margin: 0 auto 1rem auto;
+          overflow: hidden;
+        }
+
+        .progress-fill {
+          height: 100%;
+          background: linear-gradient(90deg, #9b59b6, #3498db);
+          width: 0;
+          animation: progress-fill 5s ease-out forwards;
+        }
+
+        .intro-progress p {
+          font-family: 'Press Start 2P', monospace;
+          font-size: 0.7rem;
+          color: white;
+        }
+
+        .cave-game-area {
+          width: 100%;
+          max-width: 1000px;
+          color: white;
+        }
+
+        .cave-scene {
+          background: rgba(44, 62, 80, 0.8);
+          padding: 3rem;
+          border-radius: 20px;
+          border: 2px solid #7f8c8d;
+        }
+
+        .scene-elements {
+          display: flex;
+          justify-content: space-between;
+          align-items: center;
+          margin-bottom: 3rem;
+          flex-wrap: wrap;
+          gap: 2rem;
+        }
+
+        .andy-character,
+        .bat-area {
+          text-align: center;
+        }
+
+        .character,
+        .system-icon,
+        .cave-chamber {
+          font-size: 4rem;
+          margin-bottom: 0.5rem;
+        }
+
+        .character-label,
+        .system-label,
+        .bat-label {
+          font-family: 'Press Start 2P', monospace;
+          font-size: 0.6rem;
+          color: #ecf0f1;
+        }
+
+        .system-elements {
+          display: flex;
+          gap: 2rem;
+          align-items: center;
+          flex-wrap: wrap;
+        }
+
+        .cpu-scheduler,
+        .memory-manager,
+        .deadlock-resolver {
+          text-align: center;
+          position: relative;
+          padding: 1rem;
+          border-radius: 10px;
+          transition: all 0.3s;
+        }
+
+        .cpu-scheduler.active,
+        .memory-manager.active,
+        .deadlock-resolver.active {
+          background: rgba(46, 204, 113, 0.2);
+          border: 2px solid #2ecc71;
+        }
+
+        .cpu-scheduler.inactive,
+        .memory-manager.inactive,
+        .deadlock-resolver.inactive {
+          background: rgba(149, 165, 166, 0.2);
+          border: 2px solid #95a5a6;
+        }
+
+        .completion-check {
+          position: absolute;
+          top: -0.5rem;
+          right: -0.5rem;
+          font-size: 1.5rem;
+          animation: completion-pop 0.5s ease-out;
+        }
+
+        .bat-container {
+          position: relative;
+          text-align: center;
+        }
+
+        .bat {
+          position: absolute;
+          top: 1rem;
+          left: 50%;
+          transform: translateX(-50%);
+          font-size: 3rem;
+          transition: all 1s ease;
+        }
+
+        .bat.free {
+          animation: bat-freedom 2s ease-out infinite;
+        }
+
+        .bat.frozen {
+          animation: frozen-struggle 1.5s ease-in-out infinite;
+        }
+
+        .system-lock {
+          position: absolute;
+          top: -0.5rem;
+          right: -0.5rem;
+          font-size: 2rem;
+          transition: all 0.5s;
+        }
+
+        .system-lock.unlocked {
+          transform: rotate(45deg) scale(0.8);
+          opacity: 0.5;
+        }
+
+        .phase-indicator {
+          text-align: center;
+          margin-bottom: 2rem;
+        }
+
+        .phase-indicator h3 {
+          font-family: 'Press Start 2P', monospace;
+          font-size: 1rem;
+          margin-bottom: 1rem;
+          color: white;
+        }
+
+        .progress-indicators {
+          display: flex;
+          justify-content: center;
+          gap: 1rem;
+        }
+
+        .phase-dot {
+          width: 50px;
+          height: 50px;
+          border-radius: 50%;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          font-family: 'Press Start 2P', monospace;
+          font-size: 0.8rem;
+          transition: all 0.3s;
+        }
+
+        .phase-dot.pending {
+          background: rgba(149, 165, 166, 0.5);
+          color: #bdc3c7;
+        }
+
+        .phase-dot.active {
+          background: #9b59b6;
+          color: white;
+          animation: pulse 1s ease-in-out infinite alternate;
+        }
+
+        .phase-dot.completed {
+          background: #2ecc71;
+          color: white;
+        }
+
+        .action-area {
+          text-align: center;
+        }
+
+        .puzzle-trigger-btn {
+          background: linear-gradient(45deg, #9b59b6, #3498db);
+          color: white;
+          border: none;
+          padding: 1.5rem 3rem;
+          border-radius: 15px;
+          font-family: 'Press Start 2P', monospace;
+          font-size: 0.8rem;
+          cursor: pointer;
+          transition: all 0.3s;
+          box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+        }
+
+        .puzzle-trigger-btn:hover {
+          transform: translateY(-3px);
+          box-shadow: 0 8px 25px rgba(0, 0, 0, 0.4);
+        }
+
+        @keyframes torch-flicker {
+          0% { filter: brightness(1); }
+          100% { filter: brightness(1.3) drop-shadow(0 0 10px #f39c12); }
+        }
+
+        @keyframes torch-walk {
+          0% { transform: translateX(-10px); }
+          100% { transform: translateX(10px); }
+        }
+
+        @keyframes frozen-struggle {
+          0%, 100% { transform: scale(1) rotate(0deg); }
+          50% { transform: scale(0.9) rotate(-2deg); }
+        }
+
+        @keyframes cave-echo {
+          0%, 100% { transform: scale(1); }
+          50% { transform: scale(1.05); }
+        }
+
+        @keyframes stalactite-drip {
+          0%, 90%, 100% { transform: translateY(0); }
+          5% { transform: translateY(2px); }
+        }
+
+        @keyframes villain-menace {
+          0% { transform: translateY(0) rotate(-2deg); }
+          100% { transform: translateY(-15px) rotate(2deg); }
+        }
+
+        @keyframes progress-fill {
+          0% { width: 0; }
+          100% { width: 100%; }
+        }
+
+        @keyframes completion-pop {
+          0% { transform: scale(0); }
+          50% { transform: scale(1.3); }
+          100% { transform: scale(1); }
+        }
+
+        @keyframes bat-freedom {
+          0%, 100% { transform: translateX(-50%) translateY(0); }
+          50% { transform: translateX(-50%) translateY(-20px); }
+        }
+
+        @keyframes pulse {
+          0% { transform: scale(1); }
+          100% { transform: scale(1.1); }
+        }
+
+        @media (max-width: 768px) {
+          .scene-elements {
+            flex-direction: column;
+            gap: 1rem;
+          }
+          
+          .system-elements {
+            flex-wrap: wrap;
+            justify-content: center;
+          }
+          
+          .character,
+          .system-icon,
+          .cave-chamber {
+            font-size: 2.5rem;
+          }
+          
+          .characters {
+            flex-direction: column;
+            gap: 2rem;
+          }
+        }
+      `}</style>
     </div>
   );
 };

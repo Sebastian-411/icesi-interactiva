@@ -7,10 +7,11 @@ const WorldMapScreen = ({ isActive }) => {
   const [currentTutorialStep, setCurrentTutorialStep] = useState(1);
 
   const levels = [
-    { id: 1, name: 'Jardín de Redes', friend: '🕊️', icon: '🏠', biome: 'garden', unlocked: true },
-    { id: 2, name: 'Cueva de Sistemas', friend: '🦇', icon: '🌑', biome: 'cave', unlocked: state.completedLevels.length >= 1 },
-    { id: 3, name: 'Pantano de Datos', friend: '🦎', icon: '💧', biome: 'swamp', unlocked: state.completedLevels.length >= 2 },
-    { id: 4, name: 'Pico de Software', friend: '🐾', icon: '🌪️', biome: 'peak', unlocked: state.completedLevels.length >= 3 }
+    // Iconos únicos solicitados: árbol con antena, cueva con murciélago, charco verdoso con iguana, montaña con engranaje
+    { id: 1, name: 'Jardín de Redes', friend: '🕊️', icon: '🌳📡', biome: 'garden', unlocked: true },
+    { id: 2, name: 'Cueva de Sistemas', friend: '🦇', icon: '🕳️🦇', biome: 'cave', unlocked: state.completedLevels.length >= 1 },
+    { id: 3, name: 'Pantano de Datos', friend: '🦎', icon: '💧🦎', biome: 'swamp', unlocked: state.completedLevels.length >= 2 },
+    { id: 4, name: 'Pico de Software', friend: '🐾', icon: '⛰️⚙️', biome: 'peak', unlocked: state.completedLevels.length >= 3 }
   ];
 
   const handleLevelClick = (level) => {
@@ -137,21 +138,11 @@ const WorldMapScreen = ({ isActive }) => {
           <div className="peak-platforms"></div>
         </div>
         
-        {/* Torre ICESI Central */}
+        {/* Torre ICESI Central (decorativa, no clickeable) */}
         <div 
-          className={`central-icesi-tower ${state.completedLevels.length >= 4 ? 'tower-activated' : ''}`}
-          onClick={() => {
-            if (state.completedLevels.length >= 4) {
-              console.log('🏛️ Accediendo a la Torre Final');
-              setLevel(5); // Nivel 5 será la torre final
-              showScreen('level-screen');
-            } else {
-              alert(`¡Debes completar todos los niveles primero! Progreso: ${state.completedLevels.length}/4`);
-            }
-          }}
+          className={`central-icesi-tower decorative ${state.completedLevels.length >= 4 ? 'tower-activated' : ''}`}
           style={{
-            cursor: state.completedLevels.length >= 4 ? 'pointer' : 'not-allowed',
-            filter: state.completedLevels.length >= 4 ? 'brightness(1.3)' : 'brightness(0.8)'
+            cursor: 'not-allowed'
           }}
         >
           <div className="tower-base-large"></div>
@@ -159,23 +150,15 @@ const WorldMapScreen = ({ isActive }) => {
           <div className="tower-top-large"></div>
           <div className="icesi-text-large">ICESI</div>
           <div className="tower-clock-large"></div>
-          <div className={`tower-glow-effect ${state.completedLevels.length >= 4 ? 'tower-final-glow' : ''}`}></div>
+          <div className={`tower-glow-effect ${state.completedLevels.length >= 4 ? 'tower-final-glow' : 'tower-red-glow'}`}></div>
+          {/* Barrera mágica / niebla para recordar que no se entra desde el mapa */}
+          <div className={`tower-barrier ${state.completedLevels.length >= 4 ? 'barrier-weak' : 'barrier-strong'}`}></div>
           
-          {/* Indicador de acceso */}
-          {state.completedLevels.length >= 4 && (
-            <div className="tower-access-indicator">
-              <div className="access-icon">⚡</div>
-              <div className="access-text">¡TORRE ACTIVADA!</div>
-            </div>
-          )}
-          
-          {/* Andy atrapado en la torre */}
-          {state.completedLevels.length >= 4 && (
-            <div className="andy-trapped">
-              <div className="andy-icon">🐿️</div>
-              <div className="help-text">¡AYUDA!</div>
-            </div>
-          )}
+          {/* Andy atrapado como recordatorio narrativo */}
+          <div className="andy-trapped">
+            <div className="andy-icon">🐿️</div>
+            <div className="help-text">¡AYUDA!</div>
+          </div>
         </div>
       </div>
       
@@ -240,11 +223,21 @@ const WorldMapScreen = ({ isActive }) => {
         <div className="andy-shadow"></div>
       </div>
       
-      {/* Título del mapa */}
+      {/* Título del mapa + caritas de amigos como progreso */}
       <div className="map-header">
         <h2 className="adventure-title">¡Rescata a los Amigos de Andy!</h2>
-        <div className="progress-indicator">
-          <span className="rescued-count">{state.completedLevels.length}</span> / 4 amigos rescatados
+        <div className="friends-progress">
+          {[
+            { id: 1, face: '🕊️' },
+            { id: 2, face: '🦇' },
+            { id: 3, face: '🦎' },
+            { id: 4, face: '🐾' },
+          ].map(({ id, face }) => {
+            const rescued = state.completedLevels.includes(id);
+            return (
+              <span key={id} className={`friend-face ${rescued ? 'rescued' : 'pending'}`}>{face}</span>
+            );
+          })}
         </div>
         <div className="gamification-stats">
           <div className="stat-item">
@@ -321,3 +314,8 @@ const WorldMapScreen = ({ isActive }) => {
 };
 
 export default WorldMapScreen;
+/* Inline styles for decorative tower and map enhancements */
+/* Keeping styles here for clarity; consider moving to CSS file if preferred */
+// Note: This component relies on existing CSS in public/styles.css.
+// The following classes add only the new visual states requested.
+

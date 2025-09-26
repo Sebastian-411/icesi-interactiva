@@ -577,7 +577,7 @@ const Level5TowerFinal = () => {
         </div>
       )}
       
-      <style jsx>{`
+      <style>{`
         @keyframes grid-move {
           0% { background-position: 0 0; }
           100% { background-position: 20px 20px; }

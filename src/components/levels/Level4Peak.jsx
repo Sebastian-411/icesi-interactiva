@@ -1,513 +1,261 @@
-import React, { useState, useEffect, useCallback } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useGame } from '../../context/GameContext';
+import ProgrammingMazePuzzle from '../puzzles/ProgrammingMazePuzzle';
+import './Level4Peak.css';
 
 const Level4Peak = () => {
-  const { state, updateScore, updateLevel4State, showScreen } = useGame();
+  const { state, updateLevel4State, updateScore, showScreen } = useGame();
   
-  // Verificar que las funciones necesarias estén disponibles
-  if (!updateLevel4State) {
-    console.error('updateLevel4State no está disponible');
-    return <div>Error: Funciones del juego no disponibles</div>;
-  }
-  
-  // Estado local del nivel
+  // Estados principales del nivel
+  const [currentPhase, setCurrentPhase] = useState('intro'); // intro, programming, completed
+  const [showIntroAnimation, setShowIntroAnimation] = useState(true);
+  const [showPuzzle, setShowPuzzle] = useState(false);
+  const [completedPuzzles, setCompletedPuzzles] = useState({
+    programming: false
+  });
+  const [timeElapsed, setTimeElapsed] = useState(0);
   const [gameStarted, setGameStarted] = useState(false);
-  const [playerPosition, setPlayerPosition] = useState({ x: 50, y: 100 });
-  const [isJumping, setIsJumping] = useState(false);
-  const [jumpVelocity, setJumpVelocity] = useState(0);
-  const [onPlatform, setOnPlatform] = useState(true);
-  const [message, setMessage] = useState('');
-  const [windDirection, setWindDirection] = useState('right');
-  const [windStrength, setWindStrength] = useState(1);
-  
-  // Elementos del nivel
-  const [modules, setModules] = useState([
-    { id: 1, x: 200, y: 200, collected: false, type: 'frontend', name: 'Frontend Module' },
-    { id: 2, x: 400, y: 150, collected: false, type: 'backend', name: 'Backend Module' },
-    { id: 3, x: 600, y: 250, collected: false, type: 'database', name: 'Database Module' },
-    { id: 4, x: 800, y: 180, collected: false, type: 'api', name: 'API Module' }
-  ]);
-  
-  const [platforms, setPlatforms] = useState([
-    { id: 1, x: 150, y: 200, width: 100, moving: true, direction: 1, speed: 1, range: 100 },
-    { id: 2, x: 350, y: 150, width: 120, moving: true, direction: -1, speed: 0.8, range: 80 },
-    { id: 3, x: 550, y: 250, width: 100, moving: true, direction: 1, speed: 1.2, range: 120 },
-    { id: 4, x: 750, y: 180, width: 140, moving: true, direction: -1, speed: 0.9, range: 90 }
-  ]);
-  
-  const [bugs, setBugs] = useState([
-    { id: 1, x: 300, y: 160, fixed: false, type: 'syntax', name: 'Syntax Error' },
-    { id: 2, x: 500, y: 260, fixed: false, type: 'logic', name: 'Logic Error' },
-    { id: 3, x: 700, y: 190, fixed: false, type: 'runtime', name: 'Runtime Error' }
-  ]);
-  
-  // Constantes del nivel
-  const GROUND_LEVEL = 100;
-  const GRAVITY = 0.5;
-  const JUMP_POWER = -12;
-  const PLAYER_SPEED = 3;
-  const WIND_EFFECT = 0.5;
-  
-  // Inicializar el estado del nivel 4 si no existe
-  useEffect(() => {
-    if (!state.level4State) {
-      updateLevel4State({
-        introCompleted: false,
-        modulesCollected: 0,
-        testsCompleted: 0,
-        bugsFixed: 0,
-        codeReviewed: false,
-        deploymentReady: false,
-        possumRescued: false,
-        platformsActivated: 0,
-        windDirection: 'right',
-        windStrength: 1
-      });
-    }
-  }, [state.level4State, updateLevel4State]);
+  const [showMessage, setShowMessage] = useState(false);
+  const [currentMessage, setCurrentMessage] = useState('');
 
-  // Inicializar el juego
+  // Timer para medir tiempo
   useEffect(() => {
-    const timer = setTimeout(() => {
+    if (gameStarted && currentPhase !== 'completed') {
+      const timer = setInterval(() => {
+        setTimeElapsed(prev => prev + 1);
+      }, 1000);
+      return () => clearInterval(timer);
+    }
+  }, [gameStarted, currentPhase]);
+
+  // Inicializar el nivel
+  useEffect(() => {
+    if (!gameStarted) {
       setGameStarted(true);
-      showTemporaryMessage("¡Bienvenido al Pico de Software! Cuidado con los vientos cambiantes...");
-    }, 1000);
-    return () => clearTimeout(timer);
-  }, []);
-  
-  // Sistema de vientos cambiantes
-  useEffect(() => {
-    if (!gameStarted) return;
-    
-    const windTimer = setInterval(() => {
-      const directions = ['left', 'right', 'up', 'down'];
-      const newDirection = directions[Math.floor(Math.random() * directions.length)];
-      const newStrength = Math.random() * 2 + 0.5; // 0.5 a 2.5
-      
-      setWindDirection(newDirection);
-      setWindStrength(newStrength);
-      updateLevel4State({ windDirection: newDirection, windStrength: newStrength });
-      
-      showTemporaryMessage(`¡Viento ${newDirection === 'left' ? '←' : newDirection === 'right' ? '→' : newDirection === 'up' ? '↑' : '↓'} de fuerza ${newStrength.toFixed(1)}!`);
-    }, 5000);
-    
-    return () => clearInterval(windTimer);
-  }, [gameStarted, updateLevel4State]);
-  
-  // Movimiento de plataformas
-  useEffect(() => {
-    if (!gameStarted) return;
-    
-    const platformTimer = setInterval(() => {
-      setPlatforms(prevPlatforms => 
-        prevPlatforms.map(platform => {
-          if (!platform.moving) return platform;
-          
-          let newX = platform.x + (platform.direction * platform.speed);
-          let newDirection = platform.direction;
-          
-          // Cambiar dirección en los límites
-          if (newX <= platform.range || newX >= 800 - platform.range) {
-            newDirection = -platform.direction;
-          }
-          
-          return {
-            ...platform,
-            x: Math.max(platform.range, Math.min(800 - platform.range, newX)),
-            direction: newDirection
-          };
-        })
-      );
-    }, 50);
-    
-    return () => clearInterval(platformTimer);
-  }, [gameStarted]);
-  
-  // Física del jugador
-  useEffect(() => {
-    if (!gameStarted) return;
-    
-    const physicsTimer = setInterval(() => {
-      setPlayerPosition(prev => {
-        let newX = prev.x;
-        let newY = prev.y;
-        
-        // Aplicar efecto del viento
-        if (windDirection === 'left') {
-          newX -= windStrength * WIND_EFFECT;
-        } else if (windDirection === 'right') {
-          newX += windStrength * WIND_EFFECT;
-        }
-        
-        // Limitar posición horizontal
-        newX = Math.max(20, Math.min(980, newX));
-        
-        // Verificar colisión con plataformas
-        let onAnyPlatform = false;
-        platforms.forEach(platform => {
-          if (newX >= platform.x - 20 && newX <= platform.x + platform.width + 20 &&
-              newY <= platform.y + 20 && newY >= platform.y - 20) {
-            onAnyPlatform = true;
-            newY = platform.y;
-          }
-        });
-        
-        // Si no está en plataforma, aplicar gravedad
-        if (!onAnyPlatform && newY < 400) {
-          if (windDirection === 'up') {
-            newY -= windStrength * WIND_EFFECT * 0.3;
-          } else if (windDirection === 'down') {
-            newY += windStrength * WIND_EFFECT * 0.8;
-          }
-        }
-        
-        setOnPlatform(onAnyPlatform);
-        return { x: newX, y: Math.max(GROUND_LEVEL, newY) };
-      });
-    }, 50);
-    
-    return () => clearInterval(physicsTimer);
-  }, [gameStarted, platforms, windDirection, windStrength]);
-  
-  // Mostrar mensaje temporal
-  const showTemporaryMessage = useCallback((msg) => {
-    setMessage(msg);
-    setTimeout(() => setMessage(''), 3000);
-  }, []);
-  
-  // Controles del teclado
-  useEffect(() => {
-    const handleKeyPress = (e) => {
-      if (!gameStarted) return;
-      
-      switch(e.key.toLowerCase()) {
-        case 'a':
-        case 'arrowleft':
-          setPlayerPosition(prev => ({
-            ...prev,
-            x: Math.max(20, prev.x - PLAYER_SPEED)
-          }));
-          break;
-        case 'd':
-        case 'arrowright':
-          setPlayerPosition(prev => ({
-            ...prev,
-            x: Math.min(980, prev.x + PLAYER_SPEED)
-          }));
-          break;
-        case 'w':
-        case ' ':
-        case 'arrowup':
-          if (onPlatform && !isJumping) {
-            setIsJumping(true);
-            setJumpVelocity(JUMP_POWER);
-            setOnPlatform(false);
-          }
-          break;
-      }
-    };
-    
-    window.addEventListener('keydown', handleKeyPress);
-    return () => window.removeEventListener('keydown', handleKeyPress);
-  }, [gameStarted, onPlatform, isJumping]);
-  
-  // Salto
-  useEffect(() => {
-    if (!isJumping) return;
-    
-    const jumpTimer = setInterval(() => {
-      setJumpVelocity(prev => prev + GRAVITY);
-      setPlayerPosition(prev => {
-        const newY = prev.y + jumpVelocity;
-        if (newY >= GROUND_LEVEL) {
-          setIsJumping(false);
-          setJumpVelocity(0);
-          return { ...prev, y: GROUND_LEVEL };
-        }
-        return { ...prev, y: newY };
-      });
-    }, 50);
-    
-    return () => clearInterval(jumpTimer);
-  }, [isJumping, jumpVelocity]);
-  
-  // Recolectar módulos
-  const collectModule = (moduleId) => {
-    setModules(prev => prev.map(m => 
-      m.id === moduleId ? { ...m, collected: true } : m
-    ));
-    
-    const module = modules.find(m => m.id === moduleId);
-    updateScore(200);
-    updateLevel4State({ modulesCollected: (state.level4State?.modulesCollected || 0) + 1 });
-    showTemporaryMessage(`¡${module.name} recolectado! +200 puntos`);
-  };
-  
-  // Arreglar bugs
-  const fixBug = (bugId) => {
-    setBugs(prev => prev.map(b => 
-      b.id === bugId ? { ...b, fixed: true } : b
-    ));
-    
-    const bug = bugs.find(b => b.id === bugId);
-    updateScore(150);
-    updateLevel4State({ bugsFixed: (state.level4State?.bugsFixed || 0) + 1 });
-    showTemporaryMessage(`¡${bug.name} arreglado! +150 puntos`);
-  };
-  
-  // Verificar si se puede rescatar a la zarigüeya
-  const canRescuePossum = () => {
-    if (!state.level4State) return false;
-    return state.level4State.modulesCollected >= 4 && 
-           state.level4State.bugsFixed >= 3;
-  };
-  
-  // Rescatar zarigüeya
-  const rescuePossum = () => {
-    if (canRescuePossum()) {
-      updateLevel4State({ possumRescued: true });
-      updateScore(500);
-      showTemporaryMessage("¡Zarigüeya rescatada! ¡Software desplegado exitosamente!");
-      
+      // Mostrar intro animada por 5 segundos
       setTimeout(() => {
-        showScreen('level-summary-screen');
-      }, 3000);
-    } else {
-      const modulesNeeded = 4 - (state.level4State?.modulesCollected || 0);
-      const bugsNeeded = 3 - (state.level4State?.bugsFixed || 0);
-      showTemporaryMessage(`Necesitas: ${modulesNeeded} módulos, ${bugsNeeded} bugs por arreglar`);
+        setShowIntroAnimation(false);
+        startFirstPuzzle();
+      }, 5000);
+    }
+  }, [gameStarted]);
+
+  // Funciones de utilidad
+  const showTemporaryMessage = (message, duration = 4000) => {
+    setCurrentMessage(message);
+    setShowMessage(true);
+    setTimeout(() => setShowMessage(false), duration);
+  };
+
+  const startFirstPuzzle = () => {
+    setCurrentPhase('programming');
+    showTemporaryMessage("¡Sin programación, nadie puede navegar este laberinto! Si quieres rescatar a tu amiga, tendrás que pensar como un ingeniero de software.", 6000);
+    setTimeout(() => {
+      setShowPuzzle(true);
+    }, 6000);
+  };
+
+  const handlePuzzleComplete = (puzzleType) => {
+    setShowPuzzle(false);
+    setCompletedPuzzles(prev => ({ ...prev, [puzzleType]: true }));
+    
+    if (puzzleType === 'programming') {
+      completeLevel();
     }
   };
-  
-  if (!gameStarted) {
-    return <div>Cargando pico ventoso...</div>;
-  }
-  
+
+  const handlePuzzleClose = () => {
+    setShowPuzzle(false);
+  };
+
+  const completeLevel = () => {
+    setCurrentPhase('completed');
+    updateLevel4State({ possumRescued: true });
+    updateScore(1000);
+    
+    showTemporaryMessage("¡Zarigüeya rescatada! Has dominado la programación con bloques.", 4000);
+    
+    setTimeout(() => {
+      showScreen('level-summary-screen');
+    }, 5000);
+  };
+
+  // Función para desarrolladores - completar nivel automáticamente
+  const skipToCompletion = () => {
+    if (window.confirm('¿Completar nivel automáticamente? (Solo para desarrolladores)')) {
+      completeLevel();
+    }
+  };
+
   return (
-    <div className="level-container" style={{ 
-      background: 'linear-gradient(to bottom, #87CEEB 0%, #98D8E8 50%, #B0E0E6 100%)',
-      position: 'relative',
-      width: '1000px',
-      height: '500px',
-      overflow: 'hidden'
-    }}>
-      
-      {/* Nubes de fondo */}
-      <div style={{
-        position: 'absolute',
-        top: '10px',
-        left: '100px',
-        fontSize: '3rem',
-        opacity: 0.7,
-        animation: 'float 4s ease-in-out infinite'
-      }}>☁️</div>
-      
-      <div style={{
-        position: 'absolute',
-        top: '30px',
-        right: '150px',
-        fontSize: '2.5rem',
-        opacity: 0.6,
-        animation: 'float 3s ease-in-out infinite reverse'
-      }}>☁️</div>
-      
-      {/* Indicador de viento */}
-      <div style={{
-        position: 'absolute',
-        top: '10px',
-        right: '10px',
-        background: 'rgba(0,0,0,0.7)',
-        color: 'white',
-        padding: '10px',
-        borderRadius: '8px',
-        fontFamily: 'Press Start 2P, monospace',
-        fontSize: '0.6rem'
-      }}>
-        <div>Viento: {windDirection === 'left' ? '←' : windDirection === 'right' ? '→' : windDirection === 'up' ? '↑' : '↓'}</div>
-        <div>Fuerza: {windStrength.toFixed(1)}</div>
-      </div>
-      
-      {/* Plataformas móviles */}
-      {platforms.map(platform => (
-        <div key={platform.id} style={{
-          position: 'absolute',
-          left: `${platform.x}px`,
-          bottom: `${platform.y}px`,
-          width: `${platform.width}px`,
-          height: '20px',
-          background: 'linear-gradient(45deg, #708090, #778899)',
-          borderRadius: '10px',
-          border: '2px solid #556B2F',
-          boxShadow: '0 4px 8px rgba(0,0,0,0.3)',
-          transition: platform.moving ? 'none' : 'all 0.3s'
-        }} />
-      ))}
-      
-      {/* Módulos de software */}
-      {modules.filter(m => !m.collected).map(module => (
-        <div
-          key={module.id}
-          onClick={() => collectModule(module.id)}
-          style={{
-            position: 'absolute',
-            left: `${module.x}px`,
-            bottom: `${module.y + 30}px`,
-            width: '40px',
-            height: '40px',
-            background: module.type === 'frontend' ? '#61DAFB' :
-                       module.type === 'backend' ? '#68217A' :
-                       module.type === 'database' ? '#336791' : '#FF6B35',
-            borderRadius: '8px',
-            display: 'flex',
-            alignItems: 'center',
-            justifyContent: 'center',
-            cursor: 'pointer',
-            fontSize: '1.2rem',
-            color: 'white',
-            fontWeight: 'bold',
-            boxShadow: '0 0 15px rgba(255,255,255,0.5)',
-            animation: 'pulse 2s infinite'
-          }}
-          title={module.name}
-        >
-          {module.type === 'frontend' ? '🎨' :
-           module.type === 'backend' ? '⚙️' :
-           module.type === 'database' ? '🗄️' : '🔗'}
-        </div>
-      ))}
-      
-      {/* Bugs para arreglar */}
-      {bugs.filter(b => !b.fixed).map(bug => (
-        <div
-          key={bug.id}
-          onClick={() => fixBug(bug.id)}
-          style={{
-            position: 'absolute',
-            left: `${bug.x}px`,
-            bottom: `${bug.y + 40}px`,
-            width: '35px',
-            height: '35px',
-            background: bug.type === 'syntax' ? '#FF4444' :
-                       bug.type === 'logic' ? '#FF8800' : '#FF0088',
-            borderRadius: '50%',
-            display: 'flex',
-            alignItems: 'center',
-            justifyContent: 'center',
-            cursor: 'pointer',
-            fontSize: '1.5rem',
-            animation: 'shake 1s infinite'
-          }}
-          title={`Arreglar ${bug.name}`}
-        >
-          🐛
-        </div>
-      ))}
-      
-      {/* Zarigüeya */}
-      <div
-        onClick={rescuePossum}
-        style={{
-          position: 'absolute',
-          right: '50px',
-          bottom: '350px',
-          fontSize: '2.5rem',
-          cursor: canRescuePossum() ? 'pointer' : 'not-allowed',
-          opacity: canRescuePossum() ? 1 : 0.5,
-          animation: canRescuePossum() ? 'bounce 2s infinite' : 'none',
-          filter: canRescuePossum() ? 'brightness(1.2)' : 'grayscale(0.8)'
-        }}
-        title={canRescuePossum() ? "¡Rescatar Zarigüeya!" : "Completa todos los módulos y arregla los bugs"}
-      >
-        🐾
-      </div>
-      
-      {/* Jugador (Andy) */}
-      <div style={{
-        position: 'absolute',
-        left: `${playerPosition.x}px`,
-        bottom: `${playerPosition.y}px`,
-        fontSize: '1.6rem',
-        transition: 'none',
-        textShadow: '0 0 10px rgba(255,255,255,0.8)',
-        transform: isJumping ? 'rotate(15deg)' : 'none'
-      }}>
-        🐿️
-      </div>
-      
-      {/* HUD */}
-      <div style={{
-        position: 'absolute',
-        top: '10px',
-        left: '10px',
-        background: 'rgba(0,0,0,0.7)',
-        color: 'white',
-        padding: '10px',
-        borderRadius: '8px',
-        fontFamily: 'Press Start 2P, monospace',
-        fontSize: '0.6rem'
-      }}>
-        <div>Módulos: {state.level4State?.modulesCollected || 0}/4</div>
-        <div>Bugs: {state.level4State?.bugsFixed || 0}/3</div>
-        <div>Puntos: {state.totalScore}</div>
-      </div>
-      
-      {/* Controles */}
-      <div style={{
-        position: 'absolute',
-        bottom: '10px',
-        left: '10px',
-        background: 'rgba(0,0,0,0.7)',
-        color: 'white',
-        padding: '8px',
-        borderRadius: '8px',
-        fontFamily: 'Press Start 2P, monospace',
-        fontSize: '0.5rem'
-      }}>
-        A/D: Mover | W/Espacio: Saltar
-      </div>
-      
-      {/* Mensajes */}
-      {message && (
-        <div style={{
-          position: 'absolute',
-          top: '50%',
-          left: '50%',
-          transform: 'translate(-50%, -50%)',
-          background: 'rgba(0,0,0,0.8)',
-          color: 'white',
-          padding: '15px',
-          borderRadius: '10px',
-          fontFamily: 'Press Start 2P, monospace',
-          fontSize: '0.7rem',
-          textAlign: 'center',
-          zIndex: 100
-        }}>
-          {message}
+    <div id="level4-peak" className="level-container">
+      {/* Mensaje temporal */}
+      {showMessage && (
+        <div className="temporary-message">
+          <div className="message-content">
+            <p>{currentMessage}</p>
+          </div>
         </div>
       )}
-      
-      <style jsx>{`
-        @keyframes float {
-          0%, 100% { transform: translateY(0px); }
-          50% { transform: translateY(-10px); }
-        }
-        
-        @keyframes pulse {
-          0%, 100% { transform: scale(1); }
-          50% { transform: scale(1.1); }
-        }
-        
-        @keyframes shake {
-          0%, 100% { transform: translateX(0); }
-          25% { transform: translateX(-2px); }
-          75% { transform: translateX(2px); }
-        }
-        
-        @keyframes bounce {
-          0%, 100% { transform: translateY(0); }
-          50% { transform: translateY(-10px); }
-        }
-      `}</style>
+
+      {/* Contenido principal del nivel */}
+      {showIntroAnimation && (
+        <div className="level-intro-animation">
+          <div className="intro-background">
+            <div className="mountain-peak">
+              <div className="wind-clouds"></div>
+              <div className="code-walls"></div>
+              <div className="floating-platforms"></div>
+            </div>
+          </div>
+          
+          <div className="intro-content">
+            <div className="intro-title">
+              <h1>🌪️ Nivel 4 - Pico de Software</h1>
+              <div className="subtitle">Zarigüeya Atrapada</div>
+            </div>
+            
+            <div className="intro-story">
+              <div className="story-text">
+                <p>Andy llega a la cima de la montaña y encuentra un laberinto extraño...</p>
+                <p>Las paredes están hechas de código roto y los caminos cambian constantemente.</p>
+                <p>En el centro, la zarigüeya está atrapada en una jaula digital.</p>
+              </div>
+              
+              <div className="villain-dialogue">
+                <div className="villain-avatar">👹</div>
+                <div className="dialogue-bubble">
+                  <p>"¡Sin programación, nadie puede navegar este laberinto!"</p>
+                  <p>"Si quieres rescatar a tu amiga, tendrás que pensar como un ingeniero de software."</p>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {!showIntroAnimation && currentPhase !== 'completed' && (
+        <div className="level-game-area">
+          {/* HUD del nivel */}
+          <div className="level-hud">
+            <div className="hud-left">
+              <div className="level-title">🌪️ Pico de Software</div>
+              <div className="time-display">⏱️ Tiempo: {Math.floor(timeElapsed / 60)}:{(timeElapsed % 60).toString().padStart(2, '0')}</div>
+            </div>
+            
+            <div className="hud-center">
+              <div className="progress-indicators">
+                <div className={`progress-dot ${completedPuzzles.programming ? 'completed' : 'pending'}`}>
+                  🧩
+                </div>
+              </div>
+            </div>
+            
+            <div className="hud-right">
+              <div className="score-display">🏆 Puntuación: {state.totalScore}</div>
+              <button className="dev-skip-btn" onClick={skipToCompletion} title="Completar nivel (Dev)">
+                ⚡
+              </button>
+            </div>
+          </div>
+
+          {/* Área visual del nivel */}
+          <div className="level-visual-area">
+            <div className="mountain-environment">
+              <div className="maze-preview">
+                <div className="maze-grid-preview">
+                  <div className="maze-cell start">🚪</div>
+                  <div className="maze-cell path">·</div>
+                  <div className="maze-cell path">·</div>
+                  <div className="maze-cell wall">#</div>
+                  <div className="maze-cell path">·</div>
+                  <div className="maze-cell path">·</div>
+                  <div className="maze-cell target">🦫</div>
+                </div>
+              </div>
+              
+              <div className="possum-trapped">
+                <div className="possum-avatar">🐾</div>
+                <div className="cage-effect">🔒</div>
+              </div>
+            </div>
+          </div>
+
+          {/* Estado actual del juego */}
+          <div className="current-phase-display">
+            {currentPhase === 'programming' && (
+              <div className="phase-content">
+                <h3>🧩 El Gran Laberinto Programado</h3>
+                <p>Programa a Andy usando bloques de código para navegar el laberinto y rescatar a la zarigüeya.</p>
+                <p>Usa bucles para optimizar tu código y condicionales para manejar obstáculos dinámicos.</p>
+                
+                <div className="puzzle-objectives">
+                  <h4>🎯 Objetivos:</h4>
+                  <ul>
+                    <li>✅ Hacer que Andy llegue a la zarigüeya</li>
+                    <li>⭐ Optimizar el código con bucles</li>
+                    <li>⭐⭐ Hacer el código robusto con condicionales</li>
+                  </ul>
+                </div>
+                
+                <button 
+                  className="start-puzzle-btn"
+                  onClick={() => setShowPuzzle(true)}
+                >
+                  {completedPuzzles.programming ? '🔄 Reintentar' : '🚀 Comenzar Puzzle'}
+                </button>
+              </div>
+            )}
+          </div>
+        </div>
+      )}
+
+      {currentPhase === 'completed' && (
+        <div className="level-completed-screen">
+          <div className="completion-animation">
+            <div className="possum-rescued">🐾✨</div>
+            <div className="andy-celebration">🐿️🎉</div>
+          </div>
+          
+          <div className="completion-content">
+            <h2>🎉 ¡Zarigüeya Rescatada!</h2>
+            <p>Andy logró programar su camino a través del laberinto.</p>
+            <p>Usando bucles y condicionales, creó un algoritmo eficiente y robusto.</p>
+            <p>La zarigüeya está libre y agradecida por el rescate.</p>
+            
+            <div className="possum-dialogue">
+              <div className="possum-avatar">🐾</div>
+              <div className="dialogue-bubble">
+                <p>"¡Gracias Andy! Aprendí que la Ingeniería de Software no es solo resolver problemas,"</p>
+                <p>"sino hacerlo con código claro, optimizado y preparado para errores."</p>
+              </div>
+            </div>
+            
+            <div className="final-stats">
+              <div className="stat-item">
+                <span className="stat-label">⏱️ Tiempo Total:</span>
+                <span className="stat-value">{Math.floor(timeElapsed / 60)}:{(timeElapsed % 60).toString().padStart(2, '0')}</span>
+              </div>
+              <div className="stat-item">
+                <span className="stat-label">🧩 Puzzles Completados:</span>
+                <span className="stat-value">{Object.values(completedPuzzles).filter(Boolean).length}/1</span>
+              </div>
+              <div className="stat-item">
+                <span className="stat-label">🏆 Puntuación:</span>
+                <span className="stat-value">{state.totalScore}</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Puzzle overlay */}
+      {showPuzzle && (
+        <ProgrammingMazePuzzle
+          onComplete={() => handlePuzzleComplete('programming')}
+          onClose={handlePuzzleClose}
+        />
+      )}
     </div>
   );
 };

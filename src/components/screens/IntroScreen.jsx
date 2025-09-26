@@ -9,7 +9,7 @@ import Frame5 from '../frames/Frame5';
 const IntroScreen = ({ isActive }) => {
   const { showScreen } = useGame();
   const [currentFrame, setCurrentFrame] = useState(1);
-  const [isAutoPlaying, setIsAutoPlaying] = useState(true);
+  const [isAutoPlaying, setIsAutoPlaying] = useState(false);
   const intervalRef = useRef(null);
 
   const nextFrame = () => {
@@ -50,7 +50,7 @@ const IntroScreen = ({ isActive }) => {
 
     intervalRef.current = setInterval(() => {
       setCurrentFrame(prev => Math.min(prev + 1, 5));
-    }, 3000);
+    }, 5000);
 
     return () => {
       if (intervalRef.current) {
@@ -72,17 +72,17 @@ const IntroScreen = ({ isActive }) => {
     console.log('renderFrame called with currentFrame:', currentFrame);
     switch (currentFrame) {
       case 1:
-        return <Frame1 />;
+        return <Frame1 onComplete={nextFrame} />;
       case 2:
-        return <Frame2 />;
+        return <Frame2 onComplete={nextFrame} />;
       case 3:
-        return <Frame3 />;
+        return <Frame3 onComplete={nextFrame} />;
       case 4:
-        return <Frame4 />;
+        return <Frame4 onComplete={nextFrame} />;
       case 5:
         return <Frame5 onStartAdventure={handleStartAdventure} />;
       default:
-        return <Frame1 />;
+        return <Frame1 onComplete={nextFrame} />;
     }
   };
 
@@ -142,15 +142,6 @@ const IntroScreen = ({ isActive }) => {
             />
           ))}
         </div>
-        
-        {/* Botón para saltar */}
-        <button 
-          id="skip-intro-btn" 
-          className="btn-small skip-btn"
-          onClick={handleSkipIntro}
-        >
-          Saltar Cinemática
-        </button>
       </div>
     </div>
   );
