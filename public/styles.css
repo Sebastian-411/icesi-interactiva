@@ -80,6 +80,275 @@ body {
     image-rendering: crisp-edges;
 }
 
+/* ============================ */
+/* World Map - Decorative Tower */
+/* ============================ */
+
+#world-map-screen {
+    position: relative;
+}
+
+.world-map-landscape {
+    position: absolute;
+    inset: 0;
+    overflow: hidden;
+    background: linear-gradient(180deg, #9ad0ff 0%, #b6f0c4 60%, #7ad39d 100%);
+}
+
+/* Progresión de ambiente: más rojo/épico al avanzar */
+.world-map-landscape.progress-0 { filter: hue-rotate(0deg) brightness(1); }
+.world-map-landscape.progress-1 { filter: hue-rotate(-5deg) brightness(0.98); }
+.world-map-landscape.progress-2 { filter: hue-rotate(-10deg) brightness(0.95); }
+.world-map-landscape.progress-3 { filter: hue-rotate(-15deg) brightness(0.92); }
+.world-map-landscape.progress-4 { filter: hue-rotate(-20deg) brightness(0.9) saturate(1.1); }
+
+/* Torre épica de fondo (decorativa) */
+.central-icesi-tower.decorative {
+    position: absolute;
+    right: 2%;
+    bottom: -5%;
+    transform: scale(1.25);
+    filter: drop-shadow(0 10px 20px rgba(0,0,0,0.4));
+    pointer-events: none;
+}
+
+.central-icesi-tower.decorative .tower-red-glow {
+    position: absolute;
+    top: -40px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 320px;
+    height: 320px;
+    border-radius: 50%;
+    background: radial-gradient(circle, rgba(255,0,0,0.18) 0%, rgba(255,69,0,0.12) 40%, transparent 70%);
+    animation: towerEpicGlow 4s ease-in-out infinite;
+}
+
+.tower-barrier {
+    position: absolute;
+    bottom: 0;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 360px;
+    height: 120px;
+    background: radial-gradient(circle at 50% 100%, rgba(255,255,255,0.15) 0%, rgba(200,0,0,0.15) 50%, transparent 70%);
+    filter: blur(4px) saturate(1.2);
+    pointer-events: none;
+}
+
+.tower-barrier.barrier-strong { opacity: 0.9; }
+.tower-barrier.barrier-weak { opacity: 0.5; }
+
+/* Nubes oscuras sobre la torre */
+.world-map-landscape .tower-dark-clouds::before,
+.world-map-landscape .tower-dark-clouds::after {
+    content: '';
+    position: absolute;
+    top: 10%;
+    right: 5%;
+    width: 160px;
+    height: 60px;
+    background: rgba(40,40,40,0.5);
+    border-radius: 50px;
+    filter: blur(1px);
+    animation: cloudDrift 30s linear infinite;
+}
+
+.world-map-landscape .tower-dark-clouds::after {
+    top: 18%;
+    right: 2%;
+    width: 120px;
+    height: 50px;
+    opacity: 0.6;
+    animation-duration: 40s;
+}
+
+@keyframes towerEpicGlow {
+    0%, 100% { opacity: 0.5; transform: translateX(-50%) scale(1); }
+    50% { opacity: 0.9; transform: translateX(-50%) scale(1.05); }
+}
+
+@keyframes cloudDrift {
+    0% { transform: translateX(0); }
+    100% { transform: translateX(-100vw); }
+}
+
+/* ============================ */
+/* Camino de niveles e iconos   */
+/* ============================ */
+
+.adventure-paths {
+    position: absolute;
+    inset: 0;
+    pointer-events: none;
+}
+
+/* Caminos serpenteantes con SVG */
+/* Caminos deshabilitados */
+
+.level-stations .level-icon {
+    font-size: 1.2rem;
+    filter: drop-shadow(0 0 0 transparent);
+}
+
+.level-icon-img {
+    width: 88px;
+    height: 88px;
+    object-fit: contain;
+    image-rendering: pixelated;
+    filter: none;
+    display: block;
+}
+
+/* Nivel 1 un poco más grande */
+.station-1 .level-icon-img {
+    width: 200px;
+    height: 200px;
+}
+
+.station-2 .level-icon-img {
+    width: 150px;
+    height: 150px;
+}
+
+.station-3 .level-icon-img {
+    width: 160px;
+    height: 160px;
+}
+
+.station-4 .level-icon-img {
+    width: 170px;
+    height: 200px;
+}
+
+.station-5 .level-icon-img {
+    width: 180px;
+    height: 180px;
+}
+
+
+/* Estación simplificada: solo imagen + nombre debajo */
+.level-station {
+    background: transparent !important;
+    border: none !important;
+    box-shadow: none !important;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 6px;
+}
+
+.level-label.simple {
+    position: static !important;
+    transform: none !important;
+    left: auto !important;
+    top: auto !important;
+    margin-top: 6px;
+    font-family: 'Press Start 2P', monospace;
+    font-size: 0.9rem;
+    line-height: 1.1;
+    font-weight: 700;
+    color: #0b1e2b;
+    background: #ffffff;
+    padding: 6px 10px;
+    border-radius: 8px;
+    border: 2px solid #0b1e2b;
+    box-shadow: 0 2px 6px rgba(0,0,0,0.25);
+    text-shadow: none;
+    z-index: 30;
+}
+
+.level-station.unlocked .level-icon { filter: drop-shadow(0 0 6px rgba(255,255,255,0.6)); }
+.level-station.completed { outline: 2px solid #3498db; box-shadow: 0 0 10px rgba(52,152,219,0.6); }
+.level-station.locked .level-icon { filter: grayscale(1) opacity(0.6); }
+.level-station.locked::after {
+    content: '🔒';
+    position: absolute;
+    top: -10px;
+    right: -10px;
+}
+
+/* ============================ */
+/* Caritas de amigos            */
+/* ============================ */
+
+.map-header {
+    position: absolute;
+    top: 2%;
+    left: 50%;
+    transform: translateX(-50%);
+    text-align: center;
+    color: #fff;
+}
+
+.friends-progress {
+    display: flex;
+    gap: 12px;
+    justify-content: center;
+    margin-top: 6px;
+}
+
+.friend-face {
+    font-size: 1.4rem;
+    filter: grayscale(1) opacity(0.6);
+    transition: filter 0.3s ease, transform 0.3s ease;
+}
+
+.friend-face.rescued {
+    filter: none;
+    transform: scale(1.05);
+}
+
+/* ============================ */
+/* Fondo dinámico               */
+/* ============================ */
+
+.world-map-landscape .parallax-clouds::before,
+.world-map-landscape .parallax-clouds::after {
+    content: '';
+    position: absolute;
+    top: 8%;
+    left: -20%;
+    width: 160%;
+    height: 120px;
+    background: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 20"><rect x="10" y="8" width="20" height="8" fill="white" opacity="0.8"/><rect x="35" y="6" width="15" height="6" fill="white" opacity="0.8"/><rect x="55" y="10" width="18" height="7" fill="white" opacity="0.8"/><rect x="78" y="7" width="12" height="5" fill="white" opacity="0.8"/></svg>') repeat-x;
+    animation: cloudDrift 60s linear infinite;
+}
+
+.world-map-landscape .parallax-clouds::after {
+    top: 16%;
+    animation-duration: 90s;
+    opacity: 0.6;
+}
+
+.world-map-landscape .tiny-birds span {
+    position: absolute;
+    font-size: 0.8rem;
+    animation: birdsFly 25s linear infinite;
+    opacity: 0.8;
+}
+
+@keyframes birdsFly {
+    0% { transform: translateX(-10vw) translateY(0); }
+    50% { transform: translateX(50vw) translateY(-10px); }
+    100% { transform: translateX(110vw) translateY(0); }
+}
+
+/* Bosquecitos con profundidad */
+.forest-layer { position: absolute; inset: 0; pointer-events: none; }
+.forest-layer.back { filter: brightness(0.7); transform: translateZ(0); }
+.forest-layer.mid { filter: brightness(0.85); }
+.forest-layer.front { filter: brightness(1); }
+
+.tree { position: absolute; width: 24px; height: 24px; }
+.tree.pine { background: linear-gradient(#0d4b2e, #15613f); clip-path: polygon(50% 0%, 65% 20%, 60% 20%, 75% 40%, 70% 40%, 85% 60%, 15% 60%, 30% 40%, 25% 40%, 40% 20%, 35% 20%); box-shadow: 0 2px 0 rgba(0,0,0,0.3); }
+.tree.round { background: radial-gradient(circle at 50% 40%, #2a7b3e 0%, #1c5a2b 70%); border-radius: 50%; box-shadow: 0 2px 0 rgba(0,0,0,0.3); }
+.tree.big { transform: scale(1.4); }
+
+.bush { position: absolute; width: 18px; height: 12px; background: radial-gradient(circle at 50% 60%, #2e8b57 0%, #236b45 70%); border-radius: 10px; box-shadow: 0 1px 0 rgba(0,0,0,0.25); }
+.rock { position: absolute; width: 12px; height: 10px; background: linear-gradient(#9aa1a6, #6b7277); border-radius: 3px; box-shadow: 0 1px 0 rgba(0,0,0,0.3); }
+.flower { position: absolute; width: 6px; height: 6px; background: #ff6fb3; border-radius: 50%; box-shadow: 0 0 0 2px #ffd1e6; }
+
 .background-animation {
     position: absolute;
     top: 0;
@@ -1976,14 +2245,14 @@ body {
 
 /* Estados de las estaciones de nivel */
 .level-station.completed {
-    border: 3px solid #27ae60 !important;
-    box-shadow: 0 0 20px rgba(39, 174, 96, 0.6) !important;
+    border: 3px solid #3498db !important;
+    box-shadow: 0 0 20px rgba(52, 152, 219, 0.6) !important;
 }
 
 .level-station.current-level {
-    border: 3px solid #f39c12 !important;
-    box-shadow: 0 0 25px rgba(243, 156, 18, 0.8) !important;
-    animation: pulse-current 2s infinite;
+    border: none !important;
+    box-shadow: none !important;
+    animation: none !important;
 }
 
 .level-station.locked {

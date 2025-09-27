@@ -162,12 +162,11 @@ const ARPMazePuzzle = ({ onComplete, onClose }) => {
   };
 
   return (
-    <div className="arp-maze-overlay">
-      <div className="arp-maze-container">
+    <div className="arp-maze-container">
+      <div className="arp-maze-content">
         <div className="puzzle-header">
           <h3>🧩 Puzzle 3: Evita el Ataque</h3>
           <p>Identifica el router legítimo y evita los impostores ARP</p>
-          <button className="close-btn" onClick={onClose}>✕</button>
         </div>
 
         {/* Panel de estado */}
@@ -408,44 +407,50 @@ const ARPMazePuzzle = ({ onComplete, onClose }) => {
       </div>
 
       <style>{`
-        .arp-maze-overlay {
-          position: fixed;
-          top: 0;
-          left: 0;
+        .arp-maze-container {
           width: 100%;
           height: 100%;
-          background: rgba(0, 0, 0, 0.8);
+          background: linear-gradient(135deg, #1e3c72 0%, #2a5298 50%, #667eea 100%);
           display: flex;
-          justify-content: center;
+          flex-direction: column;
           align-items: center;
-          z-index: 1000;
+          justify-content: center;
+          padding: 1rem;
+          position: relative;
         }
 
-        .arp-maze-container {
-          background: white;
-          padding: 2rem;
-          border-radius: 15px;
-          max-width: 900px;
-          max-height: 90vh;
-          overflow-y: auto;
+        .arp-maze-content {
+          background: rgba(255, 255, 255, 0.95);
+          backdrop-filter: blur(10px);
+          padding: 1.5rem;
+          border-radius: 20px;
+          box-shadow: 0 10px 40px rgba(0, 0, 0, 0.3);
+          width: 100%;
+          height: 100%;
+          max-height: 95vh;
+          overflow: hidden;
           position: relative;
+          border: 1px solid rgba(255, 255, 255, 0.2);
+          display: flex;
+          flex-direction: column;
         }
 
         .puzzle-header {
           text-align: center;
-          margin-bottom: 1.5rem;
+          margin-bottom: 1rem;
+          flex-shrink: 0;
         }
 
         .puzzle-header h3 {
           font-family: 'Press Start 2P', monospace;
-          font-size: 1.2rem;
-          margin-bottom: 0.5rem;
+          font-size: 1rem;
+          margin-bottom: 0.3rem;
           color: #2c3e50;
         }
 
         .puzzle-header p {
           font-family: 'Press Start 2P', monospace;
-          font-size: 0.7rem;
+          font-size: 0.6rem;
           color: #7f8c8d;
         }
 

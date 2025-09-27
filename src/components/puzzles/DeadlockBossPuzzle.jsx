@@ -676,46 +676,50 @@ const DeadlockBossPuzzle = ({ onComplete, onClose }) => {
 
       <style>{`
         .deadlock-boss-overlay {
-          position: fixed;
-          top: 0;
-          left: 0;
           width: 100%;
           height: 100%;
-          background: rgba(0, 0, 0, 0.9);
+          background: linear-gradient(135deg, #2c3e50 0%, #34495e 50%, #1a1a2e 100%);
           display: flex;
-          justify-content: center;
+          flex-direction: column;
           align-items: center;
-          z-index: 1000;
+          justify-content: center;
+          padding: 1rem;
+          position: relative;
         }
 
         .deadlock-boss-container {
-          background: linear-gradient(135deg, #2c3e50, #34495e);
-          color: white;
-          padding: 2rem;
-          border-radius: 15px;
-          max-width: 1200px;
-          max-height: 90vh;
-          overflow-y: auto;
+          background: rgba(255, 255, 255, 0.95);
+          backdrop-filter: blur(10px);
+          padding: 1.5rem;
+          border-radius: 20px;
+          box-shadow: 0 10px 40px rgba(0, 0, 0, 0.3);
+          width: 100%;
+          height: 100%;
+          max-height: 95vh;
+          overflow: hidden;
           position: relative;
-          border: 3px solid #8b4513;
+          border: 1px solid rgba(255, 255, 255, 0.2);
+          display: flex;
+          flex-direction: column;
         }
 
         .puzzle-header {
           text-align: center;
-          margin-bottom: 1.5rem;
+          margin-bottom: 1rem;
+          flex-shrink: 0;
         }
 
         .puzzle-header h3 {
           font-family: 'Press Start 2P', monospace;
-          font-size: 1.2rem;
-          margin-bottom: 0.5rem;
-          color: #8b4513;
+          font-size: 1rem;
+          margin-bottom: 0.3rem;
+          color: #2c3e50;
         }
 
         .puzzle-header p {
           font-family: 'Press Start 2P', monospace;
-          font-size: 0.7rem;
-          color: #ecf0f1;
+          font-size: 0.6rem;
+          color: #7f8c8d;
         }
 
         .close-btn {
@@ -781,10 +785,11 @@ const DeadlockBossPuzzle = ({ onComplete, onClose }) => {
         }
 
         .boss-arena {
-          min-height: 500px;
+          flex: 1;
+          min-height: 0;
           background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
           border-radius: 15px;
-          padding: 2rem;
+          padding: 1rem;
           position: relative;
         }
 
@@ -930,6 +935,10 @@ const DeadlockBossPuzzle = ({ onComplete, onClose }) => {
           border: 2px solid #bdc3c7;
           border-radius: 10px;
           background: #f8f9fa;
+          max-width: 100%;
+          max-height: 100%;
+          width: auto;
+          height: auto;
         }
 
         .process-circle {

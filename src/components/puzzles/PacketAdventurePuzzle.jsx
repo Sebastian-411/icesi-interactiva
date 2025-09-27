@@ -145,12 +145,11 @@ const PacketAdventurePuzzle = ({ onComplete, onClose }) => {
   };
 
   return (
-    <div className="packet-adventure-overlay">
-      <div className="packet-adventure-container">
+    <div className="packet-adventure-container">
+      <div className="packet-adventure-content">
         <div className="puzzle-header">
           <h3>🧩 Puzzle 2: El Camino del Paquete</h3>
           <p>Guía el paquete a través del handshake TCP</p>
-          <button className="close-btn" onClick={onClose}>✕</button>
         </div>
 
         <div className="adventure-area">
@@ -304,28 +303,6 @@ const PacketAdventurePuzzle = ({ onComplete, onClose }) => {
           </div>
         )}
 
-        {/* Panel de progreso */}
-        <div className="progress-panel">
-          <h4>📊 Progreso del Handshake TCP</h4>
-          <div className="handshake-steps">
-            <div className={`step ${currentNode >= 1 ? 'completed' : ''}`}>
-              <span className="step-number">1</span>
-              <span className="step-text">Cliente → Servidor: SYN</span>
-            </div>
-            <div className={`step ${currentNode >= 2 ? 'completed' : ''}`}>
-              <span className="step-number">2</span>
-              <span className="step-text">Servidor → Cliente: SYN-ACK</span>
-            </div>
-            <div className={`step ${currentNode >= 3 ? 'completed' : ''}`}>
-              <span className="step-number">3</span>
-              <span className="step-text">Cliente → Servidor: ACK</span>
-            </div>
-            <div className={`step ${currentNode >= 4 ? 'completed' : ''}`}>
-              <span className="step-number">✓</span>
-              <span className="step-text">¡Conexión Establecida!</span>
-            </div>
-          </div>
-        </div>
 
         {/* Mensaje de completado */}
         {isCompleted && (
@@ -345,44 +322,50 @@ const PacketAdventurePuzzle = ({ onComplete, onClose }) => {
       </div>
 
       <style>{`
-        .packet-adventure-overlay {
-          position: fixed;
-          top: 0;
-          left: 0;
+        .packet-adventure-container {
           width: 100%;
           height: 100%;
-          background: rgba(0, 0, 0, 0.8);
+          background: linear-gradient(135deg, #1e3c72 0%, #2a5298 50%, #667eea 100%);
           display: flex;
-          justify-content: center;
+          flex-direction: column;
           align-items: center;
-          z-index: 1000;
+          justify-content: center;
+          padding: 1rem;
+          position: relative;
         }
 
-        .packet-adventure-container {
-          background: white;
-          padding: 2rem;
-          border-radius: 15px;
-          max-width: 950px;
-          max-height: 90vh;
-          overflow-y: auto;
+        .packet-adventure-content {
+          background: rgba(255, 255, 255, 0.95);
+          backdrop-filter: blur(10px);
+          padding: 1.5rem;
+          border-radius: 20px;
+          box-shadow: 0 10px 40px rgba(0, 0, 0, 0.3);
+          width: 100%;
+          height: 100%;
+          max-height: 95vh;
+          overflow: hidden;
           position: relative;
+          border: 1px solid rgba(255, 255, 255, 0.2);
+          display: flex;
+          flex-direction: column;
         }
 
         .puzzle-header {
           text-align: center;
-          margin-bottom: 2rem;
+          margin-bottom: 1rem;
+          flex-shrink: 0;
         }
 
         .puzzle-header h3 {
           font-family: 'Press Start 2P', monospace;
-          font-size: 1.2rem;
-          margin-bottom: 0.5rem;
+          font-size: 1rem;
+          margin-bottom: 0.3rem;
           color: #2c3e50;
         }
 
         .puzzle-header p {
           font-family: 'Press Start 2P', monospace;
-          font-size: 0.7rem;
+          font-size: 0.6rem;
           color: #7f8c8d;
         }
 
@@ -401,7 +384,11 @@ const PacketAdventurePuzzle = ({ onComplete, onClose }) => {
         }
 
         .adventure-area {
-          margin-bottom: 2rem;
+          flex: 1;
+          display: flex;
+          justify-content: center;
+          align-items: center;
+          min-height: 0;
         }
 
         .maze-svg {
@@ -411,6 +398,10 @@ const PacketAdventurePuzzle = ({ onComplete, onClose }) => {
                       linear-gradient(45deg, #f8f9fa 25%, transparent 25%, transparent 75%, #f8f9fa 75%, #f8f9fa);
           background-size: 20px 20px;
           background-position: 0 0, 10px 10px;
+          max-width: 100%;
+          max-height: 100%;
+          width: auto;
+          height: auto;
         }
 
         .maze-node {

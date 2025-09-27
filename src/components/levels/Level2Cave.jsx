@@ -157,80 +157,158 @@ const Level2Cave = () => {
     </div>
   );
 
-  // Renderizar el estado actual del juego
-  const renderGameState = () => {
+  // Renderizar contenido principal
+  const renderMainContent = () => {
     if (showIntroAnimation) {
       return renderIntroAnimation();
     }
 
-    return (
-      <div className="cave-game-area">
-        <div className="cave-scene">
-          <div className="scene-elements">
-            <div className="andy-character">
-              <div className="character">🐿️🔥</div>
-              <div className="character-label">Andy</div>
+    if (showPuzzle) {
+      return renderCurrentPuzzle();
+    }
+
+    return renderGameScene();
+  };
+
+  // Renderizar el puzzle actual
+  const renderCurrentPuzzle = () => {
+    switch (currentPhase) {
+      case 'scheduler':
+        return (
+          <div className="puzzle-container">
+            <ProcessSchedulerPuzzle 
+              onComplete={() => handlePuzzleComplete('scheduler')}
+              onClose={handlePuzzleClose}
+            />
+          </div>
+        );
+      case 'memory':
+        return (
+          <div className="puzzle-container">
+            <MemoryManagementPuzzle 
+              onComplete={() => handlePuzzleComplete('memory')}
+              onClose={handlePuzzleClose}
+            />
+          </div>
+        );
+      case 'deadlock':
+        return (
+          <div className="puzzle-container">
+            <DeadlockBossPuzzle 
+              onComplete={() => handlePuzzleComplete('deadlock')}
+              onClose={handlePuzzleClose}
+            />
+          </div>
+        );
+      default:
+        return renderGameScene();
+    }
+  };
+
+  // Renderizar escena del juego
+  const renderGameScene = () => (
+    <div className="cave-game-area">
+      <div className="cave-scene">
+        <div className="scene-elements">
+          <div className="andy-character">
+            <div className="character">🐿️🔥</div>
+            <div className="character-label">Andy</div>
+          </div>
+          
+          <div className="system-elements">
+            <div className={`cpu-scheduler ${completedPuzzles.scheduler ? 'active' : 'inactive'}`}>
+              <div className="system-icon">⚙️</div>
+              <div className="system-label">Planificador</div>
+              {completedPuzzles.scheduler && <div className="completion-check">✅</div>}
             </div>
             
-            <div className="system-elements">
-              <div className={`cpu-scheduler ${completedPuzzles.scheduler ? 'active' : 'inactive'}`}>
-                <div className="system-icon">⚙️</div>
-                <div className="system-label">Planificador</div>
-                {completedPuzzles.scheduler && <div className="completion-check">✅</div>}
-              </div>
-              
-              <div className={`memory-manager ${completedPuzzles.memory ? 'active' : 'inactive'}`}>
-                <div className="system-icon">💾</div>
-                <div className="system-label">Memoria</div>
-                {completedPuzzles.memory && <div className="completion-check">✅</div>}
-              </div>
-              
-              
-              <div className={`deadlock-resolver ${completedPuzzles.deadlock ? 'active' : 'inactive'}`}>
-                <div className="system-icon">🔓</div>
-                <div className="system-label">Deadlock</div>
-                {completedPuzzles.deadlock && <div className="completion-check">✅</div>}
-              </div>
+            <div className={`memory-manager ${completedPuzzles.memory ? 'active' : 'inactive'}`}>
+              <div className="system-icon">💾</div>
+              <div className="system-label">Memoria</div>
+              {completedPuzzles.memory && <div className="completion-check">✅</div>}
             </div>
             
-            <div className="bat-area">
-              <div className={`bat-container ${currentPhase === 'completed' ? 'freed' : 'trapped'}`}>
-                <div className="cave-chamber">🏛️</div>
-                <div className={`bat ${currentPhase === 'completed' ? 'free' : 'frozen'}`}>
-                  {currentPhase === 'completed' ? '🦇✨' : '🦇❄️'}
-                </div>
-                <div className={`system-lock ${currentPhase === 'completed' ? 'unlocked' : 'locked'}`}>
-                  {currentPhase === 'completed' ? '🔓' : '🔒'}
-                </div>
-              </div>
-              <div className="bat-label">
-                {currentPhase === 'completed' ? '¡Murciélago libre!' : 'Murciélago congelado'}
-              </div>
+            <div className={`deadlock-resolver ${completedPuzzles.deadlock ? 'active' : 'inactive'}`}>
+              <div className="system-icon">🔓</div>
+              <div className="system-label">Deadlock</div>
+              {completedPuzzles.deadlock && <div className="completion-check">✅</div>}
             </div>
           </div>
-
-          <div className="phase-indicator">
-            <h3>📍 Fase Actual: {getCurrentPhaseDescription()}</h3>
-            <div className="progress-indicators">
-              <div className={`phase-dot ${completedPuzzles.scheduler ? 'completed' : currentPhase === 'scheduler' ? 'active' : 'pending'}`}>1</div>
-              <div className={`phase-dot ${completedPuzzles.memory ? 'completed' : currentPhase === 'memory' ? 'active' : 'pending'}`}>2</div>
-              <div className={`phase-dot ${completedPuzzles.deadlock ? 'completed' : currentPhase === 'deadlock' ? 'active' : 'pending'}`}>👑</div>
+          
+          <div className="bat-area">
+            <div className={`bat-container ${currentPhase === 'completed' ? 'freed' : 'trapped'}`}>
+              <div className="cave-chamber">🏛️</div>
+              <div className={`bat ${currentPhase === 'completed' ? 'free' : 'frozen'}`}>
+                {currentPhase === 'completed' ? '🦇✨' : '🦇❄️'}
+              </div>
+              <div className={`system-lock ${currentPhase === 'completed' ? 'unlocked' : 'locked'}`}>
+                {currentPhase === 'completed' ? '🔓' : '🔒'}
+              </div>
+            </div>
+            <div className="bat-label">
+              {currentPhase === 'completed' ? '¡Murciélago libre!' : 'Murciélago congelado'}
             </div>
           </div>
-
-          {!showPuzzle && currentPhase !== 'completed' && (
-            <div className="action-area">
-              <button 
-                className="puzzle-trigger-btn"
-                onClick={() => setShowPuzzle(true)}
-              >
-                {getPuzzleButtonText()}
-              </button>
-          </div>
-          )}
         </div>
+
+        <div className="phase-indicator">
+          <h3>📍 Fase Actual: {getCurrentPhaseDescription()}</h3>
+          <div className="progress-indicators">
+            <div className={`phase-dot ${completedPuzzles.scheduler ? 'completed' : currentPhase === 'scheduler' ? 'active' : 'pending'}`}>1</div>
+            <div className={`phase-dot ${completedPuzzles.memory ? 'completed' : currentPhase === 'memory' ? 'active' : 'pending'}`}>2</div>
+            <div className={`phase-dot ${completedPuzzles.deadlock ? 'completed' : currentPhase === 'deadlock' ? 'active' : 'pending'}`}>👑</div>
+          </div>
+        </div>
+
+        {!showPuzzle && currentPhase !== 'completed' && (
+          <div className="action-area">
+            <button 
+              className="puzzle-trigger-btn"
+              onClick={() => setShowPuzzle(true)}
+            >
+              {getPuzzleButtonText()}
+            </button>
+          </div>
+        )}
       </div>
-    );
+    </div>
+  );
+
+  // Funciones para contenido dinámico
+  const getCurrentInstructions = () => {
+    switch (currentPhase) {
+      case 'scheduler':
+        return 'Organiza los procesos en la cola de planificación usando algoritmos de scheduling.';
+      case 'memory':
+        return 'Gestiona la memoria asignando y liberando bloques de memoria de manera eficiente.';
+      case 'deadlock':
+        return 'Resuelve el deadlock identificando y rompiendo el ciclo de dependencias.';
+      case 'completed':
+        return '¡Nivel completado! El murciélago está libre.';
+      default:
+        return 'Explora la cueva y libera al murciélago resolviendo los desafíos del sistema operativo.';
+    }
+  };
+
+  const getCurrentStory = () => {
+    switch (currentPhase) {
+      case 'scheduler':
+        return 'El planificador de procesos está desorganizado. Los procesos están esperando indefinidamente.';
+      case 'memory':
+        return 'La gestión de memoria está fragmentada. Necesitamos optimizar la asignación de memoria.';
+      case 'deadlock':
+        return 'Un deadlock ha paralizado el sistema. Los recursos están bloqueados mutuamente.';
+      case 'completed':
+        return '¡El sistema operativo funciona perfectamente! El murciélago puede volar libremente.';
+      default:
+        return 'Andy entra a la cueva oscura donde el murciélago está atrapado en procesos congelados.';
+    }
+  };
+
+  const getCurrentProgress = () => {
+    const completed = Object.values(completedPuzzles).filter(Boolean).length;
+    const total = 3;
+    return `${completed}/${total} sistemas operativos resueltos`;
   };
 
   const getCurrentPhaseDescription = () => {
@@ -285,31 +363,37 @@ const Level2Cave = () => {
 
       {/* Área principal del juego */}
       <div className="game-main-area">
-        {renderGameState()}
+        {/* Escenario del juego - 70% de ancho (izquierda) */}
+        <div className="game-scenario">
+          {renderMainContent()}
+        </div>
+        
+        {/* Área de diálogos - 30% de ancho (derecha) */}
+        <div className="game-dialogue-area">
+          {/* Sección izquierda (50% del 30%) */}
+          <div className="dialogue-section">
+            <div className="dialogue-row instructions">
+              📋 <strong>Instrucciones:</strong> {getCurrentInstructions()}
+            </div>
+            {showMessage && (
+              <div className="dialogue-row message">
+                🐿️ <strong>Andy:</strong> {currentMessage}
+              </div>
+            )}
+          </div>
+          
+          {/* Sección derecha (50% del 30%) */}
+          <div className="dialogue-section">
+            <div className="dialogue-row story">
+              📖 <strong>Historia:</strong> {getCurrentStory()}
+            </div>
+            <div className="dialogue-row progress">
+              🎯 <strong>Progreso:</strong> {getCurrentProgress()}
+            </div>
+          </div>
+        </div>
       </div>
 
-      {/* Puzzles */}
-      {showPuzzle && currentPhase === 'scheduler' && (
-        <ProcessSchedulerPuzzle 
-          onComplete={() => handlePuzzleComplete('scheduler')}
-          onClose={handlePuzzleClose}
-        />
-      )}
-      
-      {showPuzzle && currentPhase === 'memory' && (
-        <MemoryManagementPuzzle 
-          onComplete={() => handlePuzzleComplete('memory')}
-          onClose={handlePuzzleClose}
-        />
-      )}
-      
-      
-      {showPuzzle && currentPhase === 'deadlock' && (
-        <DeadlockBossPuzzle 
-          onComplete={() => handlePuzzleComplete('deadlock')}
-          onClose={handlePuzzleClose}
-        />
-      )}
 
       <style>{`
         .level2-cave-new {
@@ -348,43 +432,72 @@ const Level2Cave = () => {
           cursor: pointer;
         }
 
-        .story-message-overlay {
-          position: absolute;
-          bottom: 2rem;
-          left: 2rem;
-          right: 2rem;
-          display: flex;
-          align-items: center;
-          gap: 1rem;
-          background: rgba(44, 62, 80, 0.9);
-          padding: 1.5rem;
-          border-radius: 15px;
-          z-index: 200;
-        }
-
-        .andy-avatar {
-          font-size: 3rem;
-          animation: torch-flicker 2s ease-in-out infinite alternate;
-        }
-
-        .message-bubble {
-          background: rgba(236, 240, 241, 0.95);
-          color: #2c3e50;
-          padding: 1rem;
-          border-radius: 10px;
-          font-family: 'Press Start 2P', monospace;
-          font-size: 0.7rem;
-          line-height: 1.4;
-          flex: 1;
-        }
 
         .game-main-area {
           width: 100%;
           height: 100%;
           display: flex;
+          flex-direction: row;
+          padding: 7rem 2rem 2rem 2rem;
+          gap: 2rem;
+        }
+
+        .game-scenario {
+          flex: 0 0 70%;
+          display: flex;
           align-items: center;
           justify-content: center;
-          padding: 6rem 2rem 2rem 2rem;
+        }
+
+        .game-dialogue-area {
+          flex: 0 0 30%;
+          display: flex;
+          flex-direction: column;
+          gap: 1rem;
+          padding: 1rem 0;
+        }
+
+        .dialogue-section {
+          flex: 1;
+          display: flex;
+          flex-direction: column;
+          gap: 1rem;
+        }
+
+        .dialogue-row {
+          background: rgba(44, 62, 80, 0.9);
+          padding: 1rem;
+          border-radius: 10px;
+          font-family: 'Press Start 2P', monospace;
+          font-size: 0.6rem;
+          line-height: 1.4;
+          color: white;
+          border: 2px solid #7f8c8d;
+        }
+
+        .dialogue-row.instructions {
+          border-color: #3498db;
+        }
+
+        .dialogue-row.story {
+          border-color: #9b59b6;
+        }
+
+        .dialogue-row.progress {
+          border-color: #2ecc71;
+        }
+
+        .dialogue-row.message {
+          border-color: #f39c12;
+          background: rgba(243, 156, 18, 0.2);
+        }
+
+        .puzzle-container {
+          width: 100%;
+          height: 100%;
+          display: flex;
+          align-items: center;
+          justify-content: center;
         }
 
         .intro-animation {
@@ -762,6 +875,19 @@ const Level2Cave = () => {
         }
 
         @media (max-width: 768px) {
+          .game-main-area {
+            flex-direction: column;
+            padding: 6rem 1rem 1rem 1rem;
+          }
+          
+          .game-scenario {
+            flex: 0 0 60%;
+          }
+          
+          .game-dialogue-area {
+            flex: 0 0 40%;
+          }
+          
           .scene-elements {
             flex-direction: column;
             gap: 1rem;

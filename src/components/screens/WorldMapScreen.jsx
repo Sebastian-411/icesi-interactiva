@@ -1,8 +1,11 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { useGame } from '../../context/GameContext';
 
 const WorldMapScreen = ({ isActive }) => {
   const { state, showScreen, setLevel, updateTutorial } = useGame();
+  const containerRef = useRef(null);
+  const stationRefs = useRef({});
+  const [pathSegments, setPathSegments] = useState([]);
   const [showTutorial, setShowTutorial] = useState(!state.tutorialCompleted);
   const [currentTutorialStep, setCurrentTutorialStep] = useState(1);
 
@@ -13,6 +16,58 @@ const WorldMapScreen = ({ isActive }) => {
     { id: 3, name: 'Pantano de Datos', friend: '🦎', icon: '💧🦎', biome: 'swamp', unlocked: state.completedLevels.length >= 2 },
     { id: 4, name: 'Pico de Software', friend: '🐾', icon: '⛰️⚙️', biome: 'peak', unlocked: state.completedLevels.length >= 3 }
   ];
+
+  // Calcular caminos dinámicos para que el trazo pase por las estaciones
+  useEffect(() => {
+    const calcPaths = () => {
+      if (!containerRef.current) return;
+      const containerRect = containerRef.current.getBoundingClientRect();
+      const toSvg = (xPx, yPx) => {
+        const x = ((xPx - containerRect.left) / containerRect.width) * 100; // viewBox width 100
+        const y = ((yPx - containerRect.top) / containerRect.height) * 60;   // viewBox height 60
+        return { x, y };
+      };
+
+      // Recoger puntos en orden 1->2->3->4->punta torre (aprox)
+      const points = [];
+      [1, 2, 3, 4].forEach((id) => {
+        const el = stationRefs.current[id];
+        if (el) {
+          const r = el.getBoundingClientRect();
+          points.push(toSvg(r.left + r.width / 2, r.top + r.height / 2));
+        }
+      });
+      // Punto final cercano a la torre (parte inferior izquierda de la torre decorativa)
+      const towerEl = containerRef.current.querySelector('.central-icesi-tower');
+      if (towerEl) {
+        const tr = towerEl.getBoundingClientRect();
+        points.push(toSvg(tr.left + tr.width * 0.15, tr.top + tr.height * 0.55));
+      }
+
+      // Generar segmentos con curvas suaves entre puntos consecutivos
+      const segs = [];
+      for (let i = 0; i < points.length - 1; i++) {
+        const p0 = points[i];
+        const p1 = points[i + 1];
+        const dx = (p1.x - p0.x);
+        const dy = (p1.y - p0.y);
+        const c1 = { x: p0.x + dx * 0.35, y: p0.y + dy * 0.15 };
+        const c2 = { x: p0.x + dx * 0.75, y: p0.y + dy * 0.85 };
+        segs.push({
+          dBorder: `M ${p0.x.toFixed(2)} ${p0.y.toFixed(2)} C ${c1.x.toFixed(2)} ${c1.y.toFixed(2)}, ${c2.x.toFixed(2)} ${c2.y.toFixed(2)}, ${p1.x.toFixed(2)} ${p1.y.toFixed(2)}`,
+        });
+      }
+      setPathSegments(segs);
+    };
+
+    calcPaths();
+    window.addEventListener('resize', calcPaths);
+    const id = setInterval(calcPaths, 500); // recompute mientras hay HMR/animaciones
+    return () => {
+      window.removeEventListener('resize', calcPaths);
+      clearInterval(id);
+    };
+  }, [state.completedLevels.length]);
 
   const handleLevelClick = (level) => {
     console.log('🎮 Click en nivel:', level.id, 'completedLevels:', state.completedLevels);
@@ -106,14 +161,14 @@ const WorldMapScreen = ({ isActive }) => {
   return (
     <div id="world-map-screen" className={`screen ${isActive ? 'active' : ''}`}>
       {/* Fondo del mapa con paisaje */}
-      <div className="world-map-landscape">
+      <div ref={containerRef} className={`world-map-landscape progress-${state.completedLevels.length}`}>
         <div className="sky-background">
           <div className="tech-elements">
             <div className="floating-servers"></div>
             <div className="data-cables"></div>
             <div className="tech-symbols"></div>
           </div>
-          <div className="floating-clouds"></div>
+          <div className="floating-clouds parallax-clouds"></div>
           <div className="mountain-backdrop"></div>
         </div>
         
@@ -153,23 +208,37 @@ const WorldMapScreen = ({ isActive }) => {
           <div className={`tower-glow-effect ${state.completedLevels.length >= 4 ? 'tower-final-glow' : 'tower-red-glow'}`}></div>
           {/* Barrera mágica / niebla para recordar que no se entra desde el mapa */}
           <div className={`tower-barrier ${state.completedLevels.length >= 4 ? 'barrier-weak' : 'barrier-strong'}`}></div>
-          
-          {/* Andy atrapado como recordatorio narrativo */}
-          <div className="andy-trapped">
-            <div className="andy-icon">🐿️</div>
-            <div className="help-text">¡AYUDA!</div>
-          </div>
+
+        </div>
+
+        {/* Bosquecitos con profundidad (parallax) */}
+        <div className="forest-layer back">
+          <span className="tree pine" style={{ left: '8%', bottom: '18%' }}></span>
+          <span className="tree round" style={{ left: '14%', bottom: '20%' }}></span>
+          <span className="tree pine" style={{ left: '20%', bottom: '22%' }}></span>
+          <span className="tree round" style={{ left: '38%', bottom: '18%' }}></span>
+          <span className="tree pine" style={{ left: '56%', bottom: '26%' }}></span>
+          <span className="tree round" style={{ left: '72%', bottom: '28%' }}></span>
+        </div>
+        <div className="forest-layer mid">
+          <span className="tree round" style={{ left: '11%', bottom: '16%' }}></span>
+          <span className="tree pine" style={{ left: '16%', bottom: '18%' }}></span>
+          <span className="tree round" style={{ left: '33%', bottom: '22%' }}></span>
+          <span className="tree pine" style={{ left: '47%', bottom: '24%' }}></span>
+          <span className="tree round" style={{ left: '63%', bottom: '30%' }}></span>
+        </div>
+        <div className="forest-layer front">
+          <span className="tree pine big" style={{ left: '13%', bottom: '14%' }}></span>
+          <span className="tree round big" style={{ left: '30%', bottom: '20%' }}></span>
+          <span className="tree pine big" style={{ left: '52%', bottom: '26%' }}></span>
+          <span className="bush" style={{ left: '28%', bottom: '18%' }}></span>
+          <span className="bush" style={{ left: '55%', bottom: '24%' }}></span>
+          <span className="rock" style={{ left: '18%', bottom: '16%' }}></span>
+          <span className="flower" style={{ left: '35%', bottom: '19%' }}></span>
         </div>
       </div>
       
-      {/* Caminos conectores */}
-      <div className="adventure-paths">
-        <div className={`path path-1 ${levels[0].unlocked ? 'unlocked' : 'locked'}`}></div>
-        <div className={`path path-2 ${levels[1].unlocked ? 'unlocked' : 'locked'}`}></div>
-        <div className={`path path-3 ${levels[2].unlocked ? 'unlocked' : 'locked'}`}></div>
-        <div className={`path path-4 ${levels[3].unlocked ? 'unlocked' : 'locked'}`}></div>
-        <div className={`path path-final ${state.completedLevels.length >= 4 ? 'unlocked' : 'locked'}`}></div>
-      </div>
+      {/* Caminos deshabilitados */}
       
       {/* Niveles como estaciones en el mapa */}
       <div className="level-stations">
@@ -187,23 +256,15 @@ const WorldMapScreen = ({ isActive }) => {
                 'locked'
               } ${isCurrentLevel ? 'current-level' : ''}`}
               data-level={level.id}
+              ref={(el) => { stationRefs.current[level.id] = el; }}
               onClick={() => handleLevelClick(level)}
               style={{
                 cursor: isAccessible ? 'pointer' : 'not-allowed',
                 opacity: isAccessible ? 1 : isCompleted ? 0.7 : 0.4
               }}
             >
-              <div className={`station-platform ${level.biome}-platform`}></div>
-              <div className="level-icon">{level.icon}</div>
-              <div className="friend-icon" style={{
-                filter: isCompleted ? 'brightness(1.2) saturate(1.5)' : 'none'
-              }}>
-                {level.friend}
-              </div>
-              <div className="level-label">{level.name}</div>
-              <div className="level-status">
-                {isCompleted ? '✅' : isAccessible ? '🎯' : '🔒'}
-              </div>
+              <img src={`/level${level.id}.png`} alt={level.name} className="level-icon-img" />
+              <div className="level-label simple">{level.name}</div>
             </div>
           );
         })}
