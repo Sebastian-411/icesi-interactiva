@@ -550,11 +550,6 @@ const ProgrammingMazePuzzle = ({ onComplete, onClose }) => {
 
         {gamePhase === 'programming' && (
           <div className="programming-area">
-            <div className="level-info">
-              <h4>🌪️ Laberinto Complejo</h4>
-              <p>Navega a través del laberinto usando programación con bloques</p>
-            </div>
-
             <div className="game-layout">
               {/* Laberinto */}
               <div className="maze-section">
@@ -647,82 +642,110 @@ const ProgrammingMazePuzzle = ({ onComplete, onClose }) => {
             top: 0;
             left: 0;
             width: 100%;
-            height: 100%;
-            background: rgba(0, 0, 0, 0.9);
+            height: 100vh;
+            background: linear-gradient(135deg, #2c3e50 0%, #34495e 50%, #1a1a2e 100%);
             display: flex;
+            flex-direction: column;
             align-items: center;
             justify-content: center;
+            padding: 0.5rem;
             z-index: 1000;
+            overflow: hidden;
             font-family: 'Press Start 2P', monospace;
           }
 
           .programming-maze-puzzle-container {
-            width: 95%;
-            max-width: 1400px;
-            max-height: 90vh;
-            background: linear-gradient(135deg, #2c3e50 0%, #34495e 50%, #1a1a2e 100%);
-            border-radius: 20px;
-            padding: 2rem;
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+            padding: 1rem;
+            border-radius: 15px;
+            box-shadow: 0 8px 30px rgba(0, 0, 0, 0.3);
+            width: 100%;
+            height: 100%;
+            max-height: 100vh;
             overflow-y: auto;
-            border: 3px solid #3498db;
-            box-shadow: 0 0 30px rgba(52, 152, 219, 0.3);
+            position: relative;
+            border: 2px solid rgba(255, 255, 255, 0.2);
+            display: flex;
+            flex-direction: column;
+            pointer-events: auto;
           }
 
           .puzzle-header {
             display: flex;
             justify-content: space-between;
             align-items: center;
-            margin-bottom: 2rem;
+            margin-bottom: 0.8rem;
             border-bottom: 2px solid #3498db;
-            padding-bottom: 1rem;
+            padding-bottom: 0.8rem;
+            background: rgba(52, 152, 219, 0.3);
+            padding: 0.8rem;
+            border-radius: 10px;
+            border: 2px solid #3498db;
+            box-shadow: 0 4px 15px rgba(52, 152, 219, 0.2);
           }
 
           .puzzle-header h3 {
-            color: #3498db;
-            font-size: 1.2rem;
+            color: #2c3e50;
+            font-size: 0.8rem;
             margin: 0;
+            text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.2);
           }
 
           .puzzle-header p {
-            color: #ecf0f1;
-            font-size: 0.8rem;
-            margin: 0.5rem 0 0 0;
+            color: #34495e;
+            font-size: 0.5rem;
+            margin: 0.3rem 0 0 0;
+            text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.1);
           }
 
           .close-btn {
             background: #e74c3c;
             color: white;
             border: none;
-            width: 40px;
-            height: 40px;
+            width: 30px;
+            height: 30px;
             border-radius: 50%;
-            font-size: 1.2rem;
+            font-size: 1rem;
             cursor: pointer;
             transition: all 0.3s;
+            border: 2px solid #c0392b;
+            box-shadow: 0 4px 15px rgba(231, 76, 60, 0.3);
+            text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.3);
           }
 
           .close-btn:hover {
             background: #c0392b;
-            transform: scale(1.1);
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(231, 76, 60, 0.4);
           }
 
           .score-display {
             display: flex;
             justify-content: center;
-            margin-bottom: 2rem;
-            background: rgba(52, 152, 219, 0.1);
-            padding: 1rem;
+            margin-bottom: 0.8rem;
+            background: rgba(243, 156, 18, 0.3);
+            padding: 0.8rem;
             border-radius: 10px;
+            border: 2px solid #f39c12;
+            box-shadow: 0 4px 15px rgba(243, 156, 18, 0.2);
           }
 
           .score-stat {
-            color: #3498db;
-            font-size: 0.8rem;
+            color: #2c3e50;
+            font-size: 0.6rem;
+            text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.1);
           }
 
           .intro-screen {
             text-align: center;
             color: white;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            min-height: 60vh;
+            padding: 2rem;
           }
 
           .maze-intro-scene {
@@ -751,17 +774,30 @@ const ProgrammingMazePuzzle = ({ onComplete, onClose }) => {
             animation: maze-walk 3s ease-in-out infinite;
           }
 
+          .intro-content {
+            background: rgba(0, 0, 0, 0.8);
+            padding: 2rem;
+            border-radius: 15px;
+            border: 2px solid #3498db;
+            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.5);
+            max-width: 800px;
+            width: 100%;
+            margin: 0 auto;
+          }
+
           .intro-content h4 {
             color: #3498db;
             font-size: 1rem;
             margin-bottom: 1rem;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.8);
           }
 
           .intro-content p {
             font-size: 0.7rem;
             line-height: 1.4;
             margin-bottom: 1rem;
-            color: #ecf0f1;
+            color: #ffffff;
+            text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.8);
           }
 
           .programming-concepts {
@@ -772,6 +808,7 @@ const ProgrammingMazePuzzle = ({ onComplete, onClose }) => {
             color: #2ecc71;
             font-size: 0.8rem;
             margin-bottom: 1rem;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.8);
           }
 
           .concept-cards {
@@ -782,36 +819,41 @@ const ProgrammingMazePuzzle = ({ onComplete, onClose }) => {
           }
 
           .concept-card {
-            background: rgba(46, 204, 113, 0.1);
+            background: rgba(0, 0, 0, 0.6);
             padding: 1rem;
             border-radius: 10px;
             border: 2px solid #2ecc71;
             min-width: 150px;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
           }
 
           .concept-card h6 {
             color: #2ecc71;
             font-size: 0.7rem;
             margin-bottom: 0.5rem;
+            text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.8);
           }
 
           .concept-card p {
             font-size: 0.6rem;
-            color: #ecf0f1;
+            color: #ffffff;
             margin: 0;
+            text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.8);
           }
 
           .start-btn {
             background: linear-gradient(45deg, #2ecc71, #27ae60);
             color: white;
-            border: none;
+            border: 2px solid #27ae60;
             padding: 1.5rem 3rem;
             border-radius: 15px;
             font-family: 'Press Start 2P', monospace;
             font-size: 0.8rem;
             cursor: pointer;
             transition: all 0.3s;
-            box-shadow: 0 5px 15px rgba(46, 204, 113, 0.3);
+            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.5);
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.8);
+            margin-top: 1rem;
           }
 
           .start-btn:hover {
@@ -846,16 +888,22 @@ const ProgrammingMazePuzzle = ({ onComplete, onClose }) => {
 
           .game-layout {
             display: grid;
-            grid-template-columns: 1fr 1fr;
+            grid-template-columns: 70% 30%;
             gap: 2rem;
             margin-bottom: 2rem;
+            min-height: 70vh;
           }
 
           .maze-section {
             background: rgba(255, 255, 255, 0.05);
-            padding: 1rem;
+            padding: 1.5rem;
             border-radius: 10px;
             border: 2px solid #7f8c8d;
+            min-height: 60vh;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
           }
 
           .maze-container {
@@ -863,14 +911,18 @@ const ProgrammingMazePuzzle = ({ onComplete, onClose }) => {
             justify-content: center;
             align-items: center;
             min-height: 400px;
+            width: 100%;
           }
 
           .maze-grid {
             display: grid;
-            gap: 1px;
+            gap: 2px;
             background: #2c3e50;
-            padding: 1rem;
+            padding: 1.5rem;
             border-radius: 8px;
+            min-height: 50vh;
+            width: fit-content;
+            margin: 0 auto;
           }
 
           .maze-row {
@@ -879,12 +931,12 @@ const ProgrammingMazePuzzle = ({ onComplete, onClose }) => {
           }
 
           .maze-cell {
-            width: 20px;
-            height: 20px;
+            width: 30px;
+            height: 30px;
             display: flex;
             align-items: center;
             justify-content: center;
-            border-radius: 2px;
+            border-radius: 3px;
             position: relative;
           }
 
@@ -955,20 +1007,28 @@ const ProgrammingMazePuzzle = ({ onComplete, onClose }) => {
             display: flex;
             flex-direction: column;
             gap: 1rem;
+            min-height: 60vh;
+            background: rgba(255, 255, 255, 0.05);
+            padding: 1.5rem;
+            border-radius: 10px;
+            border: 2px solid #7f8c8d;
           }
 
           .blocks-palette {
-            background: rgba(255, 255, 255, 0.05);
-            padding: 1rem;
+            background: rgba(0, 0, 0, 0.4);
+            padding: 1.2rem;
             border-radius: 10px;
             border: 2px solid #f39c12;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
           }
 
           .blocks-palette h5 {
             color: #f39c12;
-            font-size: 0.8rem;
+            font-size: 0.9rem;
             margin-bottom: 1rem;
             text-align: center;
+            text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.8);
+            font-weight: bold;
           }
 
           .blocks-grid {
@@ -978,13 +1038,20 @@ const ProgrammingMazePuzzle = ({ onComplete, onClose }) => {
           }
 
           .block-item {
-            padding: 0.6rem;
+            padding: 1rem;
             border-radius: 8px;
             text-align: center;
             cursor: grab;
             transition: all 0.3s;
             color: white;
             user-select: none;
+            font-size: 1rem;
+            min-height: 55px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.8);
+            font-weight: bold;
           }
 
           .block-item:active {
@@ -1038,15 +1105,24 @@ const ProgrammingMazePuzzle = ({ onComplete, onClose }) => {
           .code-blocks {
             display: flex;
             flex-direction: column;
-            gap: 0.3rem;
-            min-height: 150px;
+            gap: 0.4rem;
+            min-height: 220px;
+            padding: 1.2rem;
+            background: rgba(0, 0, 0, 0.5);
+            border-radius: 8px;
+            border: 2px solid #7f8c8d;
+            align-items: stretch;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
           }
 
           .drop-zone {
-            height: 20px;
+            height: 15px;
             border: 2px dashed transparent;
             border-radius: 4px;
             transition: all 0.3s;
+            margin: 0;
+            width: 100%;
+            box-sizing: border-box;
           }
 
           .drop-zone:hover {
@@ -1056,14 +1132,27 @@ const ProgrammingMazePuzzle = ({ onComplete, onClose }) => {
 
           .drop-zone.final {
             flex: 1;
-            min-height: 50px;
+            min-height: 30px;
+            margin: 0;
+            width: 100%;
+            box-sizing: border-box;
           }
 
           .code-block {
-            padding: 0.6rem;
+            padding: 1rem;
             border-radius: 8px;
             color: white;
             position: relative;
+            font-size: 1rem;
+            min-height: 55px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0;
+            width: 100%;
+            box-sizing: border-box;
+            text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.8);
+            font-weight: bold;
           }
 
           .code-block.square {
@@ -1073,13 +1162,13 @@ const ProgrammingMazePuzzle = ({ onComplete, onClose }) => {
           .code-block.start {
             border-radius: 8px 8px 0 0;
             border-bottom: 3px solid #2ecc71;
-            margin-left: 1rem;
+            margin: 0;
           }
 
           .code-block.end {
             border-radius: 0 0 8px 8px;
             border-top: 3px solid #e74c3c;
-            margin-right: 1rem;
+            margin: 0;
           }
 
           .block-header {

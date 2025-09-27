@@ -117,21 +117,7 @@ const IntroScreen = ({ isActive }) => {
             {currentFrame >= 5 ? 'Final' : 'Siguiente'}
           </button>
         </div>
-        
-        {/* Progreso */}
-        <div className="story-progress">
-          <div className="progress-bar">
-            <div 
-              className="progress-fill" 
-              style={{ width: `${(currentFrame / 5) * 100}%` }}
-            ></div>
-          </div>
-          <span className="frame-counter">{currentFrame} / 5</span>
-          <div className="auto-play-indicator">
-            {isAutoPlaying ? '▶ AUTO' : '⏸ MANUAL'}
-          </div>
-        </div>
-        
+                
         {/* Indicadores de frame */}
         <div className="frame-indicators">
           {[1, 2, 3, 4, 5].map((frameNum) => (

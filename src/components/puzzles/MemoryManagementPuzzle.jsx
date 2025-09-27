@@ -127,7 +127,9 @@ const MemoryManagementPuzzle = ({ onComplete, onClose }) => {
 
   // Comenzar el juego
   const startGame = () => {
+    console.log('🚀 Iniciando juego de memoria...');
     setGamePhase('playing');
+    console.log('✅ GamePhase cambiado a playing');
   };
 
   // Seleccionar algoritmo
@@ -350,19 +352,6 @@ const MemoryManagementPuzzle = ({ onComplete, onClose }) => {
 
         {gamePhase === 'intro' && (
           <div className="intro-screen">
-            <div className="cave-memory-scene">
-              <div className="memory-visualization">
-                <div className="memory-rocks">🪨🪨🪨🪨</div>
-                <div className="fragmented-memory">
-                  <div className="memory-gap">⬜</div>
-                  <div className="memory-used">⬛</div>
-                  <div className="memory-gap">⬜</div>
-                  <div className="memory-used">⬛</div>
-                </div>
-                <p>¡La memoria está fragmentada!</p>
-              </div>
-            </div>
-            
             <div className="intro-content">
               <h4>🎯 ¿Cómo Jugar?</h4>
               <div className="tutorial-steps">
@@ -422,7 +411,18 @@ const MemoryManagementPuzzle = ({ onComplete, onClose }) => {
                 <p>La fragmentación mide cuánto espacio de memoria se desperdicia en pequeños huecos que no se pueden usar. ¡Mantenla baja!</p>
               </div>
               
-              <button className="start-btn" onClick={startGame}>
+              <button 
+                className="start-btn" 
+                onClick={(e) => {
+                  e.preventDefault();
+                  e.stopPropagation();
+                  console.log('🖱️ Botón clickeado');
+                  startGame();
+                }}
+                onMouseDown={(e) => {
+                  console.log('🖱️ Mouse down en botón');
+                }}
+              >
                 🚀 ¡Entendido! Comenzar
               </button>
             </div>
@@ -635,30 +635,32 @@ const MemoryManagementPuzzle = ({ onComplete, onClose }) => {
       <style>{`
         .memory-puzzle-overlay {
           width: 100%;
-          height: 100%;
+          height: 100vh;
           background: linear-gradient(135deg, #2c3e50 0%, #34495e 50%, #1a1a2e 100%);
           display: flex;
           flex-direction: column;
           align-items: center;
           justify-content: center;
-          padding: 1rem;
+          padding: 0.5rem;
           position: relative;
+          overflow: hidden;
         }
 
         .memory-puzzle-container {
           background: rgba(255, 255, 255, 0.95);
           backdrop-filter: blur(10px);
-          padding: 1.5rem;
-          border-radius: 20px;
-          box-shadow: 0 10px 40px rgba(0, 0, 0, 0.3);
+          padding: 1rem;
+          border-radius: 15px;
+          box-shadow: 0 8px 30px rgba(0, 0, 0, 0.3);
           width: 100%;
           height: 100%;
-          max-height: 95vh;
-          overflow: hidden;
+          max-height: 100vh;
+          overflow-y: auto;
           position: relative;
-          border: 1px solid rgba(255, 255, 255, 0.2);
+          border: 2px solid rgba(255, 255, 255, 0.2);
           display: flex;
           flex-direction: column;
+          pointer-events: auto;
         }
 
         .puzzle-header {
@@ -698,32 +700,37 @@ const MemoryManagementPuzzle = ({ onComplete, onClose }) => {
           display: flex;
           justify-content: space-between;
           align-items: center;
-          background: rgba(155, 89, 182, 0.2);
-          padding: 1rem;
+          background: rgba(155, 89, 182, 0.3);
+          padding: 0.8rem;
           border-radius: 10px;
-          margin-bottom: 2rem;
+          margin-bottom: 1rem;
+          border: 2px solid #9b59b6;
+          box-shadow: 0 4px 15px rgba(155, 89, 182, 0.2);
         }
 
         .score-stat {
           font-family: 'Press Start 2P', monospace;
-          font-size: 0.8rem;
-          color: #f39c12;
+          font-size: 0.7rem;
+          color: #2c3e50;
+          text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.1);
         }
 
         .fragmentation-stat {
           font-family: 'Press Start 2P', monospace;
-          font-size: 0.7rem;
+          font-size: 0.6rem;
           display: flex;
           align-items: center;
-          gap: 1rem;
+          gap: 0.8rem;
+          color: #2c3e50;
         }
 
         .fragmentation-indicator {
           width: 100px;
           height: 10px;
-          background: rgba(255, 255, 255, 0.2);
+          background: rgba(0, 0, 0, 0.1);
           border-radius: 5px;
           overflow: hidden;
+          border: 1px solid #7f8c8d;
         }
 
         .fragmentation-bar {
@@ -747,41 +754,12 @@ const MemoryManagementPuzzle = ({ onComplete, onClose }) => {
           text-align: center;
         }
 
-        .cave-memory-scene {
-          background: rgba(0, 0, 0, 0.8);
-          padding: 2rem;
-          border-radius: 15px;
-          margin-bottom: 2rem;
-        }
-
-        .memory-visualization {
-          margin-bottom: 1rem;
-        }
-
-        .memory-rocks {
-          font-size: 3rem;
-          margin-bottom: 1rem;
-        }
-
-        .fragmented-memory {
-          display: flex;
-          justify-content: center;
-          gap: 0.5rem;
-          font-size: 2rem;
-          margin-bottom: 1rem;
-        }
-
-        .cave-memory-scene p {
-          font-family: 'Press Start 2P', monospace;
-          font-size: 0.7rem;
-          color: #e74c3c;
-        }
-
         .intro-content h4 {
           font-family: 'Press Start 2P', monospace;
           font-size: 1rem;
           margin-bottom: 1rem;
-          color: #3498db;
+          color: #2c3e50;
+          text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);
         }
 
         .intro-content p {
@@ -789,20 +767,25 @@ const MemoryManagementPuzzle = ({ onComplete, onClose }) => {
           font-size: 0.7rem;
           margin-bottom: 1rem;
           line-height: 1.4;
+          color: #34495e;
+          text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.2);
         }
 
         .algorithms-info {
-          background: rgba(52, 152, 219, 0.2);
+          background: rgba(52, 152, 219, 0.3);
           padding: 1rem;
           border-radius: 10px;
           margin: 1rem 0;
+          border: 2px solid #3498db;
+          box-shadow: 0 4px 15px rgba(52, 152, 219, 0.2);
         }
 
         .algorithms-info h5 {
           font-family: 'Press Start 2P', monospace;
           font-size: 0.7rem;
           margin-bottom: 1rem;
-          color: #3498db;
+          color: #2c3e50;
+          text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.2);
         }
 
         .algorithm-cards {
@@ -817,13 +800,15 @@ const MemoryManagementPuzzle = ({ onComplete, onClose }) => {
           padding: 1rem;
           border: 2px solid;
           border-radius: 8px;
-          background: rgba(0, 0, 0, 0.3);
+          background: rgba(255, 255, 255, 0.8);
+          box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
         }
 
         .algorithm-card h6 {
           font-family: 'Press Start 2P', monospace;
           font-size: 0.6rem;
           margin-bottom: 0.5rem;
+          text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.1);
         }
 
         .algorithm-card p {
@@ -831,6 +816,7 @@ const MemoryManagementPuzzle = ({ onComplete, onClose }) => {
           font-size: 0.5rem;
           line-height: 1.3;
           margin: 0;
+          color: #34495e;
         }
 
         .start-btn {
@@ -843,11 +829,32 @@ const MemoryManagementPuzzle = ({ onComplete, onClose }) => {
           font-size: 0.8rem;
           cursor: pointer;
           transition: all 0.3s;
+          border: 2px solid #229954;
+          box-shadow: 0 6px 20px rgba(39, 174, 96, 0.4);
+          text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.3);
+          position: relative;
+          z-index: 10;
+          user-select: none;
+          -webkit-user-select: none;
+          -moz-user-select: none;
+          -ms-user-select: none;
         }
 
         .start-btn:hover {
           background: #229954;
           transform: translateY(-2px);
+          box-shadow: 0 8px 25px rgba(39, 174, 96, 0.6);
+        }
+
+        .start-btn:active {
+          background: #1e8449;
+          transform: translateY(0);
+          box-shadow: 0 4px 15px rgba(39, 174, 96, 0.4);
+        }
+
+        .start-btn:focus {
+          outline: 3px solid #f39c12;
+          outline-offset: 2px;
         }
 
         .tutorial-steps {
@@ -895,18 +902,21 @@ const MemoryManagementPuzzle = ({ onComplete, onClose }) => {
         }
 
         .key-concept {
-          background: rgba(241, 196, 15, 0.2);
+          background: rgba(241, 196, 15, 0.3);
           padding: 1rem;
           border-radius: 10px;
           margin: 1rem 0;
           border-left: 4px solid #f1c40f;
+          border: 2px solid #f1c40f;
+          box-shadow: 0 4px 15px rgba(241, 196, 15, 0.2);
         }
 
         .key-concept h5 {
           font-family: 'Press Start 2P', monospace;
           font-size: 0.7rem;
           margin-bottom: 0.5rem;
-          color: #f39c12;
+          color: #2c3e50;
+          text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.2);
         }
 
         .key-concept p {
@@ -914,6 +924,7 @@ const MemoryManagementPuzzle = ({ onComplete, onClose }) => {
           font-size: 0.6rem;
           line-height: 1.4;
           margin: 0;
+          color: #34495e;
         }
 
         .control-instructions {
@@ -958,20 +969,22 @@ const MemoryManagementPuzzle = ({ onComplete, onClose }) => {
           display: flex;
           flex-direction: column;
           min-height: 0;
+          overflow-y: auto;
         }
 
         .challenge-info {
           text-align: center;
           background: rgba(155, 89, 182, 0.2);
-          padding: 1rem;
+          padding: 0.8rem;
           border-radius: 10px;
-          margin-bottom: 2rem;
+          margin-bottom: 1rem;
+          flex-shrink: 0;
         }
 
         .challenge-info h4 {
           font-family: 'Press Start 2P', monospace;
-          font-size: 0.9rem;
-          margin-bottom: 0.5rem;
+          font-size: 0.8rem;
+          margin-bottom: 0.4rem;
           color: #9b59b6;
         }
 
@@ -979,7 +992,7 @@ const MemoryManagementPuzzle = ({ onComplete, onClose }) => {
           font-family: 'Press Start 2P', monospace;
           font-size: 0.6rem;
           margin-bottom: 0.3rem;
-          line-height: 1.4;
+          line-height: 1.3;
         }
 
         .objective-box {
@@ -1004,21 +1017,22 @@ const MemoryManagementPuzzle = ({ onComplete, onClose }) => {
         }
 
         .memory-visualization {
-          margin-bottom: 2rem;
+          margin-bottom: 1rem;
+          flex-shrink: 0;
         }
 
         .memory-visualization h5 {
           font-family: 'Press Start 2P', monospace;
-          font-size: 0.8rem;
-          margin-bottom: 1rem;
-          color: #ecf0f1;
+          font-size: 0.7rem;
+          margin-bottom: 0.8rem;
+          color: #2c3e50;
           text-align: center;
         }
 
         .memory-blocks-container {
           display: flex;
           width: 100%;
-          height: 80px;
+          height: 60px;
           border: 2px solid #7f8c8d;
           border-radius: 5px;
           overflow: hidden;
@@ -1077,26 +1091,27 @@ const MemoryManagementPuzzle = ({ onComplete, onClose }) => {
         }
 
         .algorithm-selector {
-          margin-bottom: 2rem;
+          margin-bottom: 1rem;
+          flex-shrink: 0;
         }
 
         .algorithm-selector h5 {
           font-family: 'Press Start 2P', monospace;
-          font-size: 0.8rem;
-          margin-bottom: 1rem;
+          font-size: 0.7rem;
+          margin-bottom: 0.8rem;
           color: #f39c12;
         }
 
         .algorithm-buttons {
           display: flex;
-          gap: 1rem;
+          gap: 0.8rem;
           flex-wrap: wrap;
         }
 
         .algorithm-btn {
           flex: 1;
-          min-width: 200px;
-          padding: 1rem;
+          min-width: 180px;
+          padding: 0.8rem;
           border: 2px solid;
           border-radius: 8px;
           background: transparent;
@@ -1122,32 +1137,33 @@ const MemoryManagementPuzzle = ({ onComplete, onClose }) => {
         }
 
         .waiting-processes {
-          margin-bottom: 2rem;
+          margin-bottom: 1rem;
+          flex-shrink: 0;
         }
 
         .waiting-processes h5 {
           font-family: 'Press Start 2P', monospace;
-          font-size: 0.8rem;
-          margin-bottom: 1rem;
+          font-size: 0.7rem;
+          margin-bottom: 0.8rem;
           color: #2ecc71;
         }
 
         .process-list {
           display: flex;
-          gap: 1rem;
+          gap: 0.8rem;
           flex-wrap: wrap;
         }
 
         .waiting-process {
-          padding: 1rem;
+          padding: 0.8rem;
           border-radius: 8px;
           cursor: pointer;
           transition: all 0.3s;
           display: flex;
           align-items: center;
-          gap: 0.8rem;
+          gap: 0.6rem;
           border: 2px solid transparent;
-          min-width: 150px;
+          min-width: 140px;
         }
 
         .waiting-process:hover {
@@ -1181,17 +1197,18 @@ const MemoryManagementPuzzle = ({ onComplete, onClose }) => {
 
         .controls {
           text-align: center;
-          margin-bottom: 2rem;
+          margin-bottom: 1rem;
+          flex-shrink: 0;
         }
 
         .allocate-btn {
           background: #e74c3c;
           color: white;
           border: none;
-          padding: 1rem 2rem;
+          padding: 0.8rem 1.5rem;
           border-radius: 10px;
           font-family: 'Press Start 2P', monospace;
-          font-size: 0.8rem;
+          font-size: 0.7rem;
           cursor: pointer;
           transition: all 0.3s;
         }
@@ -1208,9 +1225,10 @@ const MemoryManagementPuzzle = ({ onComplete, onClose }) => {
 
         .allocation-result {
           background: rgba(0, 0, 0, 0.8);
-          padding: 2rem;
+          padding: 1rem;
           border-radius: 15px;
-          margin-bottom: 2rem;
+          margin-bottom: 1rem;
+          flex-shrink: 0;
         }
 
         .allocation-result.success {
@@ -1223,16 +1241,16 @@ const MemoryManagementPuzzle = ({ onComplete, onClose }) => {
 
         .result-header h5 {
           font-family: 'Press Start 2P', monospace;
-          font-size: 1rem;
-          margin-bottom: 1rem;
+          font-size: 0.8rem;
+          margin-bottom: 0.8rem;
           text-align: center;
         }
 
         .result-content p {
           font-family: 'Press Start 2P', monospace;
-          font-size: 0.6rem;
-          margin-bottom: 0.8rem;
-          line-height: 1.4;
+          font-size: 0.5rem;
+          margin-bottom: 0.6rem;
+          line-height: 1.3;
         }
 
         .optimal-message {
@@ -1371,23 +1389,28 @@ const MemoryManagementPuzzle = ({ onComplete, onClose }) => {
         }
 
         .education-panel {
-          background: rgba(155, 89, 182, 0.2);
-          padding: 1rem;
+          background: rgba(155, 89, 182, 0.3);
+          padding: 0.8rem;
           border-radius: 10px;
-          margin-top: 2rem;
+          margin-top: 1rem;
+          flex-shrink: 0;
+          border: 2px solid #9b59b6;
+          box-shadow: 0 4px 15px rgba(155, 89, 182, 0.2);
         }
 
         .education-panel h4 {
           font-family: 'Press Start 2P', monospace;
-          font-size: 0.8rem;
-          margin-bottom: 0.8rem;
-          color: #9b59b6;
+          font-size: 0.7rem;
+          margin-bottom: 0.6rem;
+          color: #2c3e50;
+          text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.2);
         }
 
         .education-panel p {
           font-family: 'Press Start 2P', monospace;
-          font-size: 0.6rem;
-          line-height: 1.5;
+          font-size: 0.5rem;
+          line-height: 1.4;
+          color: #34495e;
         }
 
         @keyframes bat-allocate {
@@ -1406,9 +1429,14 @@ const MemoryManagementPuzzle = ({ onComplete, onClose }) => {
         }
 
         @media (max-width: 768px) {
+          .memory-puzzle-container {
+            padding: 0.8rem;
+            border-radius: 10px;
+          }
+          
           .stats-display {
             flex-direction: column;
-            gap: 1rem;
+            gap: 0.8rem;
           }
           
           .algorithm-buttons,
@@ -1418,6 +1446,25 @@ const MemoryManagementPuzzle = ({ onComplete, onClose }) => {
           
           .algorithm-cards {
             flex-direction: column;
+          }
+          
+          .memory-blocks-container {
+            height: 50px;
+          }
+          
+          .algorithm-btn {
+            min-width: 100%;
+            padding: 0.6rem;
+          }
+          
+          .waiting-process {
+            min-width: 100%;
+            padding: 0.6rem;
+          }
+          
+          .allocate-btn {
+            padding: 0.6rem 1.2rem;
+            font-size: 0.6rem;
           }
         }
       `}</style>

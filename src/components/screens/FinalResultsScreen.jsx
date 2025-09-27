@@ -40,28 +40,13 @@ const FinalResultsScreen = ({ isActive }) => {
         </div>
         <div className="final-actions">
           <a 
-            href="https://www.icesi.edu.co/programas/ingenieria-de-sistemas/" 
+            href="https://www.icesi.edu.co/programas/ingenieria-diseno-y-ciencias-aplicadas/ingenieria-de-sistemas/" 
             target="_blank" 
             rel="noopener noreferrer"
             className="btn-primary btn-large"
           >
             CONOCE EL PROGRAMA DE ING. DE SISTEMAS EN ICESI
           </a>
-          <button 
-            id="share-btn" 
-            className="btn-secondary"
-            onClick={() => {
-              if (navigator.share) {
-                navigator.share({
-                  title: 'Andy\'s Close Friends Rescue',
-                  text: `¡Completé el juego con ${state.totalScore} puntos!`,
-                  url: window.location.href
-                });
-              }
-            }}
-          >
-            COMPARTE TU LOGRO
-          </button>
         </div>
         <div className="final-footer">
           <button 

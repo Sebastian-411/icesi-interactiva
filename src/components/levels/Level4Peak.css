@@ -169,52 +169,104 @@
   color: #ecf0f1;
 }
 
-.level-game-area {
+.level4-peak-main {
   width: 100%;
-  height: 100%;
+  height: 100vh;
   display: flex;
   flex-direction: column;
+  overflow: hidden;
 }
 
-.level-hud {
+.game-main-area {
+  flex: 1;
   display: flex;
-  justify-content: space-between;
-  align-items: center;
-  padding: 1rem 2rem;
-  background: rgba(0, 0, 0, 0.8);
-  border-bottom: 2px solid #3498db;
-  color: white;
+  padding: 0.5rem;
+  gap: 0.5rem;
+  overflow: hidden;
 }
 
-.hud-left, .hud-center, .hud-right {
+.game-sidebar-left {
+  flex: 0 0 28%;
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  padding: 0.3rem;
+  overflow-y: auto;
+}
+
+.game-central-area {
+  flex: 1;
+  padding: 0.3rem;
+  overflow: hidden;
+}
+
+.sidebar-block {
+  background: rgba(52, 152, 219, 0.3);
+  border: 2px solid #3498db;
+  border-radius: 10px;
+  padding: 0.8rem;
+  flex-shrink: 0;
+  box-shadow: 0 4px 15px rgba(52, 152, 219, 0.2);
+}
+
+.block-header {
   display: flex;
   align-items: center;
-  gap: 1rem;
+  gap: 0.4rem;
+  margin-bottom: 0.6rem;
+  padding-bottom: 0.4rem;
+  border-bottom: 1px solid rgba(52, 152, 219, 0.5);
 }
 
-.level-title {
+.block-icon {
   font-size: 1rem;
-  color: #3498db;
 }
 
-.time-display, .score-display {
-  font-size: 0.7rem;
-  color: #ecf0f1;
+.block-header h4 {
+  font-size: 0.6rem;
+  color: #2c3e50;
+  margin: 0;
+  text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.2);
+}
+
+.block-content {
+  color: #34495e;
+}
+
+.block-content p {
+  font-size: 0.5rem;
+  line-height: 1.3;
+  margin: 0.3rem 0;
+  text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.1);
+}
+
+.block-content ul {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.block-content li {
+  font-size: 0.4rem;
+  margin-bottom: 0.3rem;
+  color: #34495e;
+  text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.1);
 }
 
 .progress-indicators {
   display: flex;
-  gap: 0.5rem;
+  gap: 0.3rem;
+  margin-top: 0.5rem;
 }
 
 .progress-dot {
-  width: 40px;
-  height: 40px;
+  width: 25px;
+  height: 25px;
   border-radius: 50%;
   display: flex;
   align-items: center;
   justify-content: center;
-  font-size: 1.2rem;
+  font-size: 0.8rem;
   border: 2px solid #7f8c8d;
   background: rgba(127, 128, 128, 0.3);
 }
@@ -225,60 +277,68 @@
   animation: completed-pulse 2s ease-in-out infinite;
 }
 
-.dev-skip-btn {
-  background: #f39c12;
-  color: white;
-  border: none;
-  width: 30px;
-  height: 30px;
-  border-radius: 50%;
-  font-size: 0.8rem;
-  cursor: pointer;
-  transition: all 0.3s;
-}
-
-.dev-skip-btn:hover {
-  background: #e67e22;
-  transform: scale(1.1);
-}
-
-.level-visual-area {
-  flex: 1;
-  display: flex;
-  justify-content: center;
-  align-items: center;
+.peak-scene {
   background: linear-gradient(180deg, #87CEEB 0%, #98FB98 50%, #8FBC8F 100%);
-  position: relative;
+  border-radius: 15px;
+  padding: 1.5rem;
+  box-shadow: 0 8px 25px rgba(0, 0, 0, 0.3);
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
 }
 
-.mountain-environment {
+.scene-header {
+  text-align: center;
+  margin-bottom: 1rem;
+  flex-shrink: 0;
+}
+
+.scene-header h3 {
+  font-size: 0.8rem;
+  margin-bottom: 0.5rem;
+  color: #2c3e50;
+  text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.2);
+}
+
+.scene-header p {
+  font-size: 0.6rem;
+  line-height: 1.3;
+  color: #34495e;
+  text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.1);
+}
+
+.scene-elements {
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: 2rem;
+  gap: 1rem;
+  flex: 1;
+  justify-content: center;
 }
 
 .maze-preview {
   background: rgba(0, 0, 0, 0.8);
-  padding: 1rem;
+  padding: 0.8rem;
   border-radius: 10px;
   border: 2px solid #3498db;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
 }
 
 .maze-grid-preview {
   display: grid;
-  grid-template-columns: repeat(7, 30px);
+  grid-template-columns: repeat(7, 25px);
   gap: 2px;
 }
 
 .maze-cell {
-  width: 30px;
-  height: 30px;
+  width: 25px;
+  height: 25px;
   display: flex;
   align-items: center;
   justify-content: center;
   border-radius: 3px;
-  font-size: 0.8rem;
+  font-size: 0.7rem;
 }
 
 .maze-cell.start {
@@ -300,17 +360,62 @@
 
 .possum-trapped {
   position: relative;
-  font-size: 3rem;
+  font-size: 2.5rem;
   animation: trapped-shake 1s ease-in-out infinite;
 }
 
 .cage-effect {
   position: absolute;
-  top: -10px;
-  left: -10px;
-  font-size: 1.5rem;
+  top: -8px;
+  left: -8px;
+  font-size: 1.2rem;
   color: #e74c3c;
   animation: cage-pulse 2s ease-in-out infinite;
+}
+
+.start-puzzle-btn {
+  background: linear-gradient(45deg, #2ecc71, #27ae60);
+  color: white;
+  border: none;
+  padding: 0.8rem 1.5rem;
+  border-radius: 10px;
+  font-family: 'Press Start 2P', monospace;
+  font-size: 0.6rem;
+  cursor: pointer;
+  transition: all 0.3s;
+  margin-bottom: 0.5rem;
+  width: 100%;
+  border: 2px solid #229954;
+  box-shadow: 0 4px 15px rgba(46, 204, 113, 0.3);
+  text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.3);
+}
+
+.start-puzzle-btn:hover {
+  background: linear-gradient(45deg, #27ae60, #229954);
+  transform: translateY(-2px);
+  box-shadow: 0 6px 20px rgba(46, 204, 113, 0.4);
+}
+
+.dev-skip-btn {
+  background: #f39c12;
+  color: white;
+  border: none;
+  padding: 0.6rem 1rem;
+  border-radius: 8px;
+  font-family: 'Press Start 2P', monospace;
+  font-size: 0.5rem;
+  cursor: pointer;
+  transition: all 0.3s;
+  width: 100%;
+  border: 2px solid #e67e22;
+  box-shadow: 0 4px 15px rgba(243, 156, 18, 0.3);
+  text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.3);
+}
+
+.dev-skip-btn:hover {
+  background: #e67e22;
+  transform: translateY(-2px);
+  box-shadow: 0 6px 20px rgba(243, 156, 18, 0.4);
 }
 
 .current-phase-display {
@@ -494,14 +599,80 @@
 }
 
 @media (max-width: 768px) {
-  .level-hud {
-    flex-direction: column;
-    gap: 0.5rem;
-    padding: 0.5rem;
+  .game-main-area {
+    padding: 0.3rem;
+    gap: 0.3rem;
   }
-
-  .hud-left, .hud-center, .hud-right {
-    justify-content: center;
+  
+  .game-sidebar-left {
+    gap: 0.3rem;
+    padding: 0.3rem;
+    max-height: 120px;
+    overflow-x: auto;
+    flex-direction: row;
+  }
+  
+  .game-central-area {
+    min-height: 300px;
+  }
+  
+  .sidebar-block {
+    flex: 0 0 180px;
+    padding: 0.6rem;
+  }
+  
+  .block-header h4 {
+    font-size: 0.5rem;
+  }
+  
+  .block-content p {
+    font-size: 0.4rem;
+  }
+  
+  .block-content li {
+    font-size: 0.35rem;
+  }
+  
+  .progress-dot {
+    width: 20px;
+    height: 20px;
+    font-size: 0.6rem;
+  }
+  
+  .start-puzzle-btn {
+    padding: 0.6rem 1rem;
+    font-size: 0.5rem;
+  }
+  
+  .dev-skip-btn {
+    padding: 0.4rem 0.8rem;
+    font-size: 0.4rem;
+  }
+  
+  .scene-header h3 {
+    font-size: 0.7rem;
+  }
+  
+  .scene-header p {
+    font-size: 0.5rem;
+  }
+  
+  .maze-grid-preview {
+    grid-template-columns: repeat(7, 20px);
+  }
+  
+  .maze-cell {
+    width: 20px;
+    height: 20px;
+    font-size: 0.6rem;
+  }
+  
+  .possum-trapped {
+    font-size: 2rem;
+  }
+  
+  .cage-effect {
+    font-size: 1rem;
   }
 
   .intro-title h1 {

@@ -174,7 +174,7 @@ const Level3Swamp = () => {
       )}
 
       {/* Área principal del juego */}
-      <div className="game-main-area">
+      <div className="level3-main-area">
         {showIntroAnimation ? (
           <div className="intro-animation">
             <div className="animation-scene">
@@ -220,80 +220,118 @@ const Level3Swamp = () => {
             </div>
           </div>
         ) : (
-          <div className="swamp-game-area">
-            <div className="swamp-scene">
-              <div className="scene-elements">
-                <div className="andy-character">
-                  <div className="character">🐿️🔍</div>
-                  <div className="character-label">Andy</div>
+          <div className="game-main-area">
+            {/* Sidebar izquierdo con información */}
+            <div className="game-sidebar-left">
+              {/* Información del nivel */}
+              <div className="sidebar-block">
+                <div className="block-header">
+                  <span className="block-icon">🌊</span>
+                  <h4>Pantano de Datos</h4>
+                </div>
+                <div className="block-content">
+                  <p>⏱️ Tiempo: {Math.floor(timeElapsed / 60)}:{(timeElapsed % 60).toString().padStart(2, '0')}</p>
+                  <p>📊 Progreso: {Object.values(completedPuzzles).filter(Boolean).length}/4</p>
+                  <div className="progress-indicators">
+                    <div className={`progress-dot ${completedPuzzles.modeling ? 'completed' : currentPhase === 'modeling' ? 'active' : 'pending'}`}>1</div>
+                    <div className={`progress-dot ${completedPuzzles.query ? 'completed' : currentPhase === 'query' ? 'active' : 'pending'}`}>2</div>
+                    <div className={`progress-dot ${completedPuzzles.relations ? 'completed' : currentPhase === 'relations' ? 'active' : 'pending'}`}>3</div>
+                    <div className={`progress-dot ${completedPuzzles.boss ? 'completed' : currentPhase === 'boss' ? 'active' : 'pending'}`}>👑</div>
+                  </div>
+                </div>
+              </div>
+
+              {/* Fase actual */}
+              <div className="sidebar-block">
+                <div className="block-header">
+                  <span className="block-icon">📍</span>
+                  <h4>Fase Actual</h4>
+                </div>
+                <div className="block-content">
+                  <p><strong>{getCurrentPhaseDescription()}</strong></p>
+                  <p>🎯 {getPuzzleButtonText()}</p>
+                </div>
+              </div>
+
+              {/* Botón de acción */}
+              <div className="sidebar-block">
+                <div className="block-header">
+                  <span className="block-icon">🚀</span>
+                  <h4>Acción</h4>
+                </div>
+                <div className="block-content">
+                  {!showPuzzle && currentPhase !== 'completed' && (
+                    <button 
+                      className="puzzle-trigger-btn"
+                      onClick={() => setShowPuzzle(true)}
+                    >
+                      {getPuzzleButtonText()}
+                    </button>
+                  )}
+                </div>
+              </div>
+            </div>
+
+            {/* Área central del juego */}
+            <div className="game-central-area">
+              <div className="swamp-scene">
+                <div className="scene-header">
+                  <h3>🌊 Pantano de Datos - Bases de Datos</h3>
+                  <p>Organiza, consulta y protege los datos para rescatar a la iguana</p>
                 </div>
                 
-                <div className="database-elements">
-                  <div className={`data-modeling ${completedPuzzles.modeling ? 'active' : 'inactive'}`}>
-                    <div className="system-icon">📊</div>
-                    <div className="system-label">Modelado</div>
-                    {completedPuzzles.modeling && <div className="completion-check">✅</div>}
+                <div className="scene-elements">
+                  <div className="andy-character">
+                    <div className="character">🐿️🔍</div>
+                    <div className="character-label">Andy</div>
                   </div>
                   
-                  <div className={`sql-queries ${completedPuzzles.query ? 'active' : 'inactive'}`}>
-                    <div className="system-icon">📝</div>
-                    <div className="system-label">Consultas</div>
-                    {completedPuzzles.query && <div className="completion-check">✅</div>}
-            </div>
-                  
-                  <div className={`table-relations ${completedPuzzles.relations ? 'active' : 'inactive'}`}>
-                    <div className="system-icon">🔗</div>
-                    <div className="system-label">Relaciones</div>
-                    {completedPuzzles.relations && <div className="completion-check">✅</div>}
-            </div>
-                  
-                  <div className={`sql-security ${completedPuzzles.boss ? 'active' : 'inactive'}`}>
-                    <div className="system-icon">🛡️</div>
-                    <div className="system-label">Seguridad</div>
-                    {completedPuzzles.boss && <div className="completion-check">✅</div>}
-                  </div>
-            </div>
-                
-                <div className="iguana-area">
-                  <div className={`iguana-container ${currentPhase === 'completed' ? 'freed' : 'trapped'}`}>
-                    <div className="data-chamber">🗄️</div>
-                    <div className={`iguana ${currentPhase === 'completed' ? 'free' : 'frozen'}`}>
-                      {currentPhase === 'completed' ? '🦎✨' : '🦎💾'}
+                  <div className="database-elements">
+                    <div className={`data-modeling ${completedPuzzles.modeling ? 'active' : 'inactive'}`}>
+                      <div className="system-icon">📊</div>
+                      <div className="system-label">Modelado</div>
+                      {completedPuzzles.modeling && <div className="completion-check">✅</div>}
                     </div>
-                    <div className={`data-lock ${currentPhase === 'completed' ? 'unlocked' : 'locked'}`}>
-                      {currentPhase === 'completed' ? '🔓' : '🔒'}
+                    
+                    <div className={`sql-queries ${completedPuzzles.query ? 'active' : 'inactive'}`}>
+                      <div className="system-icon">📝</div>
+                      <div className="system-label">Consultas</div>
+                      {completedPuzzles.query && <div className="completion-check">✅</div>}
+                    </div>
+                    
+                    <div className={`table-relations ${completedPuzzles.relations ? 'active' : 'inactive'}`}>
+                      <div className="system-icon">🔗</div>
+                      <div className="system-label">Relaciones</div>
+                      {completedPuzzles.relations && <div className="completion-check">✅</div>}
+                    </div>
+                    
+                    <div className={`sql-security ${completedPuzzles.boss ? 'active' : 'inactive'}`}>
+                      <div className="system-icon">🛡️</div>
+                      <div className="system-label">Seguridad</div>
+                      {completedPuzzles.boss && <div className="completion-check">✅</div>}
                     </div>
                   </div>
-                  <div className="iguana-label">
-                    {currentPhase === 'completed' ? '¡Iguana libre!' : 'Iguana en datos'}
+                  
+                  <div className="iguana-area">
+                    <div className={`iguana-container ${currentPhase === 'completed' ? 'freed' : 'trapped'}`}>
+                      <div className="data-chamber">🗄️</div>
+                      <div className={`iguana ${currentPhase === 'completed' ? 'free' : 'frozen'}`}>
+                        {currentPhase === 'completed' ? '🦎✨' : '🦎💾'}
+                      </div>
+                      <div className={`data-lock ${currentPhase === 'completed' ? 'unlocked' : 'locked'}`}>
+                        {currentPhase === 'completed' ? '🔓' : '🔒'}
+                      </div>
+                    </div>
+                    <div className="iguana-label">
+                      {currentPhase === 'completed' ? '¡Iguana libre!' : 'Iguana en datos'}
+                    </div>
                   </div>
                 </div>
-          </div>
-
-              <div className="phase-indicator">
-                <h3>📍 Fase Actual: {getCurrentPhaseDescription()}</h3>
-                <div className="progress-indicators">
-                  <div className={`phase-dot ${completedPuzzles.modeling ? 'completed' : currentPhase === 'modeling' ? 'active' : 'pending'}`}>1</div>
-                  <div className={`phase-dot ${completedPuzzles.query ? 'completed' : currentPhase === 'query' ? 'active' : 'pending'}`}>2</div>
-                  <div className={`phase-dot ${completedPuzzles.relations ? 'completed' : currentPhase === 'relations' ? 'active' : 'pending'}`}>3</div>
-                  <div className={`phase-dot ${completedPuzzles.boss ? 'completed' : currentPhase === 'boss' ? 'active' : 'pending'}`}>👑</div>
-                </div>
-          </div>
-
-              {!showPuzzle && currentPhase !== 'completed' && (
-                <div className="action-area">
-                  <button 
-                    className="puzzle-trigger-btn"
-                    onClick={() => setShowPuzzle(true)}
-                  >
-                    {getPuzzleButtonText()}
-                  </button>
-                </div>
-              )}
+              </div>
             </div>
           </div>
         )}
-        </div>
+      </div>
 
       {/* Puzzles */}
       {showPuzzle && currentPhase === 'modeling' && (
@@ -391,13 +429,148 @@ const Level3Swamp = () => {
           flex: 1;
         }
 
-        .game-main-area {
+        .level3-main-area {
           width: 100%;
-          height: 100%;
+          height: 100vh;
+          display: flex;
+          flex-direction: column;
+          overflow: hidden;
+          padding-top: 5rem;
+        }
+
+        .game-main-area {
+          flex: 1;
+          display: flex;
+          padding: 0.5rem;
+          gap: 0.5rem;
+          overflow: hidden;
+        }
+
+        .game-sidebar-left {
+          flex: 0 0 28%;
+          display: flex;
+          flex-direction: column;
+          gap: 0.5rem;
+          padding: 0.3rem;
+          overflow-y: auto;
+        }
+
+        .game-central-area {
+          flex: 1;
+          padding: 0.3rem;
+          overflow: hidden;
+        }
+
+        .sidebar-block {
+          background: rgba(26, 77, 58, 0.8);
+          border: 2px solid #2d5a47;
+          border-radius: 10px;
+          padding: 0.8rem;
+          flex-shrink: 0;
+          box-shadow: 0 4px 15px rgba(26, 77, 58, 0.3);
+        }
+
+        .block-header {
+          display: flex;
+          align-items: center;
+          gap: 0.4rem;
+          margin-bottom: 0.6rem;
+          padding-bottom: 0.4rem;
+          border-bottom: 1px solid rgba(45, 90, 71, 0.5);
+        }
+
+        .block-icon {
+          font-size: 1rem;
+        }
+
+        .block-header h4 {
+          font-size: 0.6rem;
+          color: #ecf0f1;
+          margin: 0;
+          text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.3);
+        }
+
+        .block-content {
+          color: #ecf0f1;
+        }
+
+        .block-content p {
+          font-size: 0.5rem;
+          line-height: 1.3;
+          margin: 0.3rem 0;
+          text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.2);
+        }
+
+        .progress-indicators {
+          display: flex;
+          gap: 0.3rem;
+          margin-top: 0.5rem;
+        }
+
+        .progress-dot {
+          width: 25px;
+          height: 25px;
+          border-radius: 50%;
           display: flex;
           align-items: center;
           justify-content: center;
-          padding: 6rem 2rem 2rem 2rem;
+          font-size: 0.7rem;
+          border: 2px solid #7f8c8d;
+          background: rgba(127, 128, 128, 0.3);
+          transition: all 0.3s;
+        }
+
+        .progress-dot.active {
+          border-color: #2ecc71;
+          background: rgba(46, 204, 113, 0.3);
+          animation: pulse 1s ease-in-out infinite alternate;
+        }
+
+        .progress-dot.completed {
+          border-color: #27ae60;
+          background: rgba(39, 174, 96, 0.3);
+        }
+
+        .swamp-scene {
+          background: linear-gradient(180deg, #1a4d3a 0%, #2d5a47 50%, #1a2f1a 100%);
+          border-radius: 15px;
+          padding: 1.5rem;
+          box-shadow: 0 8px 25px rgba(0, 0, 0, 0.3);
+          height: 100%;
+          display: flex;
+          flex-direction: column;
+          justify-content: space-between;
+        }
+
+        .scene-header {
+          text-align: center;
+          margin-bottom: 1rem;
+          flex-shrink: 0;
+        }
+
+        .scene-header h3 {
+          font-size: 0.8rem;
+          margin-bottom: 0.5rem;
+          color: #ecf0f1;
+          text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.3);
+        }
+
+        .scene-header p {
+          font-size: 0.6rem;
+          line-height: 1.3;
+          color: #bdc3c7;
+          text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.2);
+        }
+
+        .scene-elements {
+          display: flex;
+          justify-content: space-between;
+          align-items: center;
+          margin-bottom: 1rem;
+          flex-wrap: wrap;
+          gap: 1rem;
+          flex: 1;
+          justify-content: center;
         }
 
         .intro-animation {
@@ -573,23 +746,25 @@ const Level3Swamp = () => {
         .character,
         .system-icon,
         .data-chamber {
-          font-size: 4rem;
-          margin-bottom: 0.5rem;
+          font-size: 2.5rem;
+          margin-bottom: 0.3rem;
         }
 
         .character-label,
         .system-label,
         .iguana-label {
           font-family: 'Press Start 2P', monospace;
-          font-size: 0.6rem;
+          font-size: 0.5rem;
           color: #ecf0f1;
+          text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.2);
         }
 
         .database-elements {
           display: flex;
-          gap: 2rem;
+          gap: 1rem;
           align-items: center;
           flex-wrap: wrap;
+          justify-content: center;
         }
 
         .data-modeling,
@@ -598,25 +773,28 @@ const Level3Swamp = () => {
         .sql-security {
           text-align: center;
           position: relative;
-          padding: 1rem;
+          padding: 0.8rem;
           border-radius: 10px;
           transition: all 0.3s;
+          border: 2px solid;
         }
 
         .data-modeling.active,
         .sql-queries.active,
         .table-relations.active,
         .sql-security.active {
-          background: rgba(46, 204, 113, 0.2);
-          border: 2px solid #2ecc71;
+          background: rgba(46, 204, 113, 0.3);
+          border-color: #2ecc71;
+          box-shadow: 0 4px 15px rgba(46, 204, 113, 0.3);
         }
 
         .data-modeling.inactive,
         .sql-queries.inactive,
         .table-relations.inactive,
         .sql-security.inactive {
-          background: rgba(149, 165, 166, 0.2);
-          border: 2px solid #95a5a6;
+          background: rgba(149, 165, 166, 0.3);
+          border-color: #95a5a6;
+          box-shadow: 0 4px 15px rgba(149, 165, 166, 0.2);
         }
 
         .completion-check {
@@ -716,18 +894,100 @@ const Level3Swamp = () => {
           background: linear-gradient(45deg, #2ecc71, #3498db);
           color: white;
           border: none;
-          padding: 1.5rem 3rem;
-          border-radius: 15px;
+          padding: 0.8rem 1.5rem;
+          border-radius: 10px;
           font-family: 'Press Start 2P', monospace;
-          font-size: 0.8rem;
+          font-size: 0.6rem;
           cursor: pointer;
           transition: all 0.3s;
-          box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+          width: 100%;
+          border: 2px solid #229954;
+          box-shadow: 0 4px 15px rgba(46, 204, 113, 0.3);
+          text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.3);
         }
 
         .puzzle-trigger-btn:hover {
-          transform: translateY(-3px);
-          box-shadow: 0 8px 25px rgba(0, 0, 0, 0.4);
+          background: linear-gradient(45deg, #27ae60, #2980b9);
+          transform: translateY(-2px);
+          box-shadow: 0 6px 20px rgba(46, 204, 113, 0.4);
+        }
+
+        @media (max-width: 768px) {
+          .level3-main-area {
+            padding-top: 4rem;
+          }
+          
+          .game-main-area {
+            padding: 0.3rem;
+            gap: 0.3rem;
+          }
+          
+          .game-sidebar-left {
+            gap: 0.3rem;
+            padding: 0.3rem;
+            max-height: 120px;
+            overflow-x: auto;
+            flex-direction: row;
+          }
+          
+          .game-central-area {
+            min-height: 300px;
+          }
+          
+          .sidebar-block {
+            flex: 0 0 180px;
+            padding: 0.6rem;
+          }
+          
+          .block-header h4 {
+            font-size: 0.5rem;
+          }
+          
+          .block-content p {
+            font-size: 0.4rem;
+          }
+          
+          .progress-dot {
+            width: 20px;
+            height: 20px;
+            font-size: 0.6rem;
+          }
+          
+          .puzzle-trigger-btn {
+            padding: 0.6rem 1rem;
+            font-size: 0.5rem;
+          }
+          
+          .scene-header h3 {
+            font-size: 0.7rem;
+          }
+          
+          .scene-header p {
+            font-size: 0.5rem;
+          }
+          
+          .character,
+          .system-icon,
+          .data-chamber {
+            font-size: 2rem;
+          }
+          
+          .character-label,
+          .system-label,
+          .iguana-label {
+            font-size: 0.4rem;
+          }
+          
+          .database-elements {
+            gap: 0.8rem;
+          }
+          
+          .data-modeling,
+          .sql-queries,
+          .table-relations,
+          .sql-security {
+            padding: 0.6rem;
+          }
         }
 
         @keyframes data-search {

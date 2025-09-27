@@ -18,7 +18,12 @@ const LevelSummaryScreen = ({ isActive }) => {
     console.log('📊 Datos del nivel completado:', levelData);
     completeLevel(levelData);
     
-    showScreen('world-map-screen');
+    // Si es el último nivel (nivel 4), ir a la pantalla de victoria
+    if (state.currentLevel === 4) {
+      showScreen('victory-screen');
+    } else {
+      showScreen('world-map-screen');
+    }
   };
 
   const levelData = state.levelData[state.currentLevel];

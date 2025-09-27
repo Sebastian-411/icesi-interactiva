@@ -168,19 +168,6 @@ const ProcessSchedulerPuzzle = ({ onComplete, onClose }) => {
 
         {gamePhase === 'intro' && (
           <div className="intro-screen">
-            <div className="cave-scene">
-              <div className="cave-background">🕳️🌑✨</div>
-              <div className="trapped-processes">
-                <div className="process-chaos">
-                  <span className="chaotic-bat">🦇</span>
-                  <span className="chaotic-bat">🦇</span>
-                  <span className="chaotic-bat">🦇</span>
-                  <span className="chaotic-bat">🦇</span>
-                </div>
-                <p>¡Los procesos están en caos sin un planificador!</p>
-              </div>
-            </div>
-            
             <div className="intro-content">
               <h4>🎯 Tu Misión</h4>
               <p>Los murciélagos representan procesos esperando ser ejecutados por la CPU.</p>
@@ -389,28 +376,29 @@ const ProcessSchedulerPuzzle = ({ onComplete, onClose }) => {
       <style>{`
         .scheduler-puzzle-overlay {
           width: 100%;
-          height: 100%;
+          height: 100vh;
           background: linear-gradient(135deg, #2c3e50 0%, #34495e 50%, #1a1a2e 100%);
           display: flex;
           flex-direction: column;
           align-items: center;
           justify-content: center;
-          padding: 1rem;
+          padding: 0.5rem;
           position: relative;
+          overflow: hidden;
         }
 
         .scheduler-puzzle-container {
           background: rgba(255, 255, 255, 0.95);
           backdrop-filter: blur(10px);
-          padding: 1.5rem;
-          border-radius: 20px;
-          box-shadow: 0 10px 40px rgba(0, 0, 0, 0.3);
+          padding: 1rem;
+          border-radius: 15px;
+          box-shadow: 0 8px 30px rgba(0, 0, 0, 0.3);
           width: 100%;
           height: 100%;
-          max-height: 95vh;
-          overflow: hidden;
+          max-height: 100vh;
+          overflow-y: auto;
           position: relative;
-          border: 1px solid rgba(255, 255, 255, 0.2);
+          border: 2px solid rgba(255, 255, 255, 0.2);
           display: flex;
           flex-direction: column;
         }
@@ -456,48 +444,21 @@ const ProcessSchedulerPuzzle = ({ onComplete, onClose }) => {
           border-radius: 10px;
           font-family: 'Press Start 2P', monospace;
           font-size: 0.8rem;
-          margin-bottom: 2rem;
+          margin-bottom: 1rem;
+          border: 2px solid #e67e22;
+          box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
         }
 
         .intro-screen {
           text-align: center;
         }
 
-        .cave-scene {
-          background: rgba(0, 0, 0, 0.8);
-          padding: 2rem;
-          border-radius: 15px;
-          margin-bottom: 2rem;
-        }
-
-        .cave-background {
-          font-size: 3rem;
-          margin-bottom: 1rem;
-        }
-
-        .trapped-processes {
-          margin-bottom: 1rem;
-        }
-
-        .process-chaos {
-          margin-bottom: 1rem;
-        }
-
-        .chaotic-bat {
-          font-size: 2rem;
-          margin: 0 0.5rem;
-          animation: chaotic-movement 1s ease-in-out infinite;
-        }
-
-        .chaotic-bat:nth-child(2) { animation-delay: 0.2s; }
-        .chaotic-bat:nth-child(3) { animation-delay: 0.4s; }
-        .chaotic-bat:nth-child(4) { animation-delay: 0.6s; }
-
         .intro-content h4 {
           font-family: 'Press Start 2P', monospace;
           font-size: 1rem;
           margin-bottom: 1rem;
-          color: #3498db;
+          color: #2c3e50;
+          text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);
         }
 
         .intro-content p {
@@ -505,31 +466,38 @@ const ProcessSchedulerPuzzle = ({ onComplete, onClose }) => {
           font-size: 0.7rem;
           margin-bottom: 1rem;
           line-height: 1.4;
+          color: #34495e;
+          text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.2);
         }
 
         .scheduler-info {
-          background: rgba(52, 152, 219, 0.2);
+          background: rgba(52, 152, 219, 0.3);
           padding: 1rem;
           border-radius: 10px;
           margin: 1rem 0;
           text-align: left;
+          border: 2px solid #3498db;
+          box-shadow: 0 4px 15px rgba(52, 152, 219, 0.2);
         }
 
         .scheduler-info h5 {
           font-family: 'Press Start 2P', monospace;
           font-size: 0.7rem;
           margin-bottom: 0.8rem;
-          color: #3498db;
+          color: #2c3e50;
+          text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.2);
         }
 
         .scheduler-info ul {
           font-family: 'Press Start 2P', monospace;
           font-size: 0.6rem;
           line-height: 1.5;
+          color: #34495e;
         }
 
         .scheduler-info li {
           margin-bottom: 0.5rem;
+          text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.1);
         }
 
         .start-btn {
@@ -542,11 +510,15 @@ const ProcessSchedulerPuzzle = ({ onComplete, onClose }) => {
           font-size: 0.8rem;
           cursor: pointer;
           transition: all 0.3s;
+          border: 2px solid #229954;
+          box-shadow: 0 6px 20px rgba(39, 174, 96, 0.4);
+          text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.3);
         }
 
         .start-btn:hover {
           background: #229954;
           transform: translateY(-2px);
+          box-shadow: 0 8px 25px rgba(39, 174, 96, 0.6);
         }
 
         .playing-area {
@@ -554,58 +526,66 @@ const ProcessSchedulerPuzzle = ({ onComplete, onClose }) => {
           display: flex;
           flex-direction: column;
           min-height: 0;
+          overflow-y: auto;
         }
 
         .challenge-info {
           text-align: center;
           background: rgba(52, 152, 219, 0.2);
-          padding: 1rem;
+          padding: 0.8rem;
           border-radius: 10px;
-          margin-bottom: 2rem;
+          margin-bottom: 1rem;
+          flex-shrink: 0;
         }
 
         .challenge-info h4 {
           font-family: 'Press Start 2P', monospace;
-          font-size: 0.9rem;
-          margin-bottom: 0.5rem;
+          font-size: 0.8rem;
+          margin-bottom: 0.4rem;
           color: #3498db;
         }
 
         .challenge-info p {
           font-family: 'Press Start 2P', monospace;
-          font-size: 0.7rem;
-          line-height: 1.4;
+          font-size: 0.6rem;
+          line-height: 1.3;
         }
 
         .scheduler-workspace {
           display: flex;
-          gap: 1rem;
+          gap: 0.8rem;
           margin-bottom: 1rem;
           flex: 1;
-          min-height: 0;
+          min-height: 300px;
+          max-height: 400px;
         }
 
         .process-pool,
         .execution-queue {
           flex: 1;
           background: rgba(44, 62, 80, 0.8);
-          padding: 1rem;
+          padding: 0.8rem;
           border-radius: 10px;
+          display: flex;
+          flex-direction: column;
         }
 
         .process-pool h5,
         .execution-queue h5 {
           font-family: 'Press Start 2P', monospace;
-          font-size: 0.7rem;
-          margin-bottom: 1rem;
+          font-size: 0.6rem;
+          margin-bottom: 0.8rem;
           color: #f39c12;
           text-align: center;
+          flex-shrink: 0;
         }
 
         .processes-container {
           display: flex;
           flex-direction: column;
-          gap: 0.8rem;
+          gap: 0.6rem;
+          flex: 1;
+          overflow-y: auto;
         }
 
         .process-bat {
@@ -617,10 +597,11 @@ const ProcessSchedulerPuzzle = ({ onComplete, onClose }) => {
           align-items: center;
           gap: 0.8rem;
           border: 2px solid transparent;
+          flex-shrink: 0;
         }
 
         .process-bat:hover {
-          transform: translateY(-2px);
+          transform: translateY(-1px);
           border-color: #f39c12;
         }
 
@@ -652,14 +633,16 @@ const ProcessSchedulerPuzzle = ({ onComplete, onClose }) => {
         }
 
         .queue-container {
-          min-height: 200px;
+          min-height: 150px;
           border: 2px dashed #7f8c8d;
           border-radius: 10px;
-          padding: 1rem;
+          padding: 0.8rem;
           display: flex;
           flex-direction: column;
           align-items: center;
           justify-content: center;
+          flex: 1;
+          overflow-y: auto;
         }
 
         .empty-queue {
@@ -668,20 +651,20 @@ const ProcessSchedulerPuzzle = ({ onComplete, onClose }) => {
         }
 
         .cpu-icon {
-          font-size: 3rem;
-          margin-bottom: 1rem;
+          font-size: 2rem;
+          margin-bottom: 0.8rem;
         }
 
         .empty-queue p {
           font-family: 'Press Start 2P', monospace;
-          font-size: 0.6rem;
+          font-size: 0.5rem;
         }
 
         .queue-processes {
           width: 100%;
           display: flex;
           flex-direction: column;
-          gap: 0.8rem;
+          gap: 0.6rem;
         }
 
         .queued-process {
@@ -694,6 +677,7 @@ const ProcessSchedulerPuzzle = ({ onComplete, onClose }) => {
           gap: 0.8rem;
           border: 2px solid #27ae60;
           position: relative;
+          flex-shrink: 0;
         }
 
         .queued-process:hover {
@@ -711,21 +695,23 @@ const ProcessSchedulerPuzzle = ({ onComplete, onClose }) => {
           font-family: 'Press Start 2P', monospace;
           font-size: 0.7rem;
           color: white;
+          flex-shrink: 0;
         }
 
         .controls {
           text-align: center;
-          margin-bottom: 2rem;
+          margin-bottom: 1rem;
+          flex-shrink: 0;
         }
 
         .execute-btn {
           background: #e74c3c;
           color: white;
           border: none;
-          padding: 1rem 2rem;
+          padding: 0.8rem 1.5rem;
           border-radius: 10px;
           font-family: 'Press Start 2P', monospace;
-          font-size: 0.8rem;
+          font-size: 0.7rem;
           cursor: pointer;
           transition: all 0.3s;
         }
@@ -742,9 +728,10 @@ const ProcessSchedulerPuzzle = ({ onComplete, onClose }) => {
 
         .execution-result {
           background: rgba(0, 0, 0, 0.8);
-          padding: 2rem;
+          padding: 1rem;
           border-radius: 15px;
-          margin-bottom: 2rem;
+          margin-bottom: 1rem;
+          flex-shrink: 0;
         }
 
         .execution-result.correct {
@@ -757,15 +744,15 @@ const ProcessSchedulerPuzzle = ({ onComplete, onClose }) => {
 
         .result-header h5 {
           font-family: 'Press Start 2P', monospace;
-          font-size: 1rem;
-          margin-bottom: 1rem;
+          font-size: 0.8rem;
+          margin-bottom: 0.8rem;
           text-align: center;
         }
 
         .order-comparison {
           display: flex;
-          gap: 2rem;
-          margin-bottom: 1rem;
+          gap: 1rem;
+          margin-bottom: 0.8rem;
         }
 
         .user-order,
@@ -776,16 +763,16 @@ const ProcessSchedulerPuzzle = ({ onComplete, onClose }) => {
         .user-order h6,
         .correct-order h6 {
           font-family: 'Press Start 2P', monospace;
-          font-size: 0.7rem;
-          margin-bottom: 0.5rem;
+          font-size: 0.6rem;
+          margin-bottom: 0.4rem;
           color: #f39c12;
         }
 
         .order-list {
           font-family: 'Press Start 2P', monospace;
-          font-size: 0.6rem;
+          font-size: 0.5rem;
           background: rgba(255, 255, 255, 0.1);
-          padding: 0.8rem;
+          padding: 0.6rem;
           border-radius: 8px;
         }
 
@@ -799,32 +786,32 @@ const ProcessSchedulerPuzzle = ({ onComplete, onClose }) => {
 
         .explanation {
           background: rgba(52, 152, 219, 0.2);
-          padding: 1rem;
+          padding: 0.8rem;
           border-radius: 8px;
-          margin-bottom: 1rem;
+          margin-bottom: 0.8rem;
         }
 
         .explanation p {
           font-family: 'Press Start 2P', monospace;
-          font-size: 0.6rem;
-          line-height: 1.4;
+          font-size: 0.5rem;
+          line-height: 1.3;
           margin: 0;
         }
 
         .success-animation,
         .failure-animation {
           text-align: center;
-          margin-top: 1rem;
+          margin-top: 0.8rem;
         }
 
         .flying-bats,
         .colliding-bats {
-          margin-bottom: 1rem;
+          margin-bottom: 0.8rem;
         }
 
         .flying-bat {
-          font-size: 2rem;
-          margin: 0 0.5rem;
+          font-size: 1.5rem;
+          margin: 0 0.3rem;
           animation: fly-to-cpu 2s ease-in-out infinite;
         }
 
@@ -832,8 +819,8 @@ const ProcessSchedulerPuzzle = ({ onComplete, onClose }) => {
         .flying-bat:nth-child(3) { animation-delay: 0.6s; }
 
         .colliding-bat {
-          font-size: 2rem;
-          margin: 0 0.5rem;
+          font-size: 1.5rem;
+          margin: 0 0.3rem;
           animation: collision 1s ease-in-out infinite;
         }
 
@@ -842,7 +829,7 @@ const ProcessSchedulerPuzzle = ({ onComplete, onClose }) => {
         .success-animation p,
         .failure-animation p {
           font-family: 'Press Start 2P', monospace;
-          font-size: 0.6rem;
+          font-size: 0.5rem;
           color: #ecf0f1;
         }
 
@@ -903,31 +890,31 @@ const ProcessSchedulerPuzzle = ({ onComplete, onClose }) => {
         }
 
         .education-panel {
-          background: rgba(52, 152, 219, 0.2);
-          padding: 1rem;
+          background: rgba(52, 152, 219, 0.3);
+          padding: 0.8rem;
           border-radius: 10px;
-          margin-top: 2rem;
+          margin-top: 1rem;
+          flex-shrink: 0;
+          border: 2px solid #3498db;
+          box-shadow: 0 4px 15px rgba(52, 152, 219, 0.2);
         }
 
         .education-panel h4 {
           font-family: 'Press Start 2P', monospace;
-          font-size: 0.8rem;
-          margin-bottom: 0.8rem;
-          color: #3498db;
+          font-size: 0.7rem;
+          margin-bottom: 0.6rem;
+          color: #2c3e50;
+          text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.2);
         }
 
         .education-panel p {
           font-family: 'Press Start 2P', monospace;
-          font-size: 0.6rem;
-          line-height: 1.5;
+          font-size: 0.5rem;
+          line-height: 1.4;
+          color: #34495e;
+          text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.1);
         }
 
-        @keyframes chaotic-movement {
-          0%, 100% { transform: translateX(0) rotate(0deg); }
-          25% { transform: translateX(-10px) rotate(-10deg); }
-          50% { transform: translateX(10px) rotate(10deg); }
-          75% { transform: translateX(-5px) rotate(-5deg); }
-        }
 
         @keyframes fly-to-cpu {
           0%, 100% { transform: translateX(0) translateY(0); }
@@ -950,14 +937,56 @@ const ProcessSchedulerPuzzle = ({ onComplete, onClose }) => {
         }
 
         @media (max-width: 768px) {
+          .scheduler-puzzle-container {
+            padding: 0.8rem;
+            border-radius: 10px;
+          }
+          
           .scheduler-workspace {
             flex-direction: column;
-            gap: 1rem;
+            gap: 0.6rem;
+            min-height: 250px;
+            max-height: 300px;
+          }
+          
+          .process-pool,
+          .execution-queue {
+            padding: 0.6rem;
           }
           
           .order-comparison {
             flex-direction: column;
-            gap: 1rem;
+            gap: 0.8rem;
+          }
+          
+          .process-bat,
+          .queued-process {
+            padding: 0.6rem;
+            gap: 0.6rem;
+          }
+          
+          .bat-emoji {
+            font-size: 1.5rem;
+          }
+          
+          .process-name {
+            font-size: 0.5rem;
+          }
+          
+          .process-stats {
+            font-size: 0.4rem;
+            gap: 0.5rem;
+          }
+          
+          .queue-position {
+            width: 25px;
+            height: 25px;
+            font-size: 0.6rem;
+          }
+          
+          .execute-btn {
+            padding: 0.6rem 1.2rem;
+            font-size: 0.6rem;
           }
         }
       `}</style>

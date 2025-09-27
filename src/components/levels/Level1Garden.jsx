@@ -121,53 +121,9 @@ const Level1Garden = () => {
     }, 5000);
   };
 
-  // Renderizar la intro animada
-  const renderIntroAnimation = () => (
-    <div className="intro-animation">
-      <div className="animation-scene">
-        <div className="scene-background">
-          <div className="garden-background">🌳🌸🌺🌻</div>
-        </div>
-        
-        <div className="characters">
-          <div className="andy-arrival">
-          <div className="andy-character">🐿️</div>
-            <div className="andy-speech">¡Andy llega al jardín!</div>
-          </div>
-          
-          <div className="pigeon-cage">
-            <div className="cage-container">
-              <div className="digital-cage">🏛️</div>
-              <div className="trapped-pigeon">🕊️💔</div>
-              <div className="digital-lock">🔒</div>
-        </div>
-            <div className="cage-label">Paloma atrapada</div>
-          </div>
-        </div>
-        
-        <div className="villain-appearance">
-          <div className="villain-character">🦹‍♂️</div>
-          <div className="villain-speech">
-            <p>"¡Nadie podrá comunicarse sin mí!"</p>
-            <p>"Si quieres liberar a tu amiga, tendrás que demostrar que sabes cómo viajan los mensajes en una red."</p>
-    </div>
-        </div>
-      </div>
-      
-      <div className="intro-progress">
-        <div className="progress-bar">
-          <div className="progress-fill"></div>
-        </div>
-        <p>Preparando el primer desafío...</p>
-      </div>
-    </div>
-  );
 
   // Renderizar el contenido principal del juego
   const renderMainContent = () => {
-    if (showIntroAnimation) {
-      return renderIntroAnimation();
-    }
 
     if (showPuzzle) {
       return renderCurrentPuzzle();
@@ -178,70 +134,107 @@ const Level1Garden = () => {
 
   // Renderizar la escena del juego
   const renderGameScene = () => (
-    <div className="garden-game-area">
-      <div className="garden-scene">
-        <div className="scene-elements">
-          <div className="andy-character">
-            <div className="character">🐿️</div>
-            <div className="character-label">Andy</div>
+    <div className="game-layout-reorganized">
+      {/* Mapa central */}
+      <div className="central-map-area">
+        <div className="adventure-path">
+          {/* Andy */}
+          <div className="andy-start-position">
+            <div className="character-path">🐿️</div>
+            <div className="character-label-path">Andy</div>
           </div>
-          
-          <div className="network-elements">
-            <div className={`network-device ${completedPuzzles.connections ? 'active' : 'inactive'}`}>
-              <div className="device">📡</div>
-              <div className="device-label">Red</div>
-              {completedPuzzles.connections && <div className="completion-check">✅</div>}
+
+          {/* Conectores */}
+          <div className="path-connectors">
+            <div className="path-line-segment segment-1"></div>
+            <div className="path-line-segment segment-2"></div>
+            <div className="path-line-segment segment-3"></div>
+            <div className="path-line-segment segment-4"></div>
+          </div>
+
+          {/* Fases */}
+          <div className="phases-on-path">
+            <div className={`phase-on-path ${completedPuzzles.connections ? 'completed' : currentPhase === 'connections' ? 'active' : 'pending'}`}
+                 onClick={() => currentPhase === 'connections' && setShowPuzzle(true)}>
+              <div className="phase-icon-path">📡</div>
+              <div className="phase-number-path">1</div>
+              <div className="phase-label-path">Red</div>
+              {completedPuzzles.connections && <div className="phase-check-path">✅</div>}
             </div>
             
-            <div className={`packet-flow ${completedPuzzles.packetAdventure ? 'active' : 'inactive'}`}>
-              <div className="packet">📦</div>
-              <div className="packet-label">Paquetes</div>
-              {completedPuzzles.packetAdventure && <div className="completion-check">✅</div>}
+            <div className={`phase-on-path ${completedPuzzles.packetAdventure ? 'completed' : currentPhase === 'packet-adventure' ? 'active' : 'pending'}`}
+                 onClick={() => currentPhase === 'packet-adventure' && setShowPuzzle(true)}>
+              <div className="phase-icon-path">📦</div>
+              <div className="phase-number-path">2</div>
+              <div className="phase-label-path">Paquetes</div>
+              {completedPuzzles.packetAdventure && <div className="phase-check-path">✅</div>}
             </div>
             
-            <div className={`security-shield ${completedPuzzles.arpMaze ? 'active' : 'inactive'}`}>
-              <div className="shield">🛡️</div>
-              <div className="shield-label">Seguridad</div>
-              {completedPuzzles.arpMaze && <div className="completion-check">✅</div>}
-        </div>
-      </div>
-      
-          <div className="pigeon-area">
-            <div className={`pigeon-cage ${currentPhase === 'completed' ? 'opened' : 'locked'}`}>
-              <div className="cage">🏛️</div>
-              <div className={`pigeon ${currentPhase === 'completed' ? 'free' : 'trapped'}`}>
+            <div className={`phase-on-path ${completedPuzzles.arpMaze ? 'completed' : currentPhase === 'arp-maze' ? 'active' : 'pending'}`}
+                 onClick={() => currentPhase === 'arp-maze' && setShowPuzzle(true)}>
+              <div className="phase-icon-path">🛡️</div>
+              <div className="phase-number-path">3</div>
+              <div className="phase-label-path">Seguridad</div>
+              {completedPuzzles.arpMaze && <div className="phase-check-path">✅</div>}
+            </div>
+            
+            <div className={`phase-on-path boss-phase ${completedPuzzles.bossFight ? 'completed' : currentPhase === 'boss-fight' ? 'active' : 'pending'}`}
+                 onClick={() => currentPhase === 'boss-fight' && setShowPuzzle(true)}>
+              <div className="phase-icon-path">👑</div>
+              <div className="phase-number-path">BOSS</div>
+              <div className="phase-label-path">Final</div>
+              {completedPuzzles.bossFight && <div className="phase-check-path">✅</div>}
+            </div>
+          </div>
+
+          {/* Paloma objetivo final */}
+          <div className="pigeon-final-objective">
+            <div className={`pigeon-cage-final ${currentPhase === 'completed' ? 'opened' : 'locked'}`}>
+              <div className="cage-final">🏛️</div>
+              <div className={`pigeon-final ${currentPhase === 'completed' ? 'free' : 'trapped'}`}>
                 {currentPhase === 'completed' ? '🕊️✨' : '🕊️💔'}
               </div>
-              <div className={`lock ${currentPhase === 'completed' ? 'broken' : 'active'}`}>
+              <div className={`lock-final ${currentPhase === 'completed' ? 'broken' : 'active'}`}>
                 {currentPhase === 'completed' ? '🔓' : '🔒'}
               </div>
             </div>
-            <div className="pigeon-label">
-              {currentPhase === 'completed' ? '¡Paloma libre!' : 'Paloma atrapada'}
-              </div>
+            <div className="objective-label-final">
+              {currentPhase === 'completed' ? '¡OBJETIVO CUMPLIDO!' : 'OBJETIVO FINAL'}
+            </div>
           </div>
         </div>
-        
-        <div className="phase-indicator">
-          <h3>📍 Fase Actual: {getCurrentPhaseDescription()}</h3>
-          <div className="progress-indicators">
-            <div className={`phase-dot ${completedPuzzles.connections ? 'completed' : currentPhase === 'connections' ? 'active' : 'pending'}`}>1</div>
-            <div className={`phase-dot ${completedPuzzles.packetAdventure ? 'completed' : currentPhase === 'packet-adventure' ? 'active' : 'pending'}`}>2</div>
-            <div className={`phase-dot ${completedPuzzles.arpMaze ? 'completed' : currentPhase === 'arp-maze' ? 'active' : 'pending'}`}>3</div>
-            <div className={`phase-dot ${completedPuzzles.bossFight ? 'completed' : currentPhase === 'boss-fight' ? 'active' : 'pending'}`}>👑</div>
-          </div>
-        </div>
-        
+
+        {/* Botón de acción */}
         {currentPhase !== 'completed' && (
-          <div className="action-area">
-            <button 
-              className="puzzle-trigger-btn"
-              onClick={() => setShowPuzzle(true)}
-            >
-              {getPuzzleButtonText()}
-            </button>
-        </div>
+          <button 
+            className="pixel-action-button-centered"
+            onClick={() => setShowPuzzle(true)}
+          >
+            {getPuzzleButtonText()}
+          </button>
         )}
+      </div>
+
+      {/* Sidebar derecho */}
+      <div className="right-sidebar">
+        <div className="right-block block-1">
+          <div className="block-header">
+            <div className="block-icon">📖</div>
+            <h4>Historia</h4>
+          </div>
+          <div className="block-content">
+            <p>{getCurrentStory()}</p>
+          </div>
+        </div>
+        <div className="right-block block-2">
+          <div className="block-header">
+            <div className="block-icon">📋</div>
+            <h4>Instrucciones</h4>
+          </div>
+          <div className="block-content">
+            <p>{getCurrentInstructions()}</p>
+          </div>
+        </div>
       </div>
     </div>
   );
@@ -350,57 +343,12 @@ const Level1Garden = () => {
 
   return (
     <div className="level1-garden-new">
-      {/* HUD */}
-      <div className="level-hud">
-        <div className="progress-indicator">
-          Progreso: {Object.values(completedPuzzles).filter(Boolean).length}/4
-        </div>
-        <div className="time-indicator">
-          Tiempo: {Math.floor(timeElapsed / 60)}:{(timeElapsed % 60).toString().padStart(2, '0')}
-        </div>
-        
-        {/* Botón de desarrollo */}
-        <button 
-          className="dev-skip-btn"
-          onClick={() => completeLevel()}
-          title="Modo desarrollo - Completar nivel"
-        >
-          🚀 COMPLETAR
-        </button>
-      </div>
 
       {/* Área principal del juego */}
-      <div className="game-main-area">
+      <div >
         {/* Escenario del juego - 70% de ancho (izquierda) */}
-        <div className="game-scenario">
           {renderMainContent()}
-        </div>
-        
-        {/* Área de diálogos - 30% de ancho (derecha) */}
-        <div className="game-dialogue-area">
-          {/* Sección izquierda (50% del 30%) */}
-          <div className="dialogue-section">
-            <div className="dialogue-row instructions">
-              📋 <strong>Instrucciones:</strong> {getCurrentInstructions()}
-            </div>
-      {showMessage && (
-              <div className="dialogue-row message">
-                🐿️ <strong>Andy:</strong> {currentMessage}
               </div>
-            )}
-          </div>
-          
-          {/* Sección derecha (50% del 30%) */}
-          <div className="dialogue-section">
-            <div className="dialogue-row story">
-              📖 <strong>Historia:</strong> {getCurrentStory()}
-            </div>
-            <div className="dialogue-row progress">
-              🎯 <strong>Progreso:</strong> {getCurrentProgress()}
-            </div>
-          </div>
-        </div>
-      </div>
 
       <style>{`
         .level1-garden-new {
@@ -426,48 +374,7 @@ const Level1Garden = () => {
           pointer-events: none;
         }
 
-        .level-hud {
-          position: absolute;
-          top: 1.5rem;
-          left: 1.5rem;
-          right: 1.5rem;
-          display: flex;
-          justify-content: space-between;
-          align-items: center;
-          background: rgba(255, 255, 255, 0.95);
-          backdrop-filter: blur(10px);
-          padding: 1rem 1.5rem;
-          border-radius: 16px;
-          box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
-          border: 1px solid rgba(255, 255, 255, 0.2);
-          z-index: 100;
-        }
 
-        .level-hud > div {
-          display: flex;
-          align-items: center;
-          gap: 0.5rem;
-          font-weight: 600;
-          color: #2c3e50;
-        }
-
-        .dev-skip-btn {
-          background: linear-gradient(135deg, #e74c3c, #c0392b);
-          color: white;
-          border: none;
-          padding: 0.6rem 1.2rem;
-          border-radius: 8px;
-          font-weight: 600;
-          font-size: 0.8rem;
-          cursor: pointer;
-          transition: all 0.3s ease;
-          box-shadow: 0 4px 15px rgba(231, 76, 60, 0.3);
-        }
-
-        .dev-skip-btn:hover {
-          transform: translateY(-2px);
-          box-shadow: 0 6px 20px rgba(231, 76, 60, 0.4);
-        }
 
         .story-message-overlay {
           position: absolute;
@@ -745,223 +652,735 @@ const Level1Garden = () => {
           color: white;
         }
 
-        .garden-scene {
-          background: rgba(0, 0, 0, 0.7);
-          backdrop-filter: blur(15px);
-          padding: 3rem;
-          border-radius: 24px;
-          border: 1px solid rgba(255, 255, 255, 0.1);
-          box-shadow: 0 10px 40px rgba(0, 0, 0, 0.3);
+        /* ========================================
+           LAYOUT REORGANIZADO: SIDEBAR IZQUIERDO + MAPA CENTRAL + SIDEBAR DERECHO
+           ======================================== */
+        
+        .game-layout-reorganized {
+          display: flex;
+          height: 100vh;
+          gap: 1rem;
+          padding: 0.5rem;
+          align-items: stretch;
         }
 
-        .scene-elements {
-          display: grid;
-          grid-template-columns: 1fr 2fr 1fr;
-          gap: 3rem;
+        /* Mapa central - Ocupa todo el espacio disponible */
+        .central-map-area {
+          flex: 1;
+          display: flex;
+          flex-direction: column;
+          justify-content: center;
           align-items: center;
-          margin-bottom: 3rem;
+          background: rgba(0, 0, 0, 0.3);
+          border-radius: 15px;
+          padding: 2rem;
+          margin: 0.5rem 0;
+          width: 100%;
         }
 
-        .andy-character,
-        .pigeon-area {
-          text-align: center;
+        /* Sidebar derecho - Dos bloques */
+        .right-sidebar {
+          width: 250px;
+          display: flex;
+          flex-direction: column;
+          gap: 0.5rem;
+          height: 100%;
+          padding: 0.5rem 0;
         }
 
-        .character,
-        .device,
-        .packet,
-        .shield,
-        .cage {
-          font-size: 4.5rem;
-          margin-bottom: 1rem;
-          filter: drop-shadow(0 4px 8px rgba(0, 0, 0, 0.3));
+        /* Bloques del sidebar derecho */
+        .right-block {
+          background: rgba(0, 0, 0, 0.8);
+          backdrop-filter: blur(10px);
+          border: 2px solid rgba(255, 255, 255, 0.1);
+          border-radius: 15px;
+          overflow: hidden;
+          flex: 1;
+          min-height: 150px;
+          display: flex;
+          flex-direction: column;
         }
 
-        .character-label,
-        .device-label,
-        .packet-label,
-        .shield-label,
-        .pigeon-label {
-          font-size: 0.8rem;
+        .block-header {
+          background: rgba(52, 152, 219, 0.2);
+          padding: 0.8rem;
+          border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+          display: flex;
+          align-items: center;
+          gap: 0.5rem;
+        }
+
+        .block-icon {
+          font-size: 1.2rem;
+          filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.3));
+        }
+
+        .block-header h4 {
+          font-family: 'Press Start 2P', monospace;
+          font-size: 0.7rem;
+          color: #3498db;
+          margin: 0;
+          text-shadow: 0 2px 4px rgba(0, 0, 0, 0.5);
+        }
+
+        .block-content {
+          padding: 1rem;
+          flex: 1;
+          overflow-y: auto;
+        }
+
+        .block-content p {
+          font-family: 'Press Start 2P', monospace;
+          font-size: 0.5rem;
           color: #ecf0f1;
+          line-height: 1.4;
+          margin: 0;
+          text-shadow: 0 1px 2px rgba(0, 0, 0, 0.5);
+        }
+
+
+        .adventure-path {
+          display: flex;
+          align-items: center;
+          gap: 2rem;
+          position: relative;
+          max-width: 1200px;
+          width: 100%;
+          padding: 1rem;
+        }
+
+        /* Andy como protagonista - Inicio del camino */
+        .andy-start-position {
+          flex-shrink: 0;
+        }
+
+
+        .character-path {
+          font-size: 5rem;
+          margin-bottom: 0.5rem;
+          filter: drop-shadow(0 4px 8px rgba(0, 0, 0, 0.3));
+          animation: andy-bounce-path 3s ease-in-out infinite;
+        }
+
+        .character-label-path {
+          font-family: 'Press Start 2P', monospace;
+          font-size: 1rem;
+          color: #f39c12;
           font-weight: 600;
           text-shadow: 0 2px 4px rgba(0, 0, 0, 0.5);
         }
 
-        .network-elements {
+        .andy-path-glow {
+          position: absolute;
+          top: -1rem;
+          left: -1rem;
+          right: -1rem;
+          bottom: -1rem;
+          background: radial-gradient(circle, rgba(243, 156, 18, 0.3) 0%, transparent 70%);
+          border-radius: 50%;
+          animation: andy-glow-pulse-path 3s ease-in-out infinite;
+          z-index: -1;
+        }
+
+        /* Conectores visuales del camino */
+        .path-connectors {
+          position: absolute;
+          top: 50%;
+          left: 0;
+          right: 0;
+          height: 4px;
+          z-index: 1;
+          pointer-events: none;
+        }
+
+        .path-line-segment {
+          position: absolute;
+          height: 100%;
+          background: linear-gradient(90deg, #3498db, #f39c12, #e74c3c, #9b59b6);
+          border-radius: 2px;
+          animation: path-flow 3s ease-in-out infinite;
+        }
+
+        .segment-1 { left: 8%; width: 15%; animation-delay: 0s; }
+        .segment-2 { left: 28%; width: 15%; animation-delay: 0.5s; }
+        .segment-3 { left: 48%; width: 15%; animation-delay: 1s; }
+        .segment-4 { left: 68%; width: 15%; animation-delay: 1.5s; }
+
+        /* Fases únicas en el camino */
+        .phases-on-path {
+          display: flex;
+          justify-content: space-between;
+          width: 100%;
+          position: relative;
+          z-index: 2;
+        }
+
+        .phase-on-path {
           display: flex;
           flex-direction: column;
-          gap: 2rem;
           align-items: center;
-        }
-
-        .network-device,
-        .packet-flow,
-        .security-shield {
           text-align: center;
-          position: relative;
-          padding: 1.5rem;
-          border-radius: 16px;
           transition: all 0.4s ease;
-          min-width: 150px;
+          cursor: pointer;
+          padding: 1.5rem;
+          border-radius: 12px;
           backdrop-filter: blur(5px);
+          position: relative;
+          min-width: 150px;
         }
 
-        .network-device.active,
-        .packet-flow.active,
-        .security-shield.active {
-          background: rgba(52, 152, 219, 0.2);
-          border: 2px solid #3498db;
-          box-shadow: 0 0 20px rgba(52, 152, 219, 0.3);
-          transform: scale(1.05);
-        }
-
-        .network-device.inactive,
-        .packet-flow.inactive,
-        .security-shield.inactive {
+        .phase-on-path.pending {
           background: rgba(149, 165, 166, 0.2);
           border: 2px solid #95a5a6;
         }
 
-        .completion-check {
-          position: absolute;
-          top: -0.5rem;
-          right: -0.5rem;
-          font-size: 1.8rem;
-          animation: completion-pop 0.6s ease-out;
+        .phase-on-path.active {
+          background: rgba(243, 156, 18, 0.2);
+          border: 2px solid #f39c12;
+          animation: phase-pulse-path 2s ease-in-out infinite;
+          box-shadow: 0 0 20px rgba(243, 156, 18, 0.5);
+        }
+
+        .phase-on-path.completed {
+          background: rgba(52, 152, 219, 0.2);
+          border: 2px solid #3498db;
+          box-shadow: 0 0 20px rgba(52, 152, 219, 0.3);
+        }
+
+        .phase-on-path.boss-phase {
+          border: 3px solid #e74c3c;
+          background: rgba(231, 76, 60, 0.2);
+        }
+
+        .phase-on-path.boss-phase.active {
+          animation: boss-pulse-path 2s ease-in-out infinite;
+          box-shadow: 0 0 25px rgba(231, 76, 60, 0.6);
+        }
+
+        .phase-icon-path {
+          font-size: 3.5rem;
+          margin-bottom: 0.5rem;
           filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.3));
         }
 
-        .pigeon-cage {
+        .phase-number-path {
+          font-family: 'Press Start 2P', monospace;
+          font-size: 1rem;
+          font-weight: 600;
+          margin-bottom: 0.3rem;
+          color: white;
+          text-shadow: 0 2px 4px rgba(0, 0, 0, 0.5);
+        }
+
+        .phase-label-path {
+          font-family: 'Press Start 2P', monospace;
+          font-size: 0.7rem;
+          color: #ecf0f1;
+          text-shadow: 0 2px 4px rgba(0, 0, 0, 0.5);
+        }
+
+        .phase-check-path {
+          position: absolute;
+          top: -0.5rem;
+          right: -0.5rem;
+          font-size: 1.5rem;
+          animation: check-pop-path 0.6s ease-out;
+          filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.3));
+        }
+
+        /* Paloma atrapada - Objetivo final del camino */
+        .pigeon-final-objective {
+          flex-shrink: 0;
           position: relative;
           text-align: center;
         }
 
-        .pigeon {
+
+        .pigeon-cage-final {
+          position: relative;
+          font-size: 6rem;
+          margin-bottom: 1rem;
+          filter: drop-shadow(0 6px 12px rgba(0, 0, 0, 0.3));
+        }
+
+        .cage-final {
+          position: relative;
+          z-index: 2;
+        }
+
+        .pigeon-final {
           position: absolute;
-          top: 1rem;
+          top: 0.5rem;
           left: 50%;
           transform: translateX(-50%);
-          font-size: 3.5rem;
+          font-size: 4rem;
           transition: all 1s ease;
           filter: drop-shadow(0 4px 8px rgba(0, 0, 0, 0.3));
+          z-index: 3;
         }
 
-        .pigeon.free {
-          animation: pigeon-fly-free 3s ease-out infinite;
+        .pigeon-final.free {
+          animation: pigeon-fly-free-path 3s ease-out infinite;
         }
 
-        .pigeon.trapped {
-          animation: pigeon-struggle 2s ease-in-out infinite;
+        .pigeon-final.trapped {
+          animation: pigeon-struggle-path 2s ease-in-out infinite;
         }
 
-        .lock {
+        .lock-final {
           position: absolute;
           top: -0.5rem;
           right: -0.5rem;
           font-size: 2.5rem;
           transition: all 0.5s;
           filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.3));
+          z-index: 4;
         }
 
-        .lock.broken {
+        .lock-final.broken {
           transform: rotate(45deg) scale(0.8);
           opacity: 0.5;
         }
 
-        .phase-indicator {
-          text-align: center;
-          margin-bottom: 2rem;
+        .objective-label-final {
+          font-family: 'Press Start 2P', monospace;
+          font-size: 0.8rem;
+          color: #f39c12;
+          font-weight: 600;
+          text-shadow: 0 2px 4px rgba(0, 0, 0, 0.5);
+          margin-bottom: 1rem;
+          animation: objective-label-pulse 2s ease-in-out infinite;
         }
 
-        .phase-indicator h3 {
+        .progress-ring {
+          position: relative;
+          width: 80px;
+          height: 80px;
+          margin: 0 auto;
+        }
+
+        .progress-ring svg {
+          width: 100%;
+          height: 100%;
+          transform: rotate(-90deg);
+        }
+
+        .progress-ring-fill {
+          fill: none;
+          stroke: #f39c12;
+          stroke-width: 4;
+          stroke-linecap: round;
+          stroke-dasharray: 0 100;
+          transition: stroke-dasharray 0.5s ease;
+        }
+
+        /* ========================================
+           SIDEBAR IZQUIERDO - ESTILOS ACTUALIZADOS
+           ======================================== */
+
+        .sidebar-tabs {
+          display: flex;
+          background: rgba(0, 0, 0, 0.9);
+          border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .tab {
+          flex: 1;
+          display: flex;
+          flex-direction: column;
+          align-items: center;
+          padding: 0.8rem 0.5rem;
+          cursor: pointer;
+          transition: all 0.3s ease;
+          border-right: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .tab:last-child {
+          border-right: none;
+        }
+
+        .tab.active {
+          background: rgba(52, 152, 219, 0.3);
+          border-bottom: 2px solid #3498db;
+        }
+
+        .tab-icon {
           font-size: 1.2rem;
-          margin-bottom: 1.5rem;
+          margin-bottom: 0.3rem;
+        }
+
+        .tab span {
+          font-family: 'Press Start 2P', monospace;
+          font-size: 0.5rem;
           color: white;
-          font-weight: 600;
+          text-shadow: 0 1px 2px rgba(0, 0, 0, 0.5);
+        }
+
+        .sidebar-content {
+          padding: 1rem;
+          min-height: 200px;
+        }
+
+        .content-section {
+          display: none;
+        }
+
+        .content-section.active {
+          display: block;
+        }
+
+        .content-section h4 {
+          font-family: 'Press Start 2P', monospace;
+          font-size: 0.7rem;
+          color: #f39c12;
+          margin-bottom: 0.8rem;
           text-shadow: 0 2px 4px rgba(0, 0, 0, 0.5);
         }
 
-        .progress-indicators {
-          display: flex;
-          justify-content: center;
-          gap: 1.5rem;
-        }
-
-        .phase-dot {
-          width: 60px;
-          height: 60px;
-          border-radius: 50%;
-          display: flex;
-          align-items: center;
-          justify-content: center;
-          font-size: 1rem;
-          font-weight: 600;
-          transition: all 0.4s ease;
-          backdrop-filter: blur(5px);
-          border: 2px solid rgba(255, 255, 255, 0.2);
-        }
-
-        .phase-dot.pending {
-          background: rgba(149, 165, 166, 0.3);
-          color: #bdc3c7;
-        }
-
-        .phase-dot.active {
-          background: linear-gradient(135deg, #f39c12, #e67e22);
+        .content-section p {
+          font-family: 'Press Start 2P', monospace;
+          font-size: 0.6rem;
           color: white;
-          animation: pulse 2s ease-in-out infinite;
-          box-shadow: 0 0 20px rgba(243, 156, 18, 0.5);
+          line-height: 1.4;
+          text-shadow: 0 1px 2px rgba(0, 0, 0, 0.5);
         }
 
-        .phase-dot.completed {
-          background: linear-gradient(135deg, #3498db, #2980b9);
-          color: white;
-          box-shadow: 0 0 20px rgba(52, 152, 219, 0.3);
-        }
+        /* ========================================
+           BOTÓN DE ACCIÓN CENTRADO Y COHERENTE
+           ======================================== */
+        
 
-        .action-area {
-          text-align: center;
-        }
-
-        .puzzle-trigger-btn {
+        .pixel-action-button-centered {
+          position: relative;
           background: linear-gradient(135deg, #3498db, #2980b9, #5dade2);
           color: white;
-          border: none;
+          border: 4px solid #2c3e50;
           padding: 1.5rem 3rem;
-          border-radius: 16px;
+          border-radius: 10px;
+          font-family: 'Press Start 2P', monospace;
           font-size: 1rem;
           font-weight: 600;
           cursor: pointer;
-          transition: all 0.4s ease;
-          box-shadow: 0 8px 25px rgba(52, 152, 219, 0.3);
-          position: relative;
+          transition: all 0.3s ease;
+          box-shadow: 0 8px 25px rgba(52, 152, 219, 0.4);
           overflow: hidden;
         }
 
-        .puzzle-trigger-btn::before {
-          content: '';
+        .pixel-action-button-centered:hover {
+          transform: translateY(-3px);
+          box-shadow: 0 12px 35px rgba(52, 152, 219, 0.6);
+        }
+
+        .button-text-centered {
+          position: relative;
+          z-index: 2;
+        }
+
+        .button-glow-centered {
           position: absolute;
           top: 0;
           left: -100%;
           width: 100%;
           height: 100%;
-          background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
+          background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.3), transparent);
           transition: left 0.5s;
         }
 
-        .puzzle-trigger-btn:hover::before {
+        .pixel-action-button-centered:hover .button-glow-centered {
           left: 100%;
         }
 
-        .puzzle-trigger-btn:hover {
-          transform: translateY(-4px);
-          box-shadow: 0 12px 35px rgba(52, 152, 219, 0.4);
+        /* ========================================
+           ANIMACIONES PARA EL NUEVO DISEÑO
+           ======================================== */
+        
+        @keyframes andy-bounce-path {
+          0%, 100% { transform: translateY(0) scale(1); }
+          50% { transform: translateY(-10px) scale(1.05); }
         }
 
-        @keyframes andy-bounce {
-          0%, 100% { transform: translateY(0) scale(1); }
-          50% { transform: translateY(-15px) scale(1.05); }
+        @keyframes andy-glow-pulse-path {
+          0%, 100% { opacity: 0.3; transform: scale(1); }
+          50% { opacity: 0.6; transform: scale(1.1); }
+        }
+
+        @keyframes path-flow {
+          0%, 100% { opacity: 0.6; }
+          50% { opacity: 1; }
+        }
+
+        @keyframes phase-pulse-path {
+          0%, 100% { transform: scale(1); box-shadow: 0 0 20px rgba(243, 156, 18, 0.5); }
+          50% { transform: scale(1.05); box-shadow: 0 0 30px rgba(243, 156, 18, 0.8); }
+        }
+
+        @keyframes boss-pulse-path {
+          0%, 100% { transform: scale(1); box-shadow: 0 0 25px rgba(231, 76, 60, 0.6); }
+          50% { transform: scale(1.05); box-shadow: 0 0 35px rgba(231, 76, 60, 0.9); }
+        }
+
+        @keyframes check-pop-path {
+          0% { transform: scale(0); opacity: 0; }
+          50% { transform: scale(1.2); opacity: 1; }
+          100% { transform: scale(1); opacity: 1; }
+        }
+
+        @keyframes objective-aura-pulse {
+          0%, 100% { opacity: 0.4; transform: scale(1); }
+          50% { opacity: 0.8; transform: scale(1.1); }
+        }
+
+        @keyframes pigeon-fly-free-path {
+          0%, 100% { transform: translateX(-50%) translateY(0) rotate(0deg); }
+          25% { transform: translateX(-50%) translateY(-15px) rotate(-5deg); }
+          75% { transform: translateX(-50%) translateY(-15px) rotate(5deg); }
+        }
+
+        @keyframes pigeon-struggle-path {
+          0%, 100% { transform: translateX(-50%) translateY(0) rotate(0deg); }
+          25% { transform: translateX(-50%) translateY(-8px) rotate(-2deg); }
+          75% { transform: translateX(-50%) translateY(-8px) rotate(2deg); }
+        }
+
+        @keyframes objective-label-pulse {
+          0%, 100% { opacity: 1; text-shadow: 0 2px 4px rgba(0, 0, 0, 0.5); }
+          50% { opacity: 0.8; text-shadow: 0 2px 4px rgba(0, 0, 0, 0.5), 0 0 20px rgba(243, 156, 18, 0.8); }
+        }
+
+        /* ========================================
+           RESPONSIVE PARA EL NUEVO LAYOUT DE DOS COLUMNAS
+           ======================================== */
+        
+        @media (max-width: 1200px) {
+          .game-layout-reorganized {
+            gap: 1.5rem;
+            padding: 1.5rem;
+          }
+
+          .right-sidebar {
+            width: 280px;
+          }
+
+          .central-map-area {
+            max-width: 75%;
+            padding: 2.5rem;
+          }
+
+          .adventure-path {
+            gap: 1.5rem;
+            padding: 1.5rem;
+          }
+
+          .character-path {
+            font-size: 3.5rem;
+          }
+
+          .phase-on-path {
+            min-width: 100px;
+            padding: 0.8rem;
+          }
+
+          .phase-icon-path {
+            font-size: 2rem;
+          }
+
+          .pigeon-cage-final {
+            font-size: 4rem;
+          }
+
+          .pigeon-final {
+            font-size: 3rem;
+          }
+        }
+
+        @media (max-width: 1024px) {
+          .game-layout-reorganized {
+            gap: 1rem;
+            padding: 1rem;
+          }
+
+          .right-sidebar {
+            width: 250px;
+          }
+
+          .central-map-area {
+            max-width: 80%;
+            padding: 2rem;
+          }
+
+          .adventure-path {
+            gap: 1rem;
+            padding: 1rem;
+          }
+
+          .character-path {
+            font-size: 3rem;
+          }
+
+          .phase-icon-path {
+            font-size: 1.8rem;
+          }
+
+          .pigeon-cage-final {
+            font-size: 3.5rem;
+          }
+
+          .pigeon-final {
+            font-size: 2.5rem;
+          }
+        }
+
+        @media (max-width: 768px) {
+          .game-layout-reorganized {
+            flex-direction: column;
+            height: auto;
+            gap: 1rem;
+            padding: 1rem;
+          }
+
+          .central-map-area {
+            order: 1;
+            padding: 1.5rem;
+            margin: 0;
+            min-height: auto;
+            max-width: 100%;
+          }
+
+          .right-sidebar {
+            width: 100%;
+            order: 2;
+            flex-direction: row;
+            gap: 1rem;
+            height: auto;
+          }
+
+          .right-block {
+            flex: 1;
+            min-height: 150px;
+          }
+
+          .adventure-path {
+            flex-direction: column;
+            gap: 1rem;
+            padding: 1rem;
+          }
+
+          .andy-start-position {
+            order: 1;
+          }
+
+          .phases-on-path {
+            order: 2;
+            flex-direction: column;
+            gap: 1rem;
+            width: 100%;
+          }
+
+          .phase-on-path {
+            width: 100%;
+            min-width: auto;
+            flex-direction: row;
+            justify-content: space-between;
+            align-items: center;
+            padding: 1rem;
+          }
+
+          .phase-icon-path {
+            font-size: 2.5rem;
+            margin-bottom: 0;
+            margin-right: 1rem;
+          }
+
+          .pigeon-final-objective {
+            order: 3;
+          }
+
+          .path-connectors {
+            display: none;
+          }
+
+          .character-path {
+            font-size: 2.5rem;
+          }
+
+          .pigeon-cage-final {
+            font-size: 3rem;
+          }
+
+          .pigeon-final {
+            font-size: 2rem;
+          }
+        }
+
+        @media (max-width: 480px) {
+          .game-layout-reorganized {
+            padding: 0.5rem;
+            gap: 0.5rem;
+          }
+
+          .central-map-area {
+            padding: 1rem;
+          }
+
+          .right-sidebar {
+            flex-direction: column;
+            gap: 0.5rem;
+          }
+
+          .right-block {
+            min-height: 120px;
+          }
+
+          .adventure-path {
+            padding: 0.5rem;
+          }
+
+          .character-path {
+            font-size: 2rem;
+          }
+
+          .phase-on-path {
+            padding: 0.6rem;
+          }
+
+          .phase-icon-path {
+            font-size: 1.5rem;
+          }
+
+          .phase-number-path {
+            font-size: 0.6rem;
+          }
+
+          .phase-label-path {
+            font-size: 0.4rem;
+          }
+
+          .pigeon-cage-final {
+            font-size: 2.5rem;
+          }
+
+          .pigeon-final {
+            font-size: 1.5rem;
+          }
+
+          .objective-label-final {
+            font-size: 0.6rem;
+          }
+
+          .pixel-action-button-centered {
+            padding: 0.8rem 1.5rem;
+            font-size: 0.7rem;
+          }
+        }
+
+        @keyframes andy-glow-pulse {
+          0%, 100% { opacity: 0.3; transform: scale(1); }
+          50% { opacity: 0.6; transform: scale(1.1); }
+        }
+
+        @keyframes checkpoint-pulse {
+          0%, 100% { transform: scale(1); box-shadow: 0 0 20px rgba(243, 156, 18, 0.5); }
+          50% { transform: scale(1.05); box-shadow: 0 0 30px rgba(243, 156, 18, 0.7); }
         }
 
         @keyframes andy-walk {
@@ -1055,11 +1474,6 @@ const Level1Garden = () => {
         }
 
         @media (max-width: 768px) {
-          .level-hud {
-            flex-direction: column;
-            gap: 1rem;
-            padding: 1rem;
-          }
           
           .story-message-overlay {
             flex-direction: column;

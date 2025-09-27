@@ -135,77 +135,91 @@ const Level4Peak = () => {
       )}
 
       {!showIntroAnimation && currentPhase !== 'completed' && (
-        <div className="level-game-area">
-          {/* HUD del nivel */}
-          <div className="level-hud">
-            <div className="hud-left">
-              <div className="level-title">🌪️ Pico de Software</div>
-              <div className="time-display">⏱️ Tiempo: {Math.floor(timeElapsed / 60)}:{(timeElapsed % 60).toString().padStart(2, '0')}</div>
-            </div>
-            
-            <div className="hud-center">
-              <div className="progress-indicators">
-                <div className={`progress-dot ${completedPuzzles.programming ? 'completed' : 'pending'}`}>
-                  🧩
+        <div className="level4-peak-main">
+          {/* Layout de dos columnas */}
+          <div className="game-main-area">
+            {/* Sidebar izquierdo con información */}
+            <div className="game-sidebar-left">
+              {/* Información del nivel */}
+              <div className="sidebar-block">
+                <div className="block-header">
+                  <span className="block-icon">🌪️</span>
+                  <h4>Pico de Software</h4>
+                </div>
+                <div className="block-content">
+                  <p>⏱️ Tiempo: {Math.floor(timeElapsed / 60)}:{(timeElapsed % 60).toString().padStart(2, '0')}</p>
+                  <p>🏆 Puntuación: {state.totalScore}</p>
+                  <div className="progress-indicators">
+                    <div className={`progress-dot ${completedPuzzles.programming ? 'completed' : 'pending'}`}>
+                      🧩
+                    </div>
+                  </div>
                 </div>
               </div>
-            </div>
-            
-            <div className="hud-right">
-              <div className="score-display">🏆 Puntuación: {state.totalScore}</div>
-              <button className="dev-skip-btn" onClick={skipToCompletion} title="Completar nivel (Dev)">
-                ⚡
-              </button>
-            </div>
-          </div>
 
-          {/* Área visual del nivel */}
-          <div className="level-visual-area">
-            <div className="mountain-environment">
-              <div className="maze-preview">
-                <div className="maze-grid-preview">
-                  <div className="maze-cell start">🚪</div>
-                  <div className="maze-cell path">·</div>
-                  <div className="maze-cell path">·</div>
-                  <div className="maze-cell wall">#</div>
-                  <div className="maze-cell path">·</div>
-                  <div className="maze-cell path">·</div>
-                  <div className="maze-cell target">🦫</div>
+              {/* Objetivos del puzzle */}
+              <div className="sidebar-block">
+                <div className="block-header">
+                  <span className="block-icon">🎯</span>
+                  <h4>Objetivos</h4>
                 </div>
-              </div>
-              
-              <div className="possum-trapped">
-                <div className="possum-avatar">🐾</div>
-                <div className="cage-effect">🔒</div>
-              </div>
-            </div>
-          </div>
-
-          {/* Estado actual del juego */}
-          <div className="current-phase-display">
-            {currentPhase === 'programming' && (
-              <div className="phase-content">
-                <h3>🧩 El Gran Laberinto Programado</h3>
-                <p>Programa a Andy usando bloques de código para navegar el laberinto y rescatar a la zarigüeya.</p>
-                <p>Usa bucles para optimizar tu código y condicionales para manejar obstáculos dinámicos.</p>
-                
-                <div className="puzzle-objectives">
-                  <h4>🎯 Objetivos:</h4>
+                <div className="block-content">
                   <ul>
                     <li>✅ Hacer que Andy llegue a la zarigüeya</li>
                     <li>⭐ Optimizar el código con bucles</li>
                     <li>⭐⭐ Hacer el código robusto con condicionales</li>
                   </ul>
                 </div>
-                
-                <button 
-                  className="start-puzzle-btn"
-                  onClick={() => setShowPuzzle(true)}
-                >
-                  {completedPuzzles.programming ? '🔄 Reintentar' : '🚀 Comenzar Puzzle'}
-                </button>
               </div>
-            )}
+
+              {/* Botón de acción */}
+              <div className="sidebar-block">
+                <div className="block-header">
+                  <span className="block-icon">🚀</span>
+                  <h4>Acción</h4>
+                </div>
+                <div className="block-content">
+                  <button 
+                    className="start-puzzle-btn"
+                    onClick={() => setShowPuzzle(true)}
+                  >
+                    {completedPuzzles.programming ? '🔄 Reintentar' : '🚀 Comenzar Puzzle'}
+                  </button>
+                  <button className="dev-skip-btn" onClick={skipToCompletion} title="Completar nivel (Dev)">
+                    ⚡ Completar (Dev)
+                  </button>
+                </div>
+              </div>
+            </div>
+
+            {/* Área central del juego */}
+            <div className="game-central-area">
+              <div className="peak-scene">
+                <div className="scene-header">
+                  <h3>🧩 El Gran Laberinto Programado</h3>
+                  <p>Programa a Andy usando bloques de código para navegar el laberinto y rescatar a la zarigüeya.</p>
+                </div>
+                
+                <div className="scene-elements">
+                  <div className="maze-preview">
+                    <div className="maze-grid-preview">
+                      <div className="maze-cell start">🚪</div>
+                      <div className="maze-cell path">·</div>
+                      <div className="maze-cell path">·</div>
+                      <div className="maze-cell wall">#</div>
+                      <div className="maze-cell path">·</div>
+                      <div className="maze-cell path">·</div>
+                      <div className="maze-cell target">🦫</div>
+                    </div>
+                  </div>
+                  
+                  <div className="possum-trapped">
+                    <div className="possum-avatar">🐾</div>
+                    <div className="cage-effect">🔒</div>
+                  </div>
+                </div>
+              </div>
+            </div>
           </div>
         </div>
       )}

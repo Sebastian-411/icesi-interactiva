@@ -332,24 +332,6 @@ const Level2Cave = () => {
 
   return (
     <div className="level2-cave-new">
-      {/* HUD */}
-      <div className="level-hud">
-        <div className="progress-indicator">
-          Progreso: {Object.values(completedPuzzles).filter(Boolean).length}/3
-        </div>
-        <div className="time-indicator">
-          Tiempo: {Math.floor(timeElapsed / 60)}:{(timeElapsed % 60).toString().padStart(2, '0')}
-      </div>
-
-        {/* Botón de desarrollo */}
-      <button 
-          className="dev-skip-btn"
-          onClick={() => completeLevel()}
-          title="Modo desarrollo - Completar nivel"
-        >
-          🚀 COMPLETAR
-      </button>
-      </div>
 
       {/* Mensaje temporal */}
       {showMessage && (
@@ -363,34 +345,54 @@ const Level2Cave = () => {
 
       {/* Área principal del juego */}
       <div className="game-main-area">
-        {/* Escenario del juego - 70% de ancho (izquierda) */}
-        <div className="game-scenario">
-          {renderMainContent()}
-        </div>
-        
-        {/* Área de diálogos - 30% de ancho (derecha) */}
-        <div className="game-dialogue-area">
-          {/* Sección izquierda (50% del 30%) */}
-          <div className="dialogue-section">
-            <div className="dialogue-row instructions">
-              📋 <strong>Instrucciones:</strong> {getCurrentInstructions()}
+        {/* Sidebar izquierdo - Información del juego */}
+        <div className="game-sidebar-left">
+          <div className="sidebar-block">
+            <div className="block-header">
+              <div className="block-icon">📋</div>
+              <h4>Instrucciones</h4>
             </div>
-            {showMessage && (
-              <div className="dialogue-row message">
-                🐿️ <strong>Andy:</strong> {currentMessage}
-              </div>
-            )}
+            <div className="block-content">
+              <p>{getCurrentInstructions()}</p>
+            </div>
           </div>
           
-          {/* Sección derecha (50% del 30%) */}
-          <div className="dialogue-section">
-            <div className="dialogue-row story">
-              📖 <strong>Historia:</strong> {getCurrentStory()}
+          <div className="sidebar-block">
+            <div className="block-header">
+              <div className="block-icon">📖</div>
+              <h4>Historia</h4>
             </div>
-            <div className="dialogue-row progress">
-              🎯 <strong>Progreso:</strong> {getCurrentProgress()}
+            <div className="block-content">
+              <p>{getCurrentStory()}</p>
             </div>
           </div>
+          
+          <div className="sidebar-block">
+            <div className="block-header">
+              <div className="block-icon">🎯</div>
+              <h4>Progreso</h4>
+            </div>
+            <div className="block-content">
+              <p>{getCurrentProgress()}</p>
+            </div>
+          </div>
+          
+          {showMessage && (
+            <div className="sidebar-block message-block">
+              <div className="block-header">
+                <div className="block-icon">🐿️</div>
+                <h4>Andy</h4>
+              </div>
+              <div className="block-content">
+                <p>{currentMessage}</p>
+              </div>
+            </div>
+          )}
+        </div>
+
+        {/* Área central del juego */}
+        <div className="game-central-area">
+          {renderMainContent()}
         </div>
       </div>
 
@@ -402,6 +404,8 @@ const Level2Cave = () => {
           background: linear-gradient(135deg, #2c3e50 0%, #34495e 50%, #1a1a2e 100%);
           position: relative;
           overflow: hidden;
+          display: flex;
+          flex-direction: column;
         }
 
         .level-hud {
@@ -435,61 +439,78 @@ const Level2Cave = () => {
 
         .game-main-area {
           width: 100%;
-          height: 100%;
+          flex: 1;
           display: flex;
           flex-direction: row;
-          padding: 7rem 2rem 2rem 2rem;
-          gap: 2rem;
+          padding: 0.5rem;
+          gap: 0.5rem;
+          overflow: hidden;
         }
 
-        .game-scenario {
-          flex: 0 0 70%;
+        .game-sidebar-left {
+          flex: 0 0 28%;
+          display: flex;
+          flex-direction: column;
+          gap: 0.5rem;
+          padding: 0.3rem;
+          overflow-y: auto;
+        }
+
+        .game-central-area {
+          flex: 1;
           display: flex;
           align-items: center;
           justify-content: center;
+          padding: 0.3rem;
+          overflow: hidden;
         }
 
-        .game-dialogue-area {
-          flex: 0 0 30%;
-          display: flex;
-          flex-direction: column;
-          gap: 1rem;
-          padding: 1rem 0;
-        }
-
-        .dialogue-section {
-          flex: 1;
-          display: flex;
-          flex-direction: column;
-          gap: 1rem;
-        }
-
-        .dialogue-row {
+        .sidebar-block {
           background: rgba(44, 62, 80, 0.9);
-          padding: 1rem;
           border-radius: 10px;
+          padding: 0.8rem;
+          border: 2px solid #7f8c8d;
+          backdrop-filter: blur(10px);
+          transition: all 0.3s ease;
+          flex-shrink: 0;
+        }
+
+        .sidebar-block:hover {
+          transform: translateY(-2px);
+          box-shadow: 0 8px 25px rgba(0, 0, 0, 0.3);
+        }
+
+        .sidebar-block.message-block {
+          border-color: #f39c12;
+          background: rgba(243, 156, 18, 0.1);
+        }
+
+        .block-header {
+          display: flex;
+          align-items: center;
+          gap: 0.4rem;
+          margin-bottom: 0.6rem;
+          padding-bottom: 0.4rem;
+          border-bottom: 1px solid rgba(127, 140, 141, 0.3);
+        }
+
+        .block-icon {
+          font-size: 1rem;
+        }
+
+        .block-header h4 {
           font-family: 'Press Start 2P', monospace;
           font-size: 0.6rem;
-          line-height: 1.4;
-          color: white;
-          border: 2px solid #7f8c8d;
+          color: #ecf0f1;
+          margin: 0;
         }
 
-        .dialogue-row.instructions {
-          border-color: #3498db;
-        }
-
-        .dialogue-row.story {
-          border-color: #9b59b6;
-        }
-
-        .dialogue-row.progress {
-          border-color: #2ecc71;
-        }
-
-        .dialogue-row.message {
-          border-color: #f39c12;
-          background: rgba(243, 156, 18, 0.2);
+        .block-content p {
+          font-family: 'Press Start 2P', monospace;
+          font-size: 0.5rem;
+          line-height: 1.3;
+          color: #bdc3c7;
+          margin: 0;
         }
 
         .puzzle-container {
@@ -641,24 +662,32 @@ const Level2Cave = () => {
 
         .cave-game-area {
           width: 100%;
-          max-width: 1000px;
+          max-width: 100%;
           color: white;
+          height: 100%;
         }
 
         .cave-scene {
-          background: rgba(44, 62, 80, 0.8);
-          padding: 3rem;
-          border-radius: 20px;
-          border: 2px solid #7f8c8d;
+          background: rgba(44, 62, 80, 0.9);
+          padding: 1.5rem;
+          border-radius: 15px;
+          border: 3px solid #7f8c8d;
+          box-shadow: 0 8px 25px rgba(0, 0, 0, 0.4);
+          backdrop-filter: blur(10px);
+          height: 100%;
+          display: flex;
+          flex-direction: column;
+          justify-content: space-between;
         }
 
         .scene-elements {
           display: flex;
           justify-content: space-between;
           align-items: center;
-          margin-bottom: 3rem;
+          margin-bottom: 1rem;
           flex-wrap: wrap;
-          gap: 2rem;
+          gap: 1rem;
+          flex: 1;
         }
 
         .andy-character,
@@ -683,9 +712,10 @@ const Level2Cave = () => {
 
         .system-elements {
           display: flex;
-          gap: 2rem;
+          gap: 1rem;
           align-items: center;
           flex-wrap: wrap;
+          justify-content: center;
         }
 
         .cpu-scheduler,
@@ -693,23 +723,28 @@ const Level2Cave = () => {
         .deadlock-resolver {
           text-align: center;
           position: relative;
-          padding: 1rem;
-          border-radius: 10px;
-          transition: all 0.3s;
+          padding: 1.2rem;
+          border-radius: 15px;
+          transition: all 0.3s ease;
+          min-width: 120px;
+          box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
         }
 
         .cpu-scheduler.active,
         .memory-manager.active,
         .deadlock-resolver.active {
-          background: rgba(46, 204, 113, 0.2);
-          border: 2px solid #2ecc71;
+          background: linear-gradient(135deg, rgba(46, 204, 113, 0.3), rgba(39, 174, 96, 0.2));
+          border: 3px solid #2ecc71;
+          transform: scale(1.05);
+          box-shadow: 0 8px 25px rgba(46, 204, 113, 0.3);
         }
 
         .cpu-scheduler.inactive,
         .memory-manager.inactive,
         .deadlock-resolver.inactive {
-          background: rgba(149, 165, 166, 0.2);
+          background: linear-gradient(135deg, rgba(149, 165, 166, 0.2), rgba(127, 140, 141, 0.1));
           border: 2px solid #95a5a6;
+          opacity: 0.7;
         }
 
         .completion-check {
@@ -723,15 +758,21 @@ const Level2Cave = () => {
         .bat-container {
           position: relative;
           text-align: center;
+          padding: 1rem;
+          background: rgba(0, 0, 0, 0.3);
+          border-radius: 15px;
+          border: 2px solid #7f8c8d;
+          min-width: 150px;
         }
 
         .bat {
           position: absolute;
-          top: 1rem;
+          top: 0.5rem;
           left: 50%;
           transform: translateX(-50%);
-          font-size: 3rem;
+          font-size: 2.5rem;
           transition: all 1s ease;
+          z-index: 2;
         }
 
         .bat.free {
@@ -746,8 +787,9 @@ const Level2Cave = () => {
           position: absolute;
           top: -0.5rem;
           right: -0.5rem;
-          font-size: 2rem;
+          font-size: 1.5rem;
           transition: all 0.5s;
+          z-index: 3;
         }
 
         .system-lock.unlocked {
@@ -757,13 +799,14 @@ const Level2Cave = () => {
 
         .phase-indicator {
           text-align: center;
-          margin-bottom: 2rem;
+          margin-bottom: 1rem;
+          flex-shrink: 0;
         }
 
         .phase-indicator h3 {
           font-family: 'Press Start 2P', monospace;
-          font-size: 1rem;
-          margin-bottom: 1rem;
+          font-size: 0.8rem;
+          margin-bottom: 0.5rem;
           color: white;
         }
 
@@ -803,24 +846,33 @@ const Level2Cave = () => {
 
         .action-area {
           text-align: center;
+          flex-shrink: 0;
         }
 
         .puzzle-trigger-btn {
-          background: linear-gradient(45deg, #9b59b6, #3498db);
+          background: linear-gradient(135deg, #9b59b6, #3498db, #2ecc71);
           color: white;
           border: none;
-          padding: 1.5rem 3rem;
+          padding: 1rem 2rem;
           border-radius: 15px;
           font-family: 'Press Start 2P', monospace;
-          font-size: 0.8rem;
+          font-size: 0.6rem;
           cursor: pointer;
-          transition: all 0.3s;
-          box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+          transition: all 0.3s ease;
+          box-shadow: 0 6px 15px rgba(0, 0, 0, 0.3);
+          border: 2px solid rgba(255, 255, 255, 0.2);
+          position: relative;
+          overflow: hidden;
         }
 
         .puzzle-trigger-btn:hover {
-          transform: translateY(-3px);
-          box-shadow: 0 8px 25px rgba(0, 0, 0, 0.4);
+          transform: translateY(-4px) scale(1.02);
+          box-shadow: 0 12px 30px rgba(0, 0, 0, 0.4);
+          background: linear-gradient(135deg, #8e44ad, #2980b9, #27ae60);
+        }
+
+        .puzzle-trigger-btn:active {
+          transform: translateY(-2px) scale(0.98);
         }
 
         @keyframes torch-flicker {
@@ -877,36 +929,53 @@ const Level2Cave = () => {
         @media (max-width: 768px) {
           .game-main-area {
             flex-direction: column;
-            padding: 6rem 1rem 1rem 1rem;
+            padding: 0.3rem;
+            gap: 0.3rem;
           }
           
-          .game-scenario {
-            flex: 0 0 60%;
+          .game-sidebar-left {
+            flex: 0 0 auto;
+            flex-direction: row;
+            gap: 0.3rem;
+            overflow-x: auto;
+            padding: 0.3rem;
+            max-height: 120px;
           }
           
-          .game-dialogue-area {
-            flex: 0 0 40%;
+          .game-central-area {
+            flex: 1;
+            min-height: 300px;
+          }
+          
+          .sidebar-block {
+            flex: 0 0 180px;
+            padding: 0.6rem;
           }
           
           .scene-elements {
             flex-direction: column;
-            gap: 1rem;
+            gap: 0.8rem;
           }
           
           .system-elements {
             flex-wrap: wrap;
             justify-content: center;
+            gap: 0.6rem;
           }
           
           .character,
           .system-icon,
           .cave-chamber {
-            font-size: 2.5rem;
+            font-size: 2rem;
           }
           
-          .characters {
-            flex-direction: column;
-            gap: 2rem;
+          .bat {
+            font-size: 1.8rem;
+          }
+          
+          .puzzle-trigger-btn {
+            padding: 0.8rem 1.5rem;
+            font-size: 0.5rem;
           }
         }
       `}</style>
@@ -915,3 +984,4 @@ const Level2Cave = () => {
 };
 
 export default Level2Cave;
+

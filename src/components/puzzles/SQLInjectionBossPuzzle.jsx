@@ -266,9 +266,6 @@ const SQLInjectionBossPuzzle = ({ onComplete, onClose }) => {
                   >
                     <div className="defense-header">
                       <h6>{defense.name}</h6>
-                      <div className={`defense-indicator ${defense.correct ? 'correct' : 'incorrect'}`}>
-                        {defense.correct ? '✅' : '❌'}
-                      </div>
                     </div>
                     <p>{defense.description}</p>
                     <div className="defense-code">
@@ -365,9 +362,9 @@ const SQLInjectionBossPuzzle = ({ onComplete, onClose }) => {
           }
 
           .sql-injection-boss-container {
-            width: 95%;
-            max-width: 1200px;
-            max-height: 90vh;
+            width: 98%;
+            max-width: 1400px;
+            max-height: 95vh;
             background: linear-gradient(135deg, #2c3e50 0%, #34495e 50%, #1a1a2e 100%);
             border-radius: 20px;
             padding: 2rem;

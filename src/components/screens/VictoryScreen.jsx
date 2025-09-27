@@ -12,6 +12,9 @@ const VictoryScreen = ({ isActive }) => {
     <div id="victory-screen" className={`screen ${isActive ? 'active' : ''}`}>
       <div className="victory-container">
         <div className="victory-animation">
+          <div className="celebration-image">
+            <img src="/imagen-end.png" alt="Celebración de victoria" className="victory-image" />
+          </div>
           <div className="andy-celebration">🐿️🎉</div>
           <div className="friends-video-call" id="friends-video-call">
             <div className="friend-video">🕊️</div>

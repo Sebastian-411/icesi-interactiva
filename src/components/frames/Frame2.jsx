@@ -81,16 +81,6 @@ const Frame2 = ({ onComplete }) => {
         </div>
       </div>
       
-      {/* HUD inferior refinado */}
-      <div className="frame-hud refined">
-        <div className="progress-dots">
-          <div className="dot filled">■</div>
-          <div className="dot filled">■</div>
-          <div className="dot empty">□</div>
-          <div className="dot empty">□</div>
-          <div className="dot empty">□</div>
-        </div>
-      </div>
       
       <style>{`
         .story-frame {

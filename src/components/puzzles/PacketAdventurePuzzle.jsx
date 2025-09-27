@@ -405,16 +405,19 @@ const PacketAdventurePuzzle = ({ onComplete, onClose }) => {
         }
 
         .maze-node {
-          transition: all 0.3s;
+          transform: none !important;
+          transition: none !important;
         }
 
         .maze-node.clickable {
           cursor: pointer;
           filter: brightness(1.1);
+          transform: none !important;
+          transition: none !important;
         }
 
         .maze-node.clickable:hover {
-          transform: scale(1.1);
+          filter: brightness(1.2);
         }
 
         .packet {

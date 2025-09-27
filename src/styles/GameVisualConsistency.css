@@ -1,0 +1,520 @@
+/* ========================================
+   COHERENCIA VISUAL GLOBAL DEL JUEGO
+   ======================================== */
+
+/* Importar fuente pixelada */
+@import url('https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap');
+
+/* Variables CSS para coherencia */
+:root {
+  /* Colores principales del juego */
+  --game-primary: #C95E12;
+  --game-secondary: #3498db;
+  --game-success: #27ae60;
+  --game-warning: #f39c12;
+  --game-danger: #e74c3c;
+  --game-info: #9b59b6;
+  
+  /* Colores de fondo */
+  --game-bg-primary: linear-gradient(135deg, #1e3c72 0%, #2a5298 50%, #667eea 100%);
+  --game-bg-secondary: linear-gradient(135deg, #ffffff, #f8f9fa);
+  --game-bg-dark: rgba(14, 20, 27, 0.95);
+  
+  /* Tipografía */
+  --game-font-pixel: 'Press Start 2P', monospace;
+  --game-font-size-small: 0.6rem;
+  --game-font-size-medium: 0.8rem;
+  --game-font-size-large: 1rem;
+  --game-font-size-xl: 1.2rem;
+  
+  /* Espaciado */
+  --game-spacing-xs: 0.5rem;
+  --game-spacing-sm: 1rem;
+  --game-spacing-md: 1.5rem;
+  --game-spacing-lg: 2rem;
+  --game-spacing-xl: 3rem;
+  
+  /* Bordes y sombras */
+  --game-border-radius: 8px;
+  --game-border-radius-lg: 15px;
+  --game-border-width: 3px;
+  --game-shadow-sm: 0 2px 4px rgba(0, 0, 0, 0.1);
+  --game-shadow-md: 0 4px 8px rgba(0, 0, 0, 0.2);
+  --game-shadow-lg: 0 8px 16px rgba(0, 0, 0, 0.3);
+  --game-shadow-xl: 0 12px 24px rgba(0, 0, 0, 0.4);
+  
+  /* Animaciones */
+  --game-transition-fast: 0.2s ease;
+  --game-transition-medium: 0.3s ease;
+  --game-transition-slow: 0.5s ease;
+}
+
+/* ========================================
+   TIPOGRAFÍA PIXELADA GLOBAL
+   ======================================== */
+
+.game-text-pixel {
+  font-family: var(--game-font-pixel);
+  text-shadow: 0 2px 4px rgba(0, 0, 0, 0.5);
+}
+
+.game-text-small {
+  font-size: var(--game-font-size-small);
+}
+
+.game-text-medium {
+  font-size: var(--game-font-size-medium);
+}
+
+.game-text-large {
+  font-size: var(--game-font-size-large);
+}
+
+.game-text-xl {
+  font-size: var(--game-font-size-xl);
+}
+
+/* ========================================
+   CAJAS DE DIÁLOGO RETRO
+   ======================================== */
+
+.game-dialog-box {
+  background: var(--game-bg-dark);
+  border: var(--game-border-width) solid var(--game-primary);
+  border-radius: var(--game-border-radius);
+  padding: var(--game-spacing-md) var(--game-spacing-lg);
+  position: relative;
+  box-shadow: var(--game-shadow-lg);
+  backdrop-filter: blur(10px);
+}
+
+.game-dialog-box::before {
+  content: '';
+  position: absolute;
+  top: -2px;
+  left: -2px;
+  right: -2px;
+  bottom: -2px;
+  background: linear-gradient(45deg, var(--game-primary), #FF6B35, var(--game-primary));
+  border-radius: calc(var(--game-border-radius) + 2px);
+  z-index: -1;
+  animation: dialog-border-glow 3s ease-in-out infinite;
+}
+
+.game-dialog-box.enhanced {
+  border-radius: var(--game-border-radius-lg);
+  padding: var(--game-spacing-lg) var(--game-spacing-xl);
+}
+
+.game-dialog-box.success {
+  border-color: var(--game-success);
+}
+
+.game-dialog-box.warning {
+  border-color: var(--game-warning);
+}
+
+.game-dialog-box.danger {
+  border-color: var(--game-danger);
+}
+
+.game-dialog-box.info {
+  border-color: var(--game-info);
+}
+
+/* ========================================
+   BOTONES PIXELADOS
+   ======================================== */
+
+.game-button {
+  font-family: var(--game-font-pixel);
+  font-size: var(--game-font-size-medium);
+  font-weight: 600;
+  color: white;
+  border: var(--game-border-width) solid #2c3e50;
+  border-radius: var(--game-border-radius);
+  padding: var(--game-spacing-sm) var(--game-spacing-md);
+  cursor: pointer;
+  transition: all var(--game-transition-medium);
+  position: relative;
+  overflow: hidden;
+  text-shadow: 0 2px 4px rgba(0, 0, 0, 0.5);
+  box-shadow: var(--game-shadow-md);
+}
+
+.game-button::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: -100%;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.3), transparent);
+  transition: left var(--game-transition-slow);
+}
+
+.game-button:hover::before {
+  left: 100%;
+}
+
+.game-button:hover {
+  transform: translateY(-2px);
+  box-shadow: var(--game-shadow-lg);
+}
+
+.game-button:active {
+  transform: translateY(0);
+  box-shadow: var(--game-shadow-sm);
+}
+
+.game-button-primary {
+  background: linear-gradient(135deg, var(--game-secondary), #2980b9, #5dade2);
+}
+
+.game-button-success {
+  background: linear-gradient(135deg, var(--game-success), #2ecc71);
+}
+
+.game-button-warning {
+  background: linear-gradient(135deg, var(--game-warning), #e67e22);
+}
+
+.game-button-danger {
+  background: linear-gradient(135deg, var(--game-danger), #c0392b);
+}
+
+.game-button-large {
+  padding: var(--game-spacing-md) var(--game-spacing-xl);
+  font-size: var(--game-font-size-large);
+}
+
+.game-button-small {
+  padding: var(--game-spacing-xs) var(--game-spacing-sm);
+  font-size: var(--game-font-size-small);
+}
+
+/* ========================================
+   PANELES Y CONTENEDORES
+   ======================================== */
+
+.game-panel {
+  background: var(--game-bg-secondary);
+  border: 2px solid rgba(255, 255, 255, 0.1);
+  border-radius: var(--game-border-radius-lg);
+  padding: var(--game-spacing-md);
+  backdrop-filter: blur(10px);
+  box-shadow: var(--game-shadow-md);
+}
+
+.game-panel-header {
+  display: flex;
+  align-items: center;
+  gap: var(--game-spacing-sm);
+  margin-bottom: var(--game-spacing-md);
+  padding-bottom: var(--game-spacing-sm);
+  border-bottom: 2px solid rgba(0, 0, 0, 0.1);
+}
+
+.game-panel-icon {
+  font-size: 1.5rem;
+  animation: icon-float 2s ease-in-out infinite;
+}
+
+.game-panel-title {
+  font-family: var(--game-font-pixel);
+  font-size: var(--game-font-size-medium);
+  color: #2c3e50;
+  margin: 0;
+}
+
+.game-panel-primary {
+  background: linear-gradient(135deg, rgba(52, 152, 219, 0.1), rgba(41, 128, 185, 0.1));
+  border-color: rgba(52, 152, 219, 0.3);
+}
+
+.game-panel-success {
+  background: linear-gradient(135deg, rgba(39, 174, 96, 0.1), rgba(46, 204, 113, 0.1));
+  border-color: rgba(39, 174, 96, 0.3);
+}
+
+.game-panel-warning {
+  background: linear-gradient(135deg, rgba(243, 156, 18, 0.1), rgba(230, 126, 34, 0.1));
+  border-color: rgba(243, 156, 18, 0.3);
+}
+
+.game-panel-danger {
+  background: linear-gradient(135deg, rgba(231, 76, 60, 0.1), rgba(192, 57, 43, 0.1));
+  border-color: rgba(231, 76, 60, 0.3);
+}
+
+/* ========================================
+   INDICADORES DE PROGRESO
+   ======================================== */
+
+.game-progress-bar {
+  width: 100%;
+  height: 8px;
+  background: rgba(255, 255, 255, 0.2);
+  border-radius: 4px;
+  overflow: hidden;
+  box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.2);
+}
+
+.game-progress-fill {
+  height: 100%;
+  background: linear-gradient(90deg, var(--game-secondary), #2980b9, var(--game-warning));
+  border-radius: 4px;
+  transition: width var(--game-transition-slow);
+}
+
+.game-progress-circles {
+  display: flex;
+  justify-content: space-between;
+  gap: var(--game-spacing-sm);
+}
+
+.game-progress-circle {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+  transition: all var(--game-transition-medium);
+  border: 3px solid;
+  font-family: var(--game-font-pixel);
+  font-size: var(--game-font-size-small);
+  font-weight: 600;
+  color: #2c3e50;
+}
+
+.game-progress-circle.pending {
+  background: rgba(149, 165, 166, 0.2);
+  border-color: #95a5a6;
+}
+
+.game-progress-circle.active {
+  background: rgba(243, 156, 18, 0.2);
+  border-color: var(--game-warning);
+  animation: progress-pulse 2s ease-in-out infinite;
+  box-shadow: 0 0 20px rgba(243, 156, 18, 0.5);
+}
+
+.game-progress-circle.completed {
+  background: rgba(52, 152, 219, 0.2);
+  border-color: var(--game-secondary);
+  box-shadow: 0 0 20px rgba(52, 152, 219, 0.3);
+}
+
+.game-progress-circle.completed::after {
+  content: '✓';
+  position: absolute;
+  font-size: 1.2rem;
+  color: var(--game-success);
+  animation: check-pop 0.4s ease-out;
+}
+
+/* ========================================
+   ANIMACIONES GLOBALES
+   ======================================== */
+
+@keyframes dialog-border-glow {
+  0%, 100% { box-shadow: 0 0 20px rgba(201, 94, 18, 0.3); }
+  50% { box-shadow: 0 0 30px rgba(201, 94, 18, 0.6); }
+}
+
+@keyframes icon-float {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-5px); }
+}
+
+@keyframes progress-pulse {
+  0%, 100% { transform: scale(1); box-shadow: 0 0 20px rgba(243, 156, 18, 0.5); }
+  50% { transform: scale(1.05); box-shadow: 0 0 30px rgba(243, 156, 18, 0.7); }
+}
+
+@keyframes check-pop {
+  0% { transform: scale(0) rotate(0deg); }
+  50% { transform: scale(1.3) rotate(180deg); }
+  100% { transform: scale(1) rotate(360deg); }
+}
+
+@keyframes bounce-gentle {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-8px); }
+}
+
+@keyframes glow-pulse {
+  0%, 100% { opacity: 0.3; transform: scale(1); }
+  50% { opacity: 0.6; transform: scale(1.1); }
+}
+
+@keyframes data-flow {
+  0%, 100% { stroke-dasharray: 15, 5; stroke-dashoffset: 0; }
+  50% { stroke-dashoffset: 20; }
+}
+
+@keyframes error-flash {
+  0%, 100% { stroke: var(--game-danger); }
+  50% { stroke: #c0392b; }
+}
+
+/* ========================================
+   UTILIDADES DE CLASE
+   ======================================== */
+
+.game-text-center {
+  text-align: center;
+}
+
+.game-text-left {
+  text-align: left;
+}
+
+.game-text-right {
+  text-align: right;
+}
+
+.game-flex-center {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.game-flex-between {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.game-flex-column {
+  display: flex;
+  flex-direction: column;
+}
+
+.game-gap-sm {
+  gap: var(--game-spacing-sm);
+}
+
+.game-gap-md {
+  gap: var(--game-spacing-md);
+}
+
+.game-gap-lg {
+  gap: var(--game-spacing-lg);
+}
+
+.game-margin-sm {
+  margin: var(--game-spacing-sm);
+}
+
+.game-margin-md {
+  margin: var(--game-spacing-md);
+}
+
+.game-margin-lg {
+  margin: var(--game-spacing-lg);
+}
+
+.game-padding-sm {
+  padding: var(--game-spacing-sm);
+}
+
+.game-padding-md {
+  padding: var(--game-spacing-md);
+}
+
+.game-padding-lg {
+  padding: var(--game-spacing-lg);
+}
+
+/* ========================================
+   RESPONSIVE GLOBAL
+   ======================================== */
+
+@media (max-width: 1024px) {
+  :root {
+    --game-font-size-small: 0.5rem;
+    --game-font-size-medium: 0.7rem;
+    --game-font-size-large: 0.9rem;
+    --game-font-size-xl: 1rem;
+  }
+  
+  .game-button {
+    padding: var(--game-spacing-xs) var(--game-spacing-sm);
+  }
+  
+  .game-button-large {
+    padding: var(--game-spacing-sm) var(--game-spacing-md);
+  }
+}
+
+@media (max-width: 768px) {
+  :root {
+    --game-font-size-small: 0.4rem;
+    --game-font-size-medium: 0.6rem;
+    --game-font-size-large: 0.8rem;
+    --game-font-size-xl: 0.9rem;
+  }
+  
+  .game-dialog-box {
+    padding: var(--game-spacing-sm) var(--game-spacing-md);
+  }
+  
+  .game-panel {
+    padding: var(--game-spacing-sm);
+  }
+  
+  .game-progress-circles {
+    flex-wrap: wrap;
+    justify-content: center;
+  }
+  
+  .game-progress-circle {
+    width: 35px;
+    height: 35px;
+    font-size: 0.5rem;
+  }
+}
+
+/* ========================================
+   ESTADOS ESPECIALES
+   ======================================== */
+
+.game-loading {
+  opacity: 0.6;
+  pointer-events: none;
+}
+
+.game-disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+  pointer-events: none;
+}
+
+.game-hidden {
+  display: none;
+}
+
+.game-visible {
+  display: block;
+}
+
+.game-fade-in {
+  animation: fadeIn 0.5s ease-in;
+}
+
+.game-fade-out {
+  animation: fadeOut 0.5s ease-out;
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(20px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes fadeOut {
+  from { opacity: 1; transform: translateY(0); }
+  to { opacity: 0; transform: translateY(-20px); }
+}

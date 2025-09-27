@@ -677,49 +677,58 @@ const DeadlockBossPuzzle = ({ onComplete, onClose }) => {
       <style>{`
         .deadlock-boss-overlay {
           width: 100%;
-          height: 100%;
+          height: 100vh;
           background: linear-gradient(135deg, #2c3e50 0%, #34495e 50%, #1a1a2e 100%);
           display: flex;
           flex-direction: column;
           align-items: center;
           justify-content: center;
-          padding: 1rem;
+          padding: 0.5rem;
           position: relative;
+          overflow: hidden;
         }
 
         .deadlock-boss-container {
           background: rgba(255, 255, 255, 0.95);
           backdrop-filter: blur(10px);
-          padding: 1.5rem;
-          border-radius: 20px;
-          box-shadow: 0 10px 40px rgba(0, 0, 0, 0.3);
+          padding: 1rem;
+          border-radius: 15px;
+          box-shadow: 0 8px 30px rgba(0, 0, 0, 0.3);
           width: 100%;
           height: 100%;
-          max-height: 95vh;
-          overflow: hidden;
+          max-height: 100vh;
+          overflow-y: auto;
           position: relative;
-          border: 1px solid rgba(255, 255, 255, 0.2);
+          border: 2px solid rgba(255, 255, 255, 0.2);
           display: flex;
           flex-direction: column;
+          pointer-events: auto;
         }
 
         .puzzle-header {
           text-align: center;
-          margin-bottom: 1rem;
+          margin-bottom: 0.8rem;
           flex-shrink: 0;
+          background: rgba(52, 152, 219, 0.3);
+          padding: 0.8rem;
+          border-radius: 10px;
+          border: 2px solid #3498db;
+          box-shadow: 0 4px 15px rgba(52, 152, 219, 0.2);
         }
 
         .puzzle-header h3 {
           font-family: 'Press Start 2P', monospace;
-          font-size: 1rem;
+          font-size: 0.8rem;
           margin-bottom: 0.3rem;
           color: #2c3e50;
+          text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.2);
         }
 
         .puzzle-header p {
           font-family: 'Press Start 2P', monospace;
-          font-size: 0.6rem;
-          color: #7f8c8d;
+          font-size: 0.5rem;
+          color: #34495e;
+          text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.1);
         }
 
         .close-btn {
@@ -739,26 +748,30 @@ const DeadlockBossPuzzle = ({ onComplete, onClose }) => {
         .villain-health-bar {
           display: flex;
           align-items: center;
-          gap: 1rem;
-          margin-bottom: 1rem;
-          background: #2c3e50;
-          padding: 1rem;
+          gap: 0.8rem;
+          margin-bottom: 0.8rem;
+          background: rgba(44, 62, 80, 0.9);
+          padding: 0.8rem;
           border-radius: 10px;
           color: white;
+          border: 2px solid #2c3e50;
+          box-shadow: 0 4px 15px rgba(44, 62, 80, 0.3);
         }
 
         .health-label {
           font-family: 'Press Start 2P', monospace;
-          font-size: 0.7rem;
-          min-width: 220px;
+          font-size: 0.6rem;
+          min-width: 180px;
+          text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.3);
         }
 
         .health-bar-container {
           flex: 1;
-          height: 20px;
+          height: 18px;
           background: #34495e;
           border-radius: 10px;
           overflow: hidden;
+          border: 1px solid #2c3e50;
         }
 
         .health-bar-fill {
@@ -769,19 +782,23 @@ const DeadlockBossPuzzle = ({ onComplete, onClose }) => {
 
         .health-text {
           font-family: 'Press Start 2P', monospace;
-          font-size: 0.6rem;
-          min-width: 80px;
+          font-size: 0.5rem;
+          min-width: 70px;
+          text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.3);
         }
 
         .player-score {
           text-align: center;
           font-family: 'Press Start 2P', monospace;
-          font-size: 0.8rem;
-          background: #f39c12;
+          font-size: 0.7rem;
+          background: rgba(243, 156, 18, 0.9);
           color: white;
-          padding: 0.5rem;
+          padding: 0.6rem;
           border-radius: 8px;
-          margin-bottom: 1rem;
+          margin-bottom: 0.8rem;
+          border: 2px solid #f39c12;
+          box-shadow: 0 4px 15px rgba(243, 156, 18, 0.3);
+          text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.3);
         }
 
         .boss-arena {
@@ -789,8 +806,9 @@ const DeadlockBossPuzzle = ({ onComplete, onClose }) => {
           min-height: 0;
           background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
           border-radius: 15px;
-          padding: 1rem;
+          padding: 0.8rem;
           position: relative;
+          overflow-y: auto;
         }
 
         .intro-scene,
@@ -891,63 +909,72 @@ const DeadlockBossPuzzle = ({ onComplete, onClose }) => {
 
         .challenge-content {
           background: rgba(255, 255, 255, 0.95);
-          padding: 2rem;
+          padding: 1rem;
           border-radius: 15px;
           color: #2c3e50;
+          border: 2px solid rgba(255, 255, 255, 0.3);
+          box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
         }
 
         .challenge-header {
           text-align: center;
-          margin-bottom: 2rem;
+          margin-bottom: 1rem;
         }
 
         .challenge-header h4 {
           font-family: 'Press Start 2P', monospace;
-          font-size: 1rem;
-          margin-bottom: 1rem;
-          color: #8b4513;
+          font-size: 0.8rem;
+          margin-bottom: 0.8rem;
+          color: #2c3e50;
+          text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.2);
         }
 
         .description {
           font-family: 'Press Start 2P', monospace;
-          font-size: 0.7rem;
-          margin-bottom: 1rem;
-          line-height: 1.4;
+          font-size: 0.6rem;
+          margin-bottom: 0.8rem;
+          line-height: 1.3;
+          color: #34495e;
+          text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.1);
         }
 
         .deadlock-warning {
-          background: rgba(231, 76, 60, 0.2);
+          background: rgba(231, 76, 60, 0.3);
           color: #e74c3c;
-          padding: 1rem;
+          padding: 0.8rem;
           border-radius: 8px;
           font-family: 'Press Start 2P', monospace;
-          font-size: 0.6rem;
+          font-size: 0.5rem;
           border: 2px solid #e74c3c;
+          box-shadow: 0 4px 15px rgba(231, 76, 60, 0.2);
+          text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.2);
         }
 
         .deadlock-visualization {
-          margin: 2rem 0;
+          margin: 1rem 0;
           display: flex;
           justify-content: center;
         }
 
         .deadlock-graph {
-          border: 2px solid #bdc3c7;
+          border: 2px solid #34495e;
           border-radius: 10px;
           background: #f8f9fa;
           max-width: 100%;
           max-height: 100%;
           width: auto;
           height: auto;
+          box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
         }
 
         .process-circle {
           cursor: pointer;
-          transition: all 0.3s;
+          transition: none;
+          transform: none !important;
         }
 
         .process-circle:hover {
-          transform: scale(1.1);
+          transform: none !important;
         }
 
         .process-circle.freed {
@@ -963,41 +990,48 @@ const DeadlockBossPuzzle = ({ onComplete, onClose }) => {
         }
 
         .solution-controls {
-          background: rgba(52, 152, 219, 0.1);
-          padding: 1.5rem;
+          background: rgba(52, 152, 219, 0.3);
+          padding: 1rem;
           border-radius: 10px;
-          margin-bottom: 2rem;
+          margin-bottom: 1rem;
+          border: 2px solid #3498db;
+          box-shadow: 0 4px 15px rgba(52, 152, 219, 0.2);
         }
 
         .solution-controls h5 {
           font-family: 'Press Start 2P', monospace;
-          font-size: 0.8rem;
-          margin-bottom: 1rem;
+          font-size: 0.7rem;
+          margin-bottom: 0.8rem;
           color: #2c3e50;
+          text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.2);
         }
 
         .action-buttons {
           display: flex;
-          gap: 1rem;
-          margin-bottom: 1rem;
+          gap: 0.8rem;
+          margin-bottom: 0.8rem;
           flex-wrap: wrap;
         }
 
         .action-btn {
           flex: 1;
-          min-width: 150px;
-          padding: 1rem;
+          min-width: 120px;
+          padding: 0.8rem;
           border: none;
           border-radius: 8px;
           font-family: 'Press Start 2P', monospace;
-          font-size: 0.6rem;
+          font-size: 0.5rem;
           cursor: pointer;
           transition: all 0.3s;
           color: white;
+          border: 2px solid;
+          box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+          text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.3);
         }
 
         .action-btn:hover:not(:disabled) {
           transform: translateY(-2px);
+          box-shadow: 0 6px 20px rgba(0, 0, 0, 0.3);
         }
 
         .action-btn:disabled {
@@ -1007,6 +1041,7 @@ const DeadlockBossPuzzle = ({ onComplete, onClose }) => {
 
         .action-btn.release {
           background: #27ae60;
+          border-color: #229954;
         }
 
         .action-btn.release:hover:not(:disabled) {
@@ -1015,6 +1050,7 @@ const DeadlockBossPuzzle = ({ onComplete, onClose }) => {
 
         .action-btn.preempt {
           background: #e74c3c;
+          border-color: #c0392b;
         }
 
         .action-btn.preempt:hover:not(:disabled) {
@@ -1023,6 +1059,7 @@ const DeadlockBossPuzzle = ({ onComplete, onClose }) => {
 
         .action-btn.priority {
           background: #f39c12;
+          border-color: #e67e22;
         }
 
         .action-btn.priority:hover:not(:disabled) {
@@ -1030,55 +1067,70 @@ const DeadlockBossPuzzle = ({ onComplete, onClose }) => {
         }
 
         .selected-process-info {
-          background: rgba(241, 196, 15, 0.2);
-          padding: 1rem;
+          background: rgba(241, 196, 15, 0.3);
+          padding: 0.8rem;
           border-radius: 8px;
           border-left: 4px solid #f1c40f;
+          border: 2px solid #f1c40f;
+          box-shadow: 0 4px 15px rgba(241, 196, 15, 0.2);
         }
 
         .selected-process-info p {
           font-family: 'Press Start 2P', monospace;
-          font-size: 0.6rem;
-          margin-bottom: 0.5rem;
+          font-size: 0.5rem;
+          margin-bottom: 0.4rem;
           line-height: 1.3;
+          color: #2c3e50;
+          text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.1);
         }
 
         .solution-result {
-          background: rgba(0, 0, 0, 0.8);
+          background: rgba(0, 0, 0, 0.9);
           color: white;
-          padding: 2rem;
+          padding: 1rem;
           border-radius: 15px;
-          margin-bottom: 2rem;
+          margin-bottom: 1rem;
+          border: 2px solid;
+          box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
         }
 
         .solution-result.correct {
-          border: 3px solid #27ae60;
+          border-color: #27ae60;
         }
 
         .solution-result.incorrect {
-          border: 3px solid #e74c3c;
+          border-color: #e74c3c;
         }
 
         .result-header h5 {
           font-family: 'Press Start 2P', monospace;
-          font-size: 1rem;
-          margin-bottom: 1rem;
+          font-size: 0.8rem;
+          margin-bottom: 0.8rem;
           text-align: center;
+          text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.3);
         }
 
         .result-content p {
           font-family: 'Press Start 2P', monospace;
-          font-size: 0.6rem;
-          margin-bottom: 0.8rem;
-          line-height: 1.4;
+          font-size: 0.5rem;
+          margin-bottom: 0.6rem;
+          line-height: 1.3;
+          text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.2);
         }
 
         .hint-box {
-          background: rgba(52, 152, 219, 0.2);
-          padding: 1rem;
+          background: rgba(52, 152, 219, 0.3);
+          padding: 0.8rem;
           border-radius: 8px;
-          margin-top: 1rem;
+          margin-top: 0.8rem;
           border-left: 4px solid #3498db;
+          border: 2px solid #3498db;
+          box-shadow: 0 4px 15px rgba(52, 152, 219, 0.2);
+        }
+
+        .hint-box p {
+          color: #2c3e50;
+          text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.1);
         }
 
         .success-animation {
@@ -1157,34 +1209,40 @@ const DeadlockBossPuzzle = ({ onComplete, onClose }) => {
         }
 
         .education-panel {
-          background: rgba(52, 152, 219, 0.2);
-          padding: 1rem;
+          background: rgba(52, 152, 219, 0.3);
+          padding: 0.8rem;
           border-radius: 10px;
-          margin-top: 2rem;
+          margin-top: 1rem;
+          border: 2px solid #3498db;
+          box-shadow: 0 4px 15px rgba(52, 152, 219, 0.2);
         }
 
         .education-panel h4 {
           font-family: 'Press Start 2P', monospace;
-          font-size: 0.8rem;
-          margin-bottom: 1rem;
-          color: #3498db;
+          font-size: 0.7rem;
+          margin-bottom: 0.8rem;
+          color: #2c3e50;
+          text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.2);
         }
 
         .deadlock-conditions h5 {
           font-family: 'Press Start 2P', monospace;
-          font-size: 0.7rem;
-          margin-bottom: 0.8rem;
+          font-size: 0.6rem;
+          margin-bottom: 0.6rem;
           color: #f39c12;
+          text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.2);
         }
 
         .deadlock-conditions ul {
           font-family: 'Press Start 2P', monospace;
-          font-size: 0.6rem;
-          line-height: 1.5;
+          font-size: 0.5rem;
+          line-height: 1.4;
+          color: #34495e;
         }
 
         .deadlock-conditions li {
-          margin-bottom: 0.5rem;
+          margin-bottom: 0.4rem;
+          text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.1);
         }
 
         @keyframes deadlock-spin {
@@ -1218,18 +1276,92 @@ const DeadlockBossPuzzle = ({ onComplete, onClose }) => {
         }
 
         @media (max-width: 768px) {
+          .deadlock-boss-container {
+            padding: 0.8rem;
+            border-radius: 10px;
+          }
+          
           .action-buttons {
             flex-direction: column;
           }
           
           .scene-setup {
             flex-direction: column;
-            gap: 2rem;
+            gap: 1rem;
           }
           
           .deadlock-graph {
             width: 100%;
-            height: 300px;
+            height: 250px;
+          }
+          
+          .villain-health-bar {
+            flex-direction: column;
+            gap: 0.5rem;
+            text-align: center;
+          }
+          
+          .health-label {
+            min-width: auto;
+          }
+          
+          .health-text {
+            min-width: auto;
+          }
+          
+          .puzzle-header h3 {
+            font-size: 0.7rem;
+          }
+          
+          .puzzle-header p {
+            font-size: 0.4rem;
+          }
+          
+          .challenge-header h4 {
+            font-size: 0.7rem;
+          }
+          
+          .description {
+            font-size: 0.5rem;
+          }
+          
+          .deadlock-warning {
+            font-size: 0.4rem;
+            padding: 0.6rem;
+          }
+          
+          .solution-controls h5 {
+            font-size: 0.6rem;
+          }
+          
+          .action-btn {
+            font-size: 0.4rem;
+            padding: 0.6rem;
+            min-width: 100%;
+          }
+          
+          .selected-process-info p {
+            font-size: 0.4rem;
+          }
+          
+          .result-header h5 {
+            font-size: 0.7rem;
+          }
+          
+          .result-content p {
+            font-size: 0.4rem;
+          }
+          
+          .education-panel h4 {
+            font-size: 0.6rem;
+          }
+          
+          .deadlock-conditions h5 {
+            font-size: 0.5rem;
+          }
+          
+          .deadlock-conditions ul {
+            font-size: 0.4rem;
           }
         }
       `}</style>

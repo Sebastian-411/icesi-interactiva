@@ -149,6 +149,58 @@ const DataModelingPuzzle = ({ onComplete, onClose }) => {
     setDraggedItem(null);
   };
 
+  // Función para reorganizar datos por filas
+  const organizeDataByRows = () => {
+    const challenge = getCurrentChallenge();
+    const organizedRows = [];
+    
+    // Obtener todos los datos de todas las columnas
+    const allData = [];
+    challenge.columns.forEach(column => {
+      const columnData = tableColumns.find(col => col.id === column.id)?.data || [];
+      columnData.forEach(data => {
+        allData.push({ ...data, columnId: column.id });
+      });
+    });
+
+    // Agrupar datos por grupos relacionados (mismo índice en los datos originales)
+    const dataGroups = {};
+    challenge.mixedData.forEach((originalData, index) => {
+      const placedData = allData.find(data => data.id === originalData.id);
+      if (placedData) {
+        if (!dataGroups[index]) {
+          dataGroups[index] = {};
+        }
+        dataGroups[index][placedData.columnId] = placedData;
+      }
+    });
+
+    // Convertir grupos a filas
+    Object.values(dataGroups).forEach(group => {
+      const row = {};
+      challenge.columns.forEach(column => {
+        row[column.id] = group[column.id] || null;
+      });
+      organizedRows.push(row);
+    });
+
+    // Agregar filas vacías para datos sueltos
+    const maxRows = Math.max(...Object.values(dataGroups).map(group => 
+      Object.keys(group).length
+    ));
+    
+    // Si hay menos filas que el máximo, agregar filas vacías
+    while (organizedRows.length < maxRows) {
+      const emptyRow = {};
+      challenge.columns.forEach(column => {
+        emptyRow[column.id] = null;
+      });
+      organizedRows.push(emptyRow);
+    }
+    
+    return organizedRows;
+  };
+
   // Validar organización
   const validateOrganization = () => {
     const challenge = challenges[currentChallenge - 1];
@@ -229,36 +281,76 @@ const DataModelingPuzzle = ({ onComplete, onClose }) => {
   // Renderizar tabla
   const renderTable = () => {
     const challenge = getCurrentChallenge();
+    const organizedRows = organizeDataByRows();
     
     return (
       <div className="table-container">
         <h4>📊 Tabla: {challenge.tableName}</h4>
-        <div className="table-structure">
-          {tableColumns.map(column => (
-            <div
-              key={column.id}
-              className="table-column"
-              onDragOver={handleDragOver}
-              onDrop={(e) => handleDrop(e, column.id)}
-            >
-              <div 
-                className="column-header"
-                style={{ backgroundColor: column.color }}
-              >
-                <div className="column-name">{column.name}</div>
-                <div className="column-type">{column.type}</div>
-                {column.type === 'primary_key' && <div className="key-indicator">🔑</div>}
-              </div>
-              
-              <div className="column-data">
-                {column.data.map((item, index) => (
-                  <div key={`${item.id}-${index}`} className="data-item">
-                    {item.value}
-                  </div>
+        <div className="table-wrapper">
+          <table className="data-table">
+            {/* Header de la tabla */}
+            <thead>
+              <tr>
+                {challenge.columns.map(column => (
+                  <th 
+                    key={column.id}
+                    className="table-header"
+                    style={{ backgroundColor: column.color }}
+                    onDragOver={handleDragOver}
+                    onDrop={(e) => handleDrop(e, column.id)}
+                  >
+                    <div className="header-content">
+                      <div className="column-name">{column.name}</div>
+                      <div className="column-type">{column.type}</div>
+                      {column.type === 'primary_key' && <div className="key-indicator">🔑</div>}
+                    </div>
+                  </th>
                 ))}
-              </div>
-            </div>
-          ))}
+              </tr>
+            </thead>
+            
+            {/* Filas de datos */}
+            <tbody>
+              {organizedRows.map((row, rowIndex) => (
+                <tr key={rowIndex} className="table-row">
+                  {challenge.columns.map((column, cellIndex) => (
+                    <td 
+                      key={cellIndex}
+                      className="table-cell"
+                      onDragOver={handleDragOver}
+                      onDrop={(e) => handleDrop(e, column.id)}
+                    >
+                      {row[column.id] ? (
+                        <div className="data-item">
+                          {row[column.id].value}
+                        </div>
+                      ) : (
+                        <div className="empty-cell">
+                          {rowIndex === 0 && cellIndex === 0 && "Arrastra datos aquí"}
+                        </div>
+                      )}
+                    </td>
+                  ))}
+                </tr>
+              ))}
+              
+              {/* Fila vacía adicional para más datos */}
+              <tr className="table-row">
+                {challenge.columns.map((column, index) => (
+                  <td 
+                    key={index}
+                    className="table-cell drop-zone"
+                    onDragOver={handleDragOver}
+                    onDrop={(e) => handleDrop(e, column.id)}
+                  >
+                    <div className="empty-cell">
+                      {index === 0 && "Arrastra más datos aquí"}
+                    </div>
+                  </td>
+                ))}
+              </tr>
+            </tbody>
+          </table>
         </div>
       </div>
     );
@@ -670,6 +762,7 @@ const DataModelingPuzzle = ({ onComplete, onClose }) => {
             padding: 1rem;
             border-radius: 10px;
             border: 2px solid #3498db;
+            margin-bottom: 1rem;
           }
 
           .table-container h4 {
@@ -679,65 +772,123 @@ const DataModelingPuzzle = ({ onComplete, onClose }) => {
             text-align: center;
           }
 
-          .table-structure {
-            display: flex;
-            gap: 1rem;
+          .table-wrapper {
             overflow-x: auto;
-            padding: 1rem 0;
+            border-radius: 8px;
+            border: 2px solid #34495e;
+            background: rgba(255, 255, 255, 0.1);
           }
 
-          .table-column {
-            min-width: 150px;
-            border: 2px dashed #7f8c8d;
-            border-radius: 8px;
+          .data-table {
+            width: 100%;
+            border-collapse: collapse;
+            font-family: 'Press Start 2P', monospace;
+            background: rgba(255, 255, 255, 0.05);
+          }
+
+          .table-header {
+            background: #34495e;
+            color: white;
+            padding: 0.8rem;
+            text-align: center;
+            border: 1px solid #2c3e50;
+            position: relative;
+            min-width: 120px;
             transition: all 0.3s;
           }
 
-          .table-column:hover {
-            border-color: #3498db;
-            background: rgba(52, 152, 219, 0.1);
+          .table-header:hover {
+            background: #3498db;
+            transform: scale(1.02);
           }
 
-          .column-header {
-            padding: 1rem;
-            color: white;
-            text-align: center;
-            position: relative;
+          .header-content {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 0.3rem;
           }
 
           .column-name {
-            font-size: 0.7rem;
+            font-size: 0.6rem;
             font-weight: bold;
-            margin-bottom: 0.3rem;
+            text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.3);
           }
 
           .column-type {
-            font-size: 0.5rem;
-            opacity: 0.8;
+            font-size: 0.4rem;
+            opacity: 0.9;
+            background: rgba(0, 0, 0, 0.3);
+            padding: 0.2rem 0.4rem;
+            border-radius: 4px;
           }
 
           .key-indicator {
             position: absolute;
-            top: 0.5rem;
-            right: 0.5rem;
-            font-size: 1rem;
+            top: 0.3rem;
+            right: 0.3rem;
+            font-size: 0.8rem;
+            animation: key-pulse 2s ease-in-out infinite;
           }
 
-          .column-data {
-            min-height: 200px;
-            padding: 0.5rem;
-            background: rgba(255, 255, 255, 0.05);
+          .table-row {
+            border-bottom: 1px solid #34495e;
+          }
+
+          .table-cell {
+            padding: 0.6rem;
+            border: 1px solid #34495e;
+            text-align: center;
+            vertical-align: middle;
+            min-width: 120px;
+            min-height: 50px;
+            transition: all 0.3s;
+            position: relative;
+          }
+
+          .table-cell:hover {
+            background: rgba(52, 152, 219, 0.1);
+            border-color: #3498db;
+          }
+
+          .table-cell.drop-zone {
+            border: 2px dashed #7f8c8d;
+            background: rgba(127, 128, 128, 0.1);
+          }
+
+          .table-cell.drop-zone:hover {
+            border-color: #3498db;
+            background: rgba(52, 152, 219, 0.2);
           }
 
           .data-item {
             background: #ecf0f1;
             color: #2c3e50;
-            padding: 0.5rem;
-            margin-bottom: 0.5rem;
+            padding: 0.4rem 0.6rem;
             border-radius: 4px;
-            font-size: 0.6rem;
+            font-size: 0.5rem;
             text-align: center;
             border: 1px solid #bdc3c7;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+            transition: all 0.3s;
+            word-break: break-word;
+          }
+
+          .data-item:hover {
+            transform: scale(1.05);
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+          }
+
+          .empty-cell {
+            color: #7f8c8d;
+            font-size: 0.4rem;
+            font-style: italic;
+            opacity: 0.6;
+            padding: 0.5rem;
+            min-height: 30px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
           }
 
           .controls {
@@ -879,9 +1030,43 @@ const DataModelingPuzzle = ({ onComplete, onClose }) => {
             50% { transform: scale(1.1) rotate(5deg); }
           }
 
+          @keyframes key-pulse {
+            0%, 100% { transform: scale(1); opacity: 1; }
+            50% { transform: scale(1.2); opacity: 0.8; }
+          }
+
           @media (max-width: 768px) {
-            .table-structure {
-              flex-direction: column;
+            .data-table {
+              font-size: 0.4rem;
+            }
+            
+            .table-header {
+              padding: 0.5rem;
+              min-width: 80px;
+            }
+            
+            .column-name {
+              font-size: 0.5rem;
+            }
+            
+            .column-type {
+              font-size: 0.3rem;
+            }
+            
+            .table-cell {
+              padding: 0.4rem;
+              min-width: 80px;
+              min-height: 40px;
+            }
+            
+            .data-item {
+              font-size: 0.4rem;
+              padding: 0.3rem 0.4rem;
+            }
+            
+            .empty-cell {
+              font-size: 0.3rem;
+              min-height: 25px;
             }
             
             .concept-cards {

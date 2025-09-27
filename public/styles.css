@@ -3916,6 +3916,21 @@ body {
     margin-bottom: 2rem;
 }
 
+.celebration-image {
+    margin-bottom: 2rem;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.victory-image {
+    max-width: 400px;
+    max-height: 300px;
+    border-radius: 15px;
+    box-shadow: 0 8px 25px rgba(0, 255, 0, 0.3);
+    animation: victory-glow 3s ease-in-out infinite alternate;
+}
+
 .andy-celebration {
     font-size: 4rem;
     margin-bottom: 2rem;
@@ -4180,6 +4195,17 @@ body {
     0%, 100% { transform: scale(1) rotate(0deg); }
     25% { transform: scale(1.1) rotate(5deg); }
     75% { transform: scale(1.1) rotate(-5deg); }
+}
+
+@keyframes victory-glow {
+    0% { 
+        filter: brightness(1) drop-shadow(0 0 10px rgba(0, 255, 0, 0.5));
+        transform: scale(1);
+    }
+    100% { 
+        filter: brightness(1.2) drop-shadow(0 0 20px rgba(0, 255, 0, 0.8));
+        transform: scale(1.02);
+    }
 }
 
 @keyframes cloudMove {
@@ -5009,6 +5035,8 @@ body {
     gap: 4rem;
     font-size: 3rem;
     margin: 2rem 0;
+    margin-top: 2rem;
+    margin-bottom: 2rem;
 }
 
 .andy-character {

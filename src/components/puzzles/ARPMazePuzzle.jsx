@@ -25,9 +25,9 @@ const ARPMazePuzzle = ({ onComplete, onClose }) => {
       description: "Encuentra el router legítimo (192.168.1.1)",
       targetIP: "192.168.1.1",
       impostors: [
-        { id: 1, x: 200, y: 150, ip: "192.168.1.1", isLegit: false, message: "¡Yo soy el router real!" },
-        { id: 2, x: 350, y: 200, ip: "192.168.1.1", isLegit: true, message: "Soy el router legítimo" },
-        { id: 3, x: 200, y: 250, ip: "192.168.1.1", isLegit: false, message: "¡Dame el paquete!" }
+        { id: 1, x: 200, y: 150, ip: "192.168.1.1", isLegit: false, message: "¡Ey, yo soy el original!" },
+        { id: 2, x: 350, y: 200, ip: "192.168.1.1", isLegit: true, message: "¡Ey, yo soy el original!" },
+        { id: 3, x: 200, y: 250, ip: "192.168.1.1", isLegit: false, message: "¡Ey, yo soy el original!" }
       ]
     },
     {
@@ -35,10 +35,10 @@ const ARPMazePuzzle = ({ onComplete, onClose }) => {
       description: "Cuidado con los ARP Spoofing (10.0.0.1)",
       targetIP: "10.0.0.1",
       impostors: [
-        { id: 1, x: 180, y: 120, ip: "10.0.0.1", isLegit: false, message: "Soy tu gateway!" },
-        { id: 2, x: 320, y: 180, ip: "10.0.0.1", isLegit: false, message: "¡Confía en mí!" },
-        { id: 3, x: 450, y: 220, ip: "10.0.0.1", isLegit: true, message: "Router auténtico aquí" },
-        { id: 4, x: 280, y: 280, ip: "10.0.0.1", isLegit: false, message: "¡Yo tengo la ruta!" }
+        { id: 1, x: 180, y: 120, ip: "10.0.0.1", isLegit: false, message: "¡Ey, yo soy el original!" },
+        { id: 2, x: 320, y: 180, ip: "10.0.0.1", isLegit: false, message: "¡Ey, yo soy el original!" },
+        { id: 3, x: 450, y: 220, ip: "10.0.0.1", isLegit: true, message: "¡Ey, yo soy el original!" },
+        { id: 4, x: 280, y: 280, ip: "10.0.0.1", isLegit: false, message: "¡Ey, yo soy el original!" }
       ]
     },
     {
@@ -46,11 +46,11 @@ const ARPMazePuzzle = ({ onComplete, onClose }) => {
       description: "Ataque masivo - Identifica el verdadero (172.16.0.1)",
       targetIP: "172.16.0.1",
       impostors: [
-        { id: 1, x: 150, y: 100, ip: "172.16.0.1", isLegit: false, message: "¡Hacker router!" },
-        { id: 2, x: 300, y: 130, ip: "172.16.0.1", isLegit: false, message: "¡Dame tus datos!" },
-        { id: 3, x: 450, y: 160, ip: "172.16.0.1", isLegit: false, message: "¡Soy malicioso!" },
-        { id: 4, x: 200, y: 240, ip: "172.16.0.1", isLegit: true, message: "Router legítimo certificado" },
-        { id: 5, x: 400, y: 280, ip: "172.16.0.1", isLegit: false, message: "¡Te voy a hackear!" }
+        { id: 1, x: 150, y: 100, ip: "172.16.0.1", isLegit: false, message: "¡Ey, yo soy el original!" },
+        { id: 2, x: 300, y: 130, ip: "172.16.0.1", isLegit: false, message: "¡Ey, yo soy el original!" },
+        { id: 3, x: 450, y: 160, ip: "172.16.0.1", isLegit: false, message: "¡Ey, yo soy el original!" },
+        { id: 4, x: 200, y: 240, ip: "172.16.0.1", isLegit: true, message: "¡Ey, yo soy el original!" },
+        { id: 5, x: 400, y: 280, ip: "172.16.0.1", isLegit: false, message: "¡Ey, yo soy el original!" }
       ]
     }
   ];
@@ -157,7 +157,29 @@ const ARPMazePuzzle = ({ onComplete, onClose }) => {
     if (entity.isLegit) {
       return "#27ae60"; // Verde para legítimo
     } else {
-      return "#e74c3c"; // Rojo para impostor
+      // Hacer que algunos impostores también sean verdes para confundir
+      const greenImpostors = [1, 3]; // IDs que serán verdes pero falsos
+      if (greenImpostors.includes(entity.id)) {
+        return "#27ae60"; // Verde para impostores que parecen legítimos
+      }
+      return "#e74c3c"; // Rojo para impostores obvios
+    }
+  };
+
+  // Obtener emoji del router según su estado
+  const getRouterEmoji = (entity) => {
+    if (entity.isLegit) {
+      return "📡"; // Router legítimo
+    } else {
+      // Diferentes emojis para dispositivos falsos que parecen routers
+      const fakeEmojis = {
+        1: "🖥️", // PC disfrazado de router
+        2: "📱", // Dispositivo móvil
+        3: "💻", // Laptop disfrazado
+        4: "🖨️", // Impresora
+        5: "📺"  // Smart TV
+      };
+      return fakeEmojis[entity.id] || "🤖"; // Emoji por defecto
     }
   };
 
@@ -197,11 +219,25 @@ const ARPMazePuzzle = ({ onComplete, onClose }) => {
                 <h4>🛡️ Misión: Proteger el Paquete</h4>
                 <p>Los hackers han creado routers falsos para interceptar tu paquete.</p>
                 <p>Andy debe identificar el router legítimo en cada onda.</p>
+                
+                {/* Ejemplo visual de router legítimo */}
+                <div className="router-example">
+                  <h5>📡 Ejemplo de Router Legítimo:</h5>
+                  <div className="example-router">
+                    <div className="router-visual">
+                      <div className="router-icon">📡</div>
+                      <div className="router-ip">192.168.1.1</div>
+                      <div className="router-message">"Soy el router legítimo certificado"</div>
+                    </div>
+                  </div>
+                </div>
+                
                 <div className="intro-tips">
                   <h5>💡 Consejos:</h5>
                   <ul>
-                    <li>Los impostores suelen ser más agresivos en sus mensajes</li>
-                    <li>El router legítimo se comporta de manera profesional</li>
+                    <li>Todos los routers dicen ser el original</li>
+                    <li>Algunos son verdes pero tienen emojis diferentes</li>
+                    <li>Solo el router con 📡 es realmente legítimo</li>
                     <li>Tienes 3 vidas - ¡úsalas sabiamente!</li>
                   </ul>
                 </div>
@@ -224,7 +260,7 @@ const ARPMazePuzzle = ({ onComplete, onClose }) => {
                 {/* Camino/red */}
                 <defs>
                   <pattern id="grid" width="20" height="20" patternUnits="userSpaceOnUse">
-                    <path d="M 20 0 L 0 0 0 20" fill="none" stroke="#ecf0f1" strokeWidth="1"/>
+                    <path d="M 20 0 L 0 0 0 20" fill="none" stroke="#bdc3c7" strokeWidth="1"/>
                   </pattern>
                 </defs>
                 <rect width="100%" height="100%" fill="url(#grid)" />
@@ -253,7 +289,9 @@ const ARPMazePuzzle = ({ onComplete, onClose }) => {
                     textAnchor="middle"
                     fontSize="10"
                     fontFamily="'Press Start 2P', monospace"
-                    fill="#2c3e50"
+                    fill="#1a252f"
+                    stroke="#ffffff"
+                    strokeWidth="0.5"
                   >
                     Andy
                   </text>
@@ -301,7 +339,7 @@ const ARPMazePuzzle = ({ onComplete, onClose }) => {
                       textAnchor="middle"
                       fontSize="20"
                     >
-                      {entity.isLegit ? "📡" : "🤖"}
+                      {getRouterEmoji(entity)}
                     </text>
                     
                     {/* IP del router */}
@@ -311,7 +349,9 @@ const ARPMazePuzzle = ({ onComplete, onClose }) => {
                       textAnchor="middle"
                       fontSize="8"
                       fontFamily="'Press Start 2P', monospace"
-                      fill="#2c3e50"
+                      fill="#1a252f"
+                      stroke="#ffffff"
+                      strokeWidth="0.5"
                     >
                       {entity.ip}
                     </text>
@@ -324,9 +364,9 @@ const ARPMazePuzzle = ({ onComplete, onClose }) => {
                         width="100"
                         height="25"
                         rx="5"
-                        fill="white"
-                        stroke="#2c3e50"
-                        strokeWidth="1"
+                        fill="#2c3e50"
+                        stroke="#34495e"
+                        strokeWidth="2"
                         className="bubble-rect"
                       />
                       <text
@@ -335,23 +375,12 @@ const ARPMazePuzzle = ({ onComplete, onClose }) => {
                         textAnchor="middle"
                         fontSize="6"
                         fontFamily="'Press Start 2P', monospace"
-                        fill="#2c3e50"
+                        fill="#ffffff"
                       >
                         {entity.message}
                       </text>
                     </g>
                     
-                    {/* Indicador de peligro para impostores */}
-                    {!entity.isLegit && (
-                      <text
-                        x={entity.x + 55}
-                        y={entity.y + 15}
-                        fontSize="16"
-                        className="danger-indicator"
-                      >
-                        ⚠️
-                      </text>
-                    )}
                   </g>
                 ))}
               </svg>
@@ -471,16 +500,18 @@ const ARPMazePuzzle = ({ onComplete, onClose }) => {
         .game-status {
           display: flex;
           justify-content: space-around;
-          background: #f8f9fa;
+          background: #2c3e50;
+          color: #ffffff;
           padding: 1rem;
           border-radius: 10px;
           margin-bottom: 1rem;
+          border: 2px solid #34495e;
         }
 
         .status-item span {
           font-family: 'Press Start 2P', monospace;
           font-size: 0.7rem;
-          color: #2c3e50;
+          color: #ffffff;
         }
 
         .warning-banner {
@@ -538,11 +569,13 @@ const ARPMazePuzzle = ({ onComplete, onClose }) => {
         }
 
         .intro-tips {
-          background: #f8f9fa;
+          background: #34495e;
+          color: #ffffff;
           padding: 1rem;
           border-radius: 8px;
           margin: 1rem 0;
           text-align: left;
+          border: 2px solid #2c3e50;
         }
 
         .intro-tips h5 {
@@ -556,6 +589,66 @@ const ARPMazePuzzle = ({ onComplete, onClose }) => {
           font-family: 'Press Start 2P', monospace;
           font-size: 0.6rem;
           line-height: 1.4;
+          color: #ecf0f1;
+        }
+
+        .router-example {
+          background: #2c3e50;
+          color: #ffffff;
+          padding: 1rem;
+          border-radius: 8px;
+          margin: 1rem 0;
+          text-align: center;
+          border: 2px solid #34495e;
+        }
+
+        .router-example h5 {
+          font-family: 'Press Start 2P', monospace;
+          font-size: 0.7rem;
+          margin-bottom: 0.5rem;
+          color: #3498db;
+        }
+
+        .example-router {
+          display: flex;
+          justify-content: center;
+          margin-top: 0.5rem;
+        }
+
+        .router-visual {
+          background: #27ae60;
+          border: 3px solid #2c3e50;
+          border-radius: 15px;
+          padding: 1rem;
+          display: flex;
+          flex-direction: column;
+          align-items: center;
+          gap: 0.5rem;
+          min-width: 200px;
+        }
+
+        .router-icon {
+          font-size: 2rem;
+        }
+
+        .router-ip {
+          font-family: 'Press Start 2P', monospace;
+          font-size: 0.6rem;
+          color: #ffffff;
+          background: #2c3e50;
+          padding: 0.3rem 0.6rem;
+          border-radius: 5px;
+        }
+
+        .router-message {
+          font-family: 'Press Start 2P', monospace;
+          font-size: 0.5rem;
+          color: #ffffff;
+          text-align: center;
+          background: #34495e;
+          padding: 0.5rem;
+          border-radius: 5px;
+          border: 1px solid #2c3e50;
         }
 
         .start-btn,
@@ -584,38 +677,42 @@ const ARPMazePuzzle = ({ onComplete, onClose }) => {
         .wave-info {
           text-align: center;
           margin-bottom: 1rem;
-          background: #ecf0f1;
+          background: #34495e;
+          color: #ffffff;
           padding: 1rem;
           border-radius: 8px;
+          border: 2px solid #2c3e50;
         }
 
         .wave-info h4 {
           font-family: 'Press Start 2P', monospace;
           font-size: 0.8rem;
           margin-bottom: 0.5rem;
-          color: #2c3e50;
+          color: #ffffff;
         }
 
         .wave-info p {
           font-family: 'Press Start 2P', monospace;
           font-size: 0.6rem;
           margin-bottom: 0.3rem;
+          color: #ecf0f1;
         }
 
         .maze-svg {
-          border: 2px solid #bdc3c7;
+          border: 2px solid #34495e;
           border-radius: 10px;
-          background: #f8f9fa;
+          background: #ecf0f1;
           width: 100%;
         }
 
         .router-circle {
           cursor: pointer;
-          transition: all 0.3s;
+          transition: none;
+          transform: none !important;
         }
 
         .router-circle:hover {
-          transform: scale(1.1);
+          transform: none !important;
           filter: brightness(1.1);
         }
 
@@ -671,23 +768,26 @@ const ARPMazePuzzle = ({ onComplete, onClose }) => {
         }
 
         .education-panel {
-          background: #f8f9fa;
+          background: #2c3e50;
+          color: #ffffff;
           padding: 1rem;
           border-radius: 10px;
           margin-top: 2rem;
+          border: 2px solid #34495e;
         }
 
         .education-panel h4 {
           font-family: 'Press Start 2P', monospace;
           font-size: 0.8rem;
           margin-bottom: 0.5rem;
-          color: #2c3e50;
+          color: #3498db;
         }
 
         .education-panel p {
           font-family: 'Press Start 2P', monospace;
           font-size: 0.6rem;
           line-height: 1.5;
+          color: #ecf0f1;
         }
 
         @keyframes banner-slide {
